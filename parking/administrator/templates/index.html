@@ -1,0 +1,1165 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<link rel="shortcut icon" href="favicon.ico">
+
+
+    <link href="/static/css/bootstrap.min14ed.css" rel="stylesheet">
+
+    <link href="/static/css/font-awesome.min93e3.css" rel="stylesheet">
+
+    <link href="/static/js/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+
+    <link href="/static/js/plugins/gritter/jquery.gritter.css" rel="stylesheet">
+
+    <link href="/static/css/animate.min.css" rel="stylesheet">
+
+    <link href="/static/css/style.min862f.css" rel="stylesheet">
+
+    <link href="/static/css/myApp.css" rel="stylesheet" />
+
+    <style>
+
+        
+
+        @media screen and (min-width:1921px){html,body{font-size:15px;}}
+
+        @media screen and (max-width:1920px) {
+
+            html, body { font-size: 14px; }
+
+        }
+
+        @media screen and (max-width:1440px) {
+
+            html, body { font-size: 13px; }
+
+        }
+
+        @media screen and (max-width:1280px){html,body{font-size:12px;}}
+
+        @media screen and (max-width:980px){html, body {font-size: 11px;}}
+
+        @media screen and (max-width:780px) {html, body {font-size: 10px;}}
+
+
+
+
+
+        html,body{font-family:'Microsoft YaHei';}
+
+        .col-xs-1{width:20%;}
+
+        .h-title {padding: 15px;font-size:1.2rem;font-family:sans-serif;height:3.2rem;overflow:hidden;line-height:2.5rem;}
+
+        .h-content {padding: 0 1rem;overflow:hidden;}
+
+        .h-bottom {padding: 15px;height:3.5rem;overflow:hidden;line-height:3.5rem;}
+
+
+
+        .h-content dl{margin:0;padding:0;width:100%;float:left;}
+
+        .h-content dl dt{float: left;width: 70%;height:6rem; font-size: 1.8rem;text-align: center;font-weight:normal;font-family:sans-serif;
+
+                         display: flex;align-items: center;justify-content: center;}
+
+        .h-content dl dd{float:left;width:30%;text-align:right;height:6rem;}
+
+        .h-content dl dt span{float:left;overflow:hidden;}
+
+        .h-content dl dd img{width:5rem;height:5rem;margin:.5rem 0;}
+
+        .h-bottom dl {width:100%;}
+
+        .h-bottom dl dt, .h-bottom dl dd{float: left;font-size:0.9rem;font-weight:normal;}
+
+        .h-bottom dl dd.dd-icon {float:right;}
+
+
+
+        .bg-item-1 {background-color: #6fa3cc;color: #fff;border-radius: 4px;cursor: pointer;}
+
+        .bg-item-2 {background-color: #4bb776;color: #fff;border-radius: 4px;cursor: pointer;}
+
+        .bg-item-3 {background-color: #57b9c9;color: #fff;border-radius: 4px;cursor: pointer;}
+
+        .bg-item-4 {background-color: #f66c6b;color: #fff;border-radius: 4px;cursor: pointer;}
+
+        .bg-item-5 {background-color: #fbba49;color: #fff;border-radius: 4px;cursor: pointer;}
+
+
+
+        .nh-content-1 {height:250px;}
+
+        .nh-content-2 {height:250px;}
+
+
+
+        /*九宫格 */
+
+        .nav-grid {  background-color: #fff; position: relative; overflow: hidden;}
+
+        .nav-grid > .item {  float: left; width: 33.3%;height:150px;}
+
+        .nav-grid > .item a { color:#666; display: block; text-align: center; position: relative;  font-size: 15px; height:150px;display: flex;align-items: center;justify-content: center;}
+
+        .nav-grid > .item a:before,
+
+        .nav-grid > .item a:after,
+
+        .nav-grid:before {display: block; content: " "; position: absolute;background-color: #eaeaea; 
+
+            -webkit-transform: scale(0.5) translate(-50%, -50%);transform: scale(0.5) translate(-50%, -50%);}
+
+        .nav-grid > .item a:before { top: 0; right: -1px; width: 1px; height: 200%; }
+
+        .nav-grid > .item a:after,
+
+        .nav-grid:before { bottom: 0; left: 0; width: 200%; height: 1px; }
+
+        .nav-grid > .item img{  display: block;margin: 0 auto;padding-bottom: 6px;padding-top: 4px;}        
+
+        .clearfix:before, .clearfix:after { content: "";display: table;}
+
+        .clearfix:after { clear: both;}
+
+        .clearfix { zoom: 1;}
+
+
+
+        .nine-icon .glyphicon {font-size: 4rem;padding-bottom: 1rem;display:none;}
+
+        #IncomeAnalysis{width:100%;height:100%;}
+
+
+
+        .btn-white{border:none;}
+
+        .pull-right .layui-form-select .layui-input {background-color: rgba(0,0,0,0);border: none;height: 30px !important;}
+
+        .pull-right .layui-form .layui-form-item {margin: 0 !important;height:auto !important;}
+
+        .pull-right .navbar-form-custom {width: auto !important;height:auto !important;}
+
+
+
+        .row{margin-top:3px;}
+
+
+
+        /* v3.5.3 */
+
+        .layui-input-block {margin-top:-5px;margin-left:0;min-height:30px;}
+
+        .ibox-title {}
+
+
+
+        /*.nh-content-2 th, .nh-content-2 td{float:left;}*/
+
+        .nh-content-2 th div, .nh-content-2 td div{text-overflow: ellipsis;white-space: nowrap;overflow:hidden;padding:0 2px;}
+
+        .table > tbody > tr > td{padding:8px 0 !important; }
+
+        .zIndex999 { z-index: 999; }
+
+
+
+        .use-table{margin:0;padding:0;}
+
+        .use-table dl { padding: 8px 0; border-bottom: 1px solid #e7eaec; display: flex; margin: 0; }
+
+        .use-table dl:hover{background-color:#f5f5f5;}
+
+        .use-table li:last-child dl { border: 0; }
+
+        .use-table dl dt { float: left; flex: 1; }
+
+        .use-table dl dd { float: left; flex: 1; height: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    </style>
+
+</head>
+
+
+    <div class="gray-bg wrapper wrapper-content">
+
+        <div class="row">
+
+            <div class="col-xs-1 animated flipInX nhMenuItem" data-name="menuParking">
+
+                <div class="ibox bg-item-1 float-e-margins">
+
+                    <div class="h-title">停车场数量</div>
+
+                    <div class="h-content">
+
+                        <dl>
+
+                            <dt><span id="Equipment"><i class="fa fa-spinner fa-spin"></i></span></dt>
+
+                            <dd><img src="/static/img/nh_icon1.png" /></dd>
+
+                        </dl>
+
+                    </div>
+
+                    <div class="h-bottom">
+
+                        <dl><dt>总数</dt><dd></dd><dd class="dd-icon"><i class="glyphicon glyphicon-circle-arrow-right"></i></dd></dl>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="col-xs-1 animated flipInX nhMenuItem" data-name="menuCarSpace">
+
+                <div class="ibox bg-item-2 float-e-margins">
+
+                    <div class="h-title">车位总数量</div>
+
+                    <div class="h-content">
+
+                        <dl>
+
+                            <dt><span id="CarSpaceCount"><i class="fa fa-spinner fa-spin"></i></span></dt>
+
+                            <dd><img src="/static/img/nh_icon2.png" /></dd>
+
+                        </dl>
+
+                    </div>
+
+                    <div class="h-bottom">
+
+                        <dl><dt>总数</dt><dd></dd><dd class="dd-icon"><i class="glyphicon glyphicon-circle-arrow-right"></i></dd></dl>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="col-xs-1 animated flipInX nhMenuItem" data-name="menuBusiness">
+
+                <div class="ibox bg-item-3 float-e-margins">
+
+                    <div class="h-title">商家总数</div>
+
+                    <div class="h-content">
+
+                        <dl>
+
+                            <dt><span id="BusinessCount"><i class="fa fa-spinner fa-spin"></i></span></dt>
+
+                            <dd><img src="/static/img/business.png" /></dd>
+
+                        </dl>
+
+                    </div>
+
+                    <div class="h-bottom">
+
+                        <dl><dt>商家总数</dt><dd class="dd-icon"><i class="glyphicon glyphicon-circle-arrow-right"></i></dd></dl>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xs-1 animated flipInX nhMenuItem" data-name="menuCouponSolution">
+
+                <div class="ibox bg-item-5 float-e-margins">
+
+                    <div class="h-title">优惠券方案总数</div>
+
+                    <div class="h-content">
+
+                        <dl>
+
+                            <dt><span id="CouponSolution"><i class="fa fa-spinner fa-spin"></i></span></dt>
+
+                            <dd><img src="/static/img/coupon.png" /></dd>
+
+                        </dl>
+
+                    </div>
+
+                    <div class="h-bottom">
+
+                        <dl><dt>优惠券方案总数</dt><dd></dd><dd class="dd-icon"><i class="glyphicon glyphicon-circle-arrow-right"></i></dd></dl>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-xs-1 animated flipInX nhMenuItem" data-name="menuInvoice">
+
+                <div class="ibox bg-item-4 float-e-margins">
+
+                    <div class="h-title">发票总数</div>
+
+                    <div class="h-content">
+
+                        <dl>
+
+                            <dt><span id="NumNotice"><i class="fa fa-spinner fa-spin"></i></span></dt>
+
+                            <dd><img src="/static/img/nh_icon4.png" /></dd>
+
+                        </dl>
+
+                    </div>
+
+                    <div class="h-bottom">
+
+                        <dl><dt>电子发票</dt><dd></dd><dd class="dd-icon"><i class="glyphicon glyphicon-circle-arrow-right"></i></dd></dl>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="row">
+
+            <div class="col-xs-12  animated flipInX zIndex999">
+
+                <div class="ibox float-e-margins">
+
+                    <div class="ibox-title">
+
+                        <h5><i class="glyphicon glyphicon-stats"></i> 近半个月收入分析</h5>
+
+                        <div class="pull-right">
+
+                            <form class="layui-form navbar-form-custom bg-rgba0" action="" role="search" method="GET" action="#">
+
+                                <div class="layui-form-item">
+
+                                    <div class="layui-input-block">
+
+                                        <select class="form-control no-borders" id="sltParking" lay-filter="sltParking"></select>
+
+                                        <script type="text/x-jquery-tmpl" id="tmpl-sltParking">
+
+                                            <option value="${Parking_ID}" data-key="${Parking_Key}">${Parking_Name}</option>
+
+                                        </script>
+
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                    <div class="ibox-content nh-content-1">
+
+                        <div id="IncomeAnalysis"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="row">
+
+            <div class="col-md-4  animated flipInX">
+
+                <div class="ibox float-e-margins">
+
+                    <div class="ibox-title">
+
+                        <h5>
+
+                            <i class="glyphicon glyphicon-thumbs-up"></i> 缴费记录
+
+                            <i class="fa fa-spinner fa-spin PayedRecord-loading"></i>
+
+                        </h5>
+
+                        <div class="pull-right">
+
+                            <button type="button" class="btn btn-xs btn-white" name="btnmore-PayedRecord">更多&gt;&gt;</button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="ibox-content nh-content-2">
+
+                        <div class="row">
+
+                            <div class="col-xs-12">
+
+                                <ul class="use-table">
+
+                                    <li>
+
+                                        <dl>
+
+                                            <dt>停车场</dt>
+
+                                            <dt>车牌</dt>
+
+                                            <dt>缴费金额</dt>
+
+                                            <dt>时间</dt>
+
+                                        </dl>
+
+                                    </li>
+
+                                    <div id="PayedRecord"></div>
+
+                                </ul>
+
+                                <script type="text/x-jquery-tmpl"  id="templ-PayedRecord">
+
+                                    <li>
+
+                                        <dl>
+
+                                            <dd></dd>
+
+                                            <dd>${ParkOrder_CarNo}</dd>
+
+                                            <dd>${PayOrder_PayedMoney.toFixed(2)}</dd>
+
+                                            <dd title="${PayOrder_PayedTime}">${PayOrder_PayedTime}</dd>
+
+                                        </dl>
+
+                                    </li>
+
+                                </script>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4  animated flipInX">
+
+                <div class="ibox float-e-margins">
+
+                    <div class="nav-grid clearfix" id="nhSubMenu">
+
+                        <div class="item">
+
+                            <a href="javascript:;" data-name="menuCouponSolution">
+
+                                <dl>
+
+                                    <dt class="nine-icon">
+
+                                        <i class="glyphicon glyphicon-home"></i>
+
+                                        <img src="/static/img/icon6.png" />
+
+                                    </dt>
+
+                                    <dd>优惠券方案</dd>
+
+                                </dl>
+
+                            </a>
+
+                        </div>
+
+                        <div class="item">
+
+                            <a href="javascript:;" data-name="menuPlatformPayOrderRecord">
+
+                                <dl>
+
+                                    <dt class="nine-icon">
+
+                                        <i class="glyphicon glyphicon-eye-open"></i>
+
+                                        <img src="/static/img/icon8.png" />
+
+                                    </dt>
+
+                                    <dd>缴费记录</dd>
+
+                                </dl>
+
+                            </a>
+
+                        </div>
+
+                        <div class="item">
+
+                            <a href="javascript:;" data-name="menuMaintain">
+
+                                <dl>
+
+                                    <dt class="nine-icon">
+
+                                        <i class="glyphicon glyphicon-object-align-bottom"></i>
+
+                                        <img src="/static/img/icon9.png" />
+
+                                    </dt>
+
+                                    <dd>停车缴费</dd>
+
+                                </dl>
+
+                            </a>
+
+                        </div>
+
+                        <div class="item">
+
+                            <a href="javascript:;" data-name="menuCarSpace">
+
+                                <dl>
+
+                                    <dt class="nine-icon">
+
+                                        <i class="glyphicon glyphicon-ruble"></i>
+
+                                        <img src="/static/img/icon10.png" />
+
+                                    </dt>
+
+                                    <dd>车位信息</dd>
+
+                                </dl>
+
+                            </a>
+
+                        </div>
+
+                        <div class="item">
+
+                            <a href="javascript:;" data-name="menuParking">
+
+                                <dl>
+
+                                    <dt class="nine-icon">
+
+                                        <i class="glyphicon glyphicon-jpy"></i>
+
+                                        <img src="/static/img/icon11.png" />
+
+                                    </dt>
+
+                                    <dd>车场信息</dd>
+
+                                </dl>
+
+                            </a>
+
+                        </div>
+
+                        <div class="item">
+
+                            <a href="javascript:;" data-name="menuInvoice">
+
+                                <dl>
+
+                                    <dt class="nine-icon">
+
+                                        <i class="glyphicon glyphicon-edit"></i>
+
+                                        <img src="/static/img/icon7.png" />
+
+                                    </dt>
+
+                                    <dd>电子发票</dd>
+
+                                </dl>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4  animated flipInX">
+
+                <div class="ibox float-e-margins">
+
+                    <div class="ibox-title">
+
+                        <h5>
+
+                            <i class="glyphicon glyphicon-duplicate"></i> 停车记录
+
+                            <i class="fa fa-spinner fa-spin parkorder-loading"></i>
+
+                        </h5>
+
+                        <div class="pull-right side-menu">
+
+                            <button type="button" class="btn btn-xs btn-white" name="btnmore-parkorder" value="已出场">更多&gt;&gt;</button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="ibox-content nh-content-2">
+
+                        <div class="row">
+
+                            <div class="col-xs-12">
+
+                                <ul class="use-table">
+
+                                    <li>
+
+                                        <dl>
+
+                                            <dt>停车场</dt>
+
+                                            <dt>车牌</dt>
+
+                                            <dt>入口</dt>
+
+                                            <dt>入场时间</dt>
+
+                                        </dl>
+
+                                    </li>
+
+                                    <div id="parkorder"></div>
+
+                                </ul>
+
+                                <script type="text/x-jquery-tmpl" id="templ-parkorder">
+
+                                    <li>
+
+                                        <dl>
+
+                                            <dd></dd>
+
+                                            <dd>${ParkOrder_CarNo}</dd>
+
+                                            <dd title="${ParkOrder_EnterGateName}">${ParkOrder_EnterGateName}</dd>
+
+                                            <dd title="${ParkOrder_EnterTime}">${ParkOrder_EnterTime}</dd>
+
+                                        </dl>
+
+                                    </li>
+
+                                </script>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block js %}
+ 
+    <script src="/static/js/jquery.tmpl.min.js"></script>
+
+    <script src="/static/js/plugins/echarts/echarts-all.js"></script>
+ 
+
+    <script>
+
+        $(function () {
+
+            pager.Init();
+
+        });
+
+
+
+        var pager = {
+
+            skinItem: null,
+
+            Init: function () {
+
+                this.loadSkin();
+
+                this.BindEvent();
+
+                this.BindData();
+
+            },
+
+            BindEvent: function () {
+
+                $("button[name='btnmore-parkorder']").click(function (event) {
+
+                    $("#menuMaintain", window.parent.document)[0].click();
+
+                });
+
+                
+
+                $("button[name='btnmore-PayedRecord']").click(function (event) {
+
+                    $("#menuPlatformPayOrderRecord", window.parent.document)[0].click();
+
+                });
+
+
+
+                $("#nhSubMenu .item a").on("click", function () {
+
+                    var dataName = $(this).attr("data-name");
+
+                    if (dataName != null && dataName != "") {
+
+                        $("#" + dataName, window.parent.document)[0].click();
+
+                    }
+
+                });
+
+
+
+                $(".nhMenuItem").on("click", function () {
+
+                    var dataName = $(this).attr("data-name");
+
+                    if (dataName != null && dataName != "") {
+
+                        $("#" + dataName, window.parent.document)[0].click();
+
+                    }
+
+                });
+
+            },
+
+            BindData: function () {
+
+                $.ajaxSettings.async = false;
+
+                LoadDataParking();
+
+                LoadCarSpaceAnalysis();
+
+                LoadDataNotice();
+
+                LoadDataParkOrder();
+
+                LoadDataUserFeedback();
+
+                LoadDataBusiness();
+
+                LoadCouponSolution();
+
+                $.ajaxSettings.async = true;
+
+                LoadEquipmentAnalysis();
+
+            },
+
+            //加载UI风格
+
+            loadSkin: function () {
+
+                var skinid = '1';
+
+                var skinItem = null;
+
+                for (var i = 0; i < skinModel.options.length; i++) {
+
+                    if (skinModel.options[i].skinid == skinid) {
+
+                        skinItem = skinModel.options[i];
+
+                        break;
+
+                    }
+
+                }
+
+                if (skinItem != null) {
+
+                    pager.skinItem = skinItem;
+
+                    var ele = document.getElementById("linkCss") ? document.getElementById("linkCss") : document.createElement("link");
+
+                    ele.id = "linkCss";
+
+                    ele.href = skinItem.css;
+
+                    ele.rel = "stylesheet";
+
+                    window.document.body.appendChild(ele);
+
+
+
+                    $("#nhSubMenu dt.nine-icon img").each(function (index) {
+
+                        $(this).attr("src", "../../static/img/" + skinModel.echart[pager.skinItem.type].icons[index]);
+
+                    });
+
+                }
+
+            }
+
+        }
+
+
+
+        //获取停车场
+
+        function LoadDataParking() {
+
+            $.post("/Index/DataParking", { }, function (ret) {
+
+                //ret = JSON.parse(ret);
+
+                $("#sltParking").html($("#tmpl-sltParking").tmpl(ret.data));
+
+                layui.use("form", function () {
+
+                    var form = layui.form;
+
+                    form.render('select');
+
+                    form.on('select(sltParking)', function (data) {
+
+                        var key = $("#sltParking").find("option:selected").attr("data-key");
+
+                        LoadIncomeAnalysis(data.value, key);
+
+                    });
+
+
+
+                    LoadIncomeAnalysis($("#sltParking").children().first().val(), $("#sltParking").children().first().attr("data-key"));
+
+                });
+
+            });
+
+        }
+
+        function LoadIncomeAnalysis(Parking_ID, Parking_Key) {
+
+            var myChart = echarts.init(document.getElementById("IncomeAnalysis"));
+
+            myChart.showLoading({ effect: "whirling" });
+
+
+
+            $.post("/Index/DataRevenue", { Parking_ID: Parking_ID, Parking_Key: Parking_Key }, function (ret) {
+
+                //ret = JSON.parse(ret);
+
+                var option = OptionRevenueAnalysis(ret);
+
+                myChart.hideLoading();
+
+                myChart.setOption(option);
+
+            });
+
+        }
+
+        var _fontSize = 14, _barWidth = 30;
+
+        function OptionRevenueAnalysis(ret) {
+
+            var dX = ret.dataX;
+
+            var dY = ret.dataY;
+
+
+
+            var textColor = "#000", lineColor = "rgba(0,0,0,0.3)";
+
+            if (pager.skinItem != null) {
+
+                textColor = skinModel.echart[pager.skinItem.type].textColor;
+
+                lineColor = skinModel.echart[pager.skinItem.type].lineColor;
+
+            }
+
+
+
+            var option = {
+
+                tooltip: { trigger: 'axis', },
+
+                legend: {
+
+                    show: false, data: ['收入情况'],
+
+                    textStyle: { fontSize: _fontSize }
+
+                },
+
+                grid: { x: '80', y: '20', x2: '10', y2: '30', borderWidth: 0, borderColor: 'rgba(0,0,0,0.3)' },
+
+                calculable: true,
+
+                xAxis: [
+
+                    {
+
+                        show: true, type: 'category', boundaryGap: true,
+
+                        data: dX,
+
+                        axisLabel: { textStyle: { color: textColor, fontSize: _fontSize } },
+
+                        splitLine: { show: false, lineStyle: { color: lineColor } }
+
+
+
+                    }
+
+                ],
+
+                yAxis: [
+
+                    {
+
+                        type: 'value',
+
+                        axisLabel: { formatter: '{value} 元' },
+
+                        axisLabel: { textStyle: { color: textColor, fontSize: _fontSize } },
+
+                        splitLine: { show: true, lineStyle: { color: lineColor } }
+
+                    }
+
+                ],
+
+                series: [
+
+                    {
+
+                        name: '收入情况',
+
+                        type: 'line',
+
+                        itemStyle: { normal: { color: 'rgba(239,97,73,0.5)' } },
+
+                        data: dY
+
+                    },
+
+                    {
+
+                        name: '收入情况',
+
+                        type: 'bar',
+
+                        itemStyle: {
+
+                            normal: { areaStyle: { type: 'default' }, color: 'rgba(239,97,73,0.7)' }
+
+                        },
+
+                        barWidth: _barWidth,
+
+                        data: dY
+
+                    }
+
+                ]
+
+            };
+
+
+
+            return option;
+
+        }
+
+
+
+        //停车场数量
+
+        function LoadEquipmentAnalysis() {
+
+            $.post("/Index/GetParkCount", {}, function (json) {
+
+                if (json.Success)
+
+                    $("#Equipment").html(json.Data);
+
+            },"json");
+
+        }
+
+
+
+        //车位总数量
+
+        function LoadCarSpaceAnalysis() {
+
+            $.post("/Index/DataCarSpaceInPark", {}, function (ret) {
+
+                //ret = JSON.parse(ret);
+
+                $("#CarSpaceCount").html(ret.count);
+
+            });
+
+        }
+
+        //BusinessCount 商家个数
+
+        function LoadDataBusiness()
+
+        {
+
+            $.post("/Index/DataBusinessCount", {}, function (ret) {
+
+                $("#BusinessCount").html(ret.count);
+
+            });
+
+        }
+
+        //优惠券方案个数
+
+        function LoadCouponSolution()
+
+        {
+
+            $.post("/Index/DataCouponSolutionCount", {}, function (ret) {
+
+                $("#CouponSolution").html(ret.count);
+
+            });
+
+        }
+
+       
+
+        
+
+        function LoadDataNotice() {
+
+            $.post("/Index/DataEinvoice", {}, function (ret) {
+
+                //ret = JSON.parse(ret);
+
+                $("#NumNotice").html(ret.count);
+
+            });
+
+        }        
+
+        //停车订单
+
+        function LoadDataParkOrder() {
+
+            $.post("/Index/DataParkOrder", {}, function (ret) {
+
+                $(".parkorder-loading").hide();
+
+                //ret = JSON.parse(ret);
+
+                if (ret.data != null && ret.data.length > 0) {
+
+                    $("#parkorder").html($('#templ-parkorder').tmpl(ret.data));
+
+                    $('#parkorder li').each(function () {
+
+                        $(this).find('dl dd:first').text(ret.parkName).attr("title", ret.parkName);
+
+                    })
+
+                }
+
+            });
+
+        }
+
+
+
+        //缴费记录
+
+        function LoadDataUserFeedback() {
+
+            $.post("/Index/DataPayedRecord", {}, function (ret) {
+
+                $(".PayedRecord-loading").hide();
+
+                //ret = JSON.parse(ret);
+
+                if (ret.data != null && ret.data.length > 0) {
+
+                    $("#PayedRecord").html($('#templ-PayedRecord').tmpl(ret.data));
+
+                    $('#PayedRecord li').each(function () {
+
+                        $(this).find('dl dd:first').text(ret.parkName).attr("title", ret.parkName);
+
+                    })
+
+                }
+
+            });
+
+        }
+
+        
+
+
+
+    </script>
+
+
+
+    <script src="/static/js/layui.all.js"></script>
+
+
+
+
+{% endblock %}

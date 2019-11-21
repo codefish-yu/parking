@@ -1,0 +1,144 @@
+﻿
+
+.sidebar-container ul.nav-tabs.navs-3 li {
+    width: 100%;
+    background-color: #2f4050;
+}
+
+/*表格分页样式*/
+
+ .page-box {
+     border-Top: 1px solid #DDD;
+     margin: 0px 15px 0px 15px;
+
+     padding: 15px 0px 0px 0px;
+ }
+
+  .page-box .page-sum {
+      float: left;
+      display: inline-block;
+      line-height: 24px;
+ }
+
+.page-box .page-size {
+    float: left;
+    display: inline-block;
+}
+
+.no-padding-y{padding-right: 0px;padding-left: 0px; }
+
+.page-box  select {
+    font-weight: normal;
+    width: auto;
+    height: 24px;
+    border-radius: 2px;
+    border: 1px solid #e5e6e7;
+    color: inherit;
+    font-family: inherit;
+    text-transform: none;
+}
+
+.laypage_main laypageskin_molv{ padding-right: 0px;}
+
+/*表格分页样式END*/
+
+
+.form-horizontal .form-group-powername {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+.form-group-powername {
+    margin-bottom: 15px;
+}
+
+/*打印页面Start*/
+.table-center {
+    margin: 0 auto; float: none;
+}
+.table-line {
+    clear: both; border-bottom: 1px solid #e7eaec;
+}
+.print-time {
+    line-height: 35px; padding: 0 8px;
+}
+.print-time .left{ float: left;}
+.print-time .right{ float: right;}
+.table-print{ margin-bottom: 0;}
+.table-print thead th:first-child {
+    text-align: left;
+}
+.table-print tbody tr td:first-child {
+    text-align: left;
+}
+.table-print tbody tr td {
+    border-top: 0;
+}
+.table-print tbody tr td:first-child div {
+    text-align: left;
+}
+.table-responsiv .fixed-table-container{ border: 0;}
+.table-responsiv .fixed-table-container thead th{ border: 0;}
+.table-responsiv .fixed-table-container tbody td{ border: 0;}
+.table-responsiv .fixed-table-container .fixed-table-footer{ border: 0;}
+
+/*打印页面End*/
+
+.table-expandable tbody tr td img {
+    width: 45px;
+    height: 45px;
+    float: left;
+    margin-right: 10px;
+    margin-top: 1px;
+    border: 1px solid #e1e1e1;
+} 
+.table-expandable tbody tr td div { 
+    float: left; 
+}
+.form-group select {
+    min-width: 196px;
+}
+
+/*根据分辨率设置宽度，超出部分自动隐藏 Begin */
+
+.nowrap{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap;} /*不换行*/
+
+.width-screen-1440-60{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+@media screen and (min-width: 1246px) { /* 设置了浏览器宽度不小于1221px时 abc 显示auto宽度 */
+    .width-screen-1440-60 {width: auto}
+}
+@media screen and (max-width: 1245px) { /* 设置了浏览器宽度不大于1220px时 abc 显示60px宽度 */ 
+    .width-screen-1440-60 {width: 60px}
+} 
+
+.width-screen-1440-80{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+@media screen and (min-width: 1181px) { /* 设置了浏览器宽度不小于1181px时 abc 显示auto宽度 */
+    .width-screen-1440-80 {width: auto}
+}
+@media screen and (max-width: 1180px) { /* 设置了浏览器宽度不大于1180px时 abc 显示80px宽度 */ 
+    .width-screen-1440-80 {width: 80px}
+} 
+
+/*根据分辨率设置宽度，超出部分自动隐藏 End */
+
+/*Report Tab Controls */
+.tabs-container .tabs-left>.nav-tabs {
+    width: 3%;
+    margin-right: 0px;
+}
+.tabs-container .tabs-left>.nav-tabs>li>a {
+    min-width: 20px;
+    padding: 15px 12px;
+}
+.tabs-container .tabs-left .panel-body {
+    width: 97%;
+    margin-left: 3%;
+}
+/*End*/
+
+/*重写alert样式*/
+.alert {
+    padding: 8px;
+    /* margin-bottom: 20px; */
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
