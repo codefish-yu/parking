@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Skin</title>
+    <script src="/Static/js/jquery.min.js"></script>
+    <script src="/Static/js/jquery.tmpl.min.js"></script>
+    <style>
+        html.body{width:100%;height:100%;font-size:14px;}
+        .mianBody{width:100%;height:auto;overflow:auto;float:left;}
+
+        ul{margin:0;padding:1rem;list-style:none;overflow:hidden;}
+        ul li {width:33.33%;float:left;height:auto;overflow:hidden;}
+        ul li dl{height:auto;overflow:hidden;position:relative;margin:1rem;padding:0;border:1px solid #f2f2f2;border-radius:3px;}
+        ul li dl dd{padding:0;margin:0;}
+        ul li dl dd.imgbox{width:100%;position:relative;overflow:hidden;}
+        ul li dl dd.nametext{height:2rem;line-height:2rem;text-align:center;width:100%;overflow:hidden;}
+
+        ul li dl dd.imgbox img{width:100%;max-height:8rem;}
+        ul li dl dd.remark{width:2rem;height:2rem;background-color:#0094ff;color:#fff;position:absolute;top:0;right:0;text-align:center;line-height:2rem;font-size:1.5rem;border-top-right-radius:3px;display:none;}
+
+        ul li dl.selected{border:1px solid #0094ff;box-shadow:0 0 10px #009fff;}
+        ul li dl:hover {border: 1px solid #0094ff;box-shadow: 0 0 10px #009fff;}
+
+    </style>
+</head>
+<body>
+    <div class="mianBody">
+        <ul id="skinData">
+        </ul>
+        <script type="text/x-jquery-tmpl" id="tmpl-data">
+            <li>
+                <dl data-skinid="${skinid}">
+                    <dd class="imgbox"><img src="${src}" /></dd>
+                    <dd class="nametext">${skinname}</dd>
+                    <dd class="remark">√</dd>
+                </dl>
+            </li>
+        </script>
+    </div>
+
+    <script>
+        $(function () {
+            pager.init();
+        });
+
+
+        var pager = {
+            skinModel: null,
+            init: function () {
+                this.skinModel = parent.skinModel;
+                this.loadData();
+            },
+            loadData: function () {
+                $("#skinData").html($("#tmpl-data").tmpl(pager.skinModel.options));
+                if (parent.pager.skinItem != null) {
+                    $("#skinData").find("dl[data-skinid='" + parent.pager.skinItem.skinid + "']").addClass("selected");
+                    $("#skinData").find("dl[data-skinid='" + parent.pager.skinItem.skinid + "']").find(".remark").show();
+                }
+                pager.bindEvent();
+            },
+            bindEvent: function () {
+                $("#skinData dl").click(function () {
+                    $("#skinData dl").removeClass("selected");
+                    $("#skinData dl dd.remark").hide();
+                    $(this).addClass("selected");
+                    $(this).find("dd.remark").show();
+                    var item = pager.Common.getSelectOption($(this).attr("data-skinid"));
+                    window.parent.pager.skinItem = item;
+                });
+            },
+            Common: {
+                getSelectOption: function (skinid) {
+                    for (var i = 0; i < pager.skinModel.options.length; i++) {
+                        if (skinid == pager.skinModel.options[i].skinid) {
+                            return pager.skinModel.options[i];
+                        }
+                    }
+                    return null;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

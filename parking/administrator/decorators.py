@@ -9,6 +9,10 @@ import re
 import json
 
 
+def user_required(func):
+    pass
+
+    
 
 def api(func):
     print('sdfsdf')

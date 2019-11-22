@@ -1,63 +1,63 @@
 ﻿var skinModel = {
-    homeiconsrc: '../../Static/img/nhome/',//Home页icon图片路径 ；视图View的相对路径
-    skinimgsrc: '../../Static/img/skin/',  //风格页show预览图片路径 
-    skincsssrc: '../../Static/css/skin/',  //风格页css路径 
+    homeiconsrc: '../../static/img/nhome/',//Home页icon图片路径 ；视图View的相对路径
+    skinimgsrc: '../../static/img/skin/',  //风格页show预览图片路径 
+    skincsssrc: '../../static/css/skin/',  //风格页css路径 
     options: [
         {
             skinid: 1,
             skinname: '背景色风格-1',
-            src: '../../Static/img/skin/skin_01.png',
-            css: '../../Static/css/skin/skin-t2-red.css',
+            src: '../../static/img/skin/skin_01.png',
+            css: '../../static/css/skin/skin-t2-red.css',
             type: 'gradient'//渐变色风格
         }, {
             skinid: 2,
             skinname: '背景色风格-2',
-            src: '../../Static/img/skin/skin_02.png',
-            css: '../../Static/css/skin/skin-t2-orange.css',
+            src: '../../static/img/skin/skin_02.png',
+            css: '../../static/css/skin/skin-t2-orange.css',
             type: 'gradient'
         }, {
             skinid: 3,
             skinname: '背景色风格-3',
-            src: '../../Static/img/skin/skin_03.png',
-            css: '../../Static/css/skin/skin-t2-blue.css',
+            src: '../../static/img/skin/skin_03.png',
+            css: '../../static/css/skin/skin-t2-blue.css',
             type: 'gradient'
         }, {
             skinid: 4,
             skinname: '背景色风格-4',
-            src: '../../Static/img/skin/skin_04.png',
-            css: '../../Static/css/skin/skin-t2-green.css',
+            src: '../../static/img/skin/skin_04.png',
+            css: '../../static/css/skin/skin-t2-green.css',
             type: 'gradient'
         },
         {
             skinid: 5,
             skinname: '纯色风格-1',
-            src: '../../Static/img/skin/skin_05.png',
-            css: '../../Static/css/skin/skin-t1-green.css',
+            src: '../../static/img/skin/skin_05.png',
+            css: '../../static/css/skin/skin-t1-green.css',
             type: 'purity'//纯背景色风格
         }, {
             skinid: 6,
             skinname: '纯色风格-2',
-            src: '../../Static/img/skin/skin_06.png',
-            css: '../../Static/css/skin/skin-t1-default.css',
+            src: '../../static/img/skin/skin_06.png',
+            css: '../../static/css/skin/skin-t1-default.css',
             type: 'purity'
         }, {
             skinid: 7,
             skinname: '纯色风格-3',
-            src: '../../Static/img/skin/skin_07.png',
-            css: '../../Static/css/skin/skin-t1-blue.css',
+            src: '../../static/img/skin/skin_07.png',
+            css: '../../static/css/skin/skin-t1-blue.css',
             type: 'purity'
         }, {
             skinid: 8,
             skinname: '纯色风格-4',
-            src: '../../Static/img/skin/skin_08.png',
-            css: '../../Static/css/skin/skin-t1-red.css',
+            src: '../../static/img/skin/skin_08.png',
+            css: '../../static/css/skin/skin-t1-red.css',
             type: 'purity'
         }
         //, {
         //    skinid: 9,
         //    skinname: '背景色风格-5',
-        //    src: '../../Static/img/skin/skin_09.png',
-        //    css: '../../Static/css/skin/skin-t2-purple.css',
+        //    src: '../../static/img/skin/skin_09.png',
+        //    css: '../../static/css/skin/skin-t2-purple.css',
         //    type: 'gradient'
         //}
     ],

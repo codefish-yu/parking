@@ -20,16 +20,24 @@ from django.conf import settings
 
 
 from administrator import views as a
-
+from car import views as car 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
 
     # administrator
+    path('', a.base),
+    path('login/', a.login),
     path('index/', a.index),
+    path('skin/', a.skin),
 
 
     # user
+
+
+    # car 
+    path('car/inner_car/', car.inner_car),
+    
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

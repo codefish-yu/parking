@@ -25,7 +25,7 @@ SECRET_KEY = '*9ypa$tfo+pmra%n%8cf@!*14h#tpgqw6b(9fat+ir@^v@qbqb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,8 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'administrator',
+    'car',
+    'bill',
     'user',
+    'data',
+    'device',
+    'company',
+    'administrator',
+
 ]
 
 MIDDLEWARE = [
@@ -124,3 +130,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+MEDIA_URL = '/media/'

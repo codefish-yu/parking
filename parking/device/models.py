@@ -3,4 +3,4 @@ from django.db import models
 # Create your models here.
 
 
-'''前端用户模块'''
+'''设备管理模块'''

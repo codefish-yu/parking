@@ -1,0 +1,15 @@
+server {
+    listen 8082;
+
+    location / {
+        proxy_pass http://127.0.0.1:8035;
+    }
+
+    location /static {
+        root /var/parking;
+    }
+
+    location /media {
+        root /var/parking;
+    }
+}

@@ -3,4 +3,5 @@ from django.db import models
 # Create your models here.
 
 
-'''前端用户模块'''
+'''车辆管理模块'''
+
