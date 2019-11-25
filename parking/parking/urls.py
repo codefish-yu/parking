@@ -30,7 +30,7 @@ urlpatterns = [
     path('', a.base),
     path('login/', a.login),
     path('index/', a.index),
-    path('skin/', a.skin),
+    path('administrator/role/', a.role),
 
 
     # user

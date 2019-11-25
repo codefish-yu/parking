@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+
+
+<html>
+
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="renderer" content="webkit">
+
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+    <title></title>
+
+    <meta name="keywords" content="">
+
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico">
+
+    <link href="/static/js/plugins/layui/css/layui.css" rel="stylesheet" />
+
+    <link href="/static/css/bootstrap.min14ed.css" rel="stylesheet">
+
+    <link href="/static/css/font-awesome.min93e3.css" rel="stylesheet">
+
+    <link href="/static/css/animate.min.css" rel="stylesheet">
+
+    <link href="/static/css/style.min862f.css" rel="stylesheet">
+
+    <link href="/static/css/myApp.css" rel="stylesheet" />
+
+    <link href="/static/css/plugins/chosen/chosen.css" rel="stylesheet" />
+    
+    <link href="/static/css/style.min862f.css" rel="stylesheet" />
+
+    <link href="https://cdn.bootcss.com/jquery.bootstrapvalidator/0.5.3/css/bootstrapValidator.min.css" rel="stylesheet">
+
+    <script src="/static/js/skin.1201.js"></script>
+    <style type="text/css">
+        .model{
+            display: none;
+        }
+    </style>
+
+ 
+</head>
+
+<body>
+    {% block content %}
+
+    {% endblock %}
+ 
+
+    <script src="/static/js/jquery.min.js"></script>
+
+    <script src="/static/js/bootstrap.min.js"></script>
+
+    <script src="/static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+
+    <script src="/static/js/plugins/layer/layer.js"></script>
+
+    <script src="/static/js/contabs.min.js"></script>
+
+    <script src="/static/js/plugins/pace/pace.min.js"></script>
+
+    <script src="/static/js/hplus.min.js"></script>
+
+    <script src="/static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <script src="/static/js/jquery.md5.js"></script>
+
+    <script src="/static/js/jquery.common.js"></script>
+
+    <script src="/static/js/localData.js"></script>
+
+    <script src="/static/js/content.min.js"></script>
+
+    <script src="/static/js/plugins/iCheck/icheck.min.js"></script>
+
+    <script src="/static/js/plugins/chosen/chosen.jquery.js"></script>
+
+    <script src="/static/js/plugins/layer/layer.js"></script>
+
+    <script src="/static/js/plugins/layer/laypage-v1.3/laypage/laypage.js"></script>
+
+    <script src="/static/js/jquery.tmpl.min.js"></script>
+
+    <script src="/static/js/plugins/layer/laydate/laydate.js"></script>
+
+    <script src="/static/js/plugins/carnopicker/carnopicker.js"></script>
+
+    <script src="/static/js/jquery.download.js"></script>
+
+    <script src="https://cdn.bootcss.com/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"></script>
+
+
+    {% block js %}
+
+
+    {% endblock %}
+    <script type="text/javascript">
+        $('.model-btn').click(function(){
+            $('#' + $(this).attr('data-target')).show()
+        })
+        $('.layui-layer-close').click(function(){
+            $('.model').hide()
+        })
+        $('.cancel').click(function(){
+            $('.model').hide()
+        })
+
+        $('#search-btn').click(()=>{
+            $('#page').val(0)
+            $('#query_form').submit()
+        })
+
+        $('#delete-btn').click(()=>{
+            $('#delete-form').submit()
+        })
+
+        $('#page-size').on('change', function(){
+            $('#pagesize').val($(this).val())
+            $('#query_form').submit()
+        })
+    </script>
+
+</body>
+
+</html>

@@ -17,7 +17,8 @@ class Role(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '用户角色'
 
-    pass
+    role_name = models.CharField(max_length=100, unique=True, verbose_name='用户名')
+    detail = models.CharField(max_length=200, null=True, verbose_name='说明')
 
 
 class Menu(models.Model):
