@@ -72,7 +72,7 @@
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                                <button type="button" id="Update" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                <button type="button" id="update-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;启用</button>
                                 <button type="button" id="UnBind" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-unlink"></i>&nbsp;解除车位</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
@@ -158,14 +158,15 @@
             </div>
         </div>
 
-        {% for i in objects %}
+<!-- update model -->
+    {% for i in objects %}
         <div id='update_model_{{ i.id }}' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 新增角色</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 修改角色</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
-                    <form id='updae_form_{{i.id}}' action='' method="post">
+                    <form id='update_form_{{i.id}}' action='' method="post">
                         {% csrf_token %}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">角色名称</label>
@@ -174,12 +175,13 @@
                             </div>
                             <label class="col-sm-1 control-label">说明</label>
                             <div class="col-sm-4">
-                                <input type="text" name="detail"  value='{{i.detail}}' class="form-control">
+                                <input type="text" name="detail"  value='{{i.detail|default:""}}' class="form-control">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="id" class="form-control" value='{{i.id}}'>
                                 <input type="hidden" name="action" class="form-control" value='update'>
                                 <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
                                 <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
@@ -197,7 +199,7 @@
        </div>
        {% endfor %}
 
-        <!-- add model -->
+<!-- add model -->
        <div id='add_role_model' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
 
@@ -253,9 +255,6 @@
         var estart = { elem: "#estart", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false, choose: function (datas) { eend.min = datas; eend.start = datas } };
 
         var eend = { elem: "#eend", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false, choose: function (datas) { estart.max = datas } }; laydate(estart); laydate(eend);
-
-
-
 
 
         $("#estart").val("");
@@ -896,6 +895,38 @@
                     }
                 }
             });
+
+            function initValidator(id){
+                $('#update_form_'+id).bootstrapValidator({
+
+    　　　　　　　　  message: 'This value is not valid',
+                　 feedbackIcons: {
+                    　　　　　　　　valid: 'glyphicon glyphicon-ok',
+                    　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+                    　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+                　　　　　　　　   },
+
+                    fields: {
+                        role_name: {
+                            message: '角色名不能为空',
+                            validators: {
+                                notEmpty: {
+                                    message: '用户名不能为空'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            $('#update-btn').click(function(){
+                var ids = $('input[name=ids]:checked')
+                if(ids.length == 1){
+                    initValidator(ids[0].value)
+
+                    $('#update_model_'+ids[0].value).show()
+                }
+            })
 
         });
 

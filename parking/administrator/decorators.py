@@ -17,7 +17,7 @@ def user_required(func):
 def page(func):
     def view(request, *args, **kwargs):
         
-        pagesize = int(request.POST.get('pagesize','1'))
+        pagesize = int(request.POST.get('pagesize','10'))
         page = int(request.POST.get('page','1'))
         
         result = func(request, *args, **kwargs)
