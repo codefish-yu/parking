@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 
 
-from .models import Role
+from .models import *
 from .decorators import page
 from django.http import JsonResponse
 
@@ -34,15 +34,13 @@ def index(request):
     return render(request, 'index.html')
 
 
-@page
+# @page
 def user(request):
     ctx = {}
 
-    
+    users = AdminUser.objects.all()
 
-
-
-    return render(request,'user.html')
+    return render(request,'user.html',ctx)
 
 
 
