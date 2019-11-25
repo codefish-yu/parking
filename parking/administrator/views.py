@@ -35,6 +35,18 @@ def index(request):
 
 
 @page
+def user(request):
+    ctx = {}
+
+    
+
+
+
+    return render(request,'user.html')
+
+
+
+@page
 def role(request):
     ctx = {}
 

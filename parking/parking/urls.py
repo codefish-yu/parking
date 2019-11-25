@@ -31,6 +31,7 @@ urlpatterns = [
     path('login/', a.login),
     path('index/', a.index),
     path('administrator/role/', a.role),
+    path('administrator/user/',a.user),
 
 
     # user
