@@ -39,6 +39,28 @@ def user(request):
     ctx = {}
 
     users = AdminUser.objects.all()
+    roles = Role.objects.all()
+
+    if request.method == 'POST':
+        action = request.POST.get('action','')
+        if action == 'add':
+
+            r = AdminUser()
+            _save_attr_(r, request)
+        elif action == 'update':
+
+            id = request.POST.get('id', '')
+            r = Role.objects.filter(id=id)
+            _save_attr_(r.first(), request)
+
+        elif action == 'delete':
+            ids = request.POST.getlist('ids', '')
+            Role.objects.filter(id__in=ids).delete()
+
+
+
+    ctx['users'] = users
+    ctx['roles'] = roles
 
     return render(request,'user.html',ctx)
 
@@ -120,3 +142,22 @@ def d(url):
         f.write(requests.get(url).text)
         f.flush()
         f.close()
+
+
+# def save_admin_user(request):
+#     user_name = request.POST.get('user_name')
+#     password = request.POST.get('user_pass')
+#     role = request.POST.get('user_role')
+#     phone = request.POST.get('phone')
+#     sex = request.POST.get('sex')
+#     real_name = request.POST.get('real_name')
+#     business = request.POST.get('belong_business')
+#     remark = request.POST.get('remark')
+
+
+
+
+
+
+
+
