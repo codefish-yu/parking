@@ -44,7 +44,7 @@
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                                <button type="button" id="update-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
                                 <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button>
                             </div>
@@ -141,7 +141,7 @@
         <div id='update_model_{{ i.id }}' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 修改用户</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改用户</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{i.id}}' action='' method="post">
@@ -987,7 +987,19 @@
 
 
 // update form validate 
-            function initValidator(id){
+            
+
+            $('#update-btn').click(function(){
+                var ids = $('input[name=ids]:checked')
+                if(ids.length == 1){
+                    initValidator(ids[0].value)
+
+                    $('#update_model_'+ids[0].value).show()
+                }
+            })
+
+        });
+    function initValidator(id){
                 $('#update_form_'+id).bootstrapValidator({
 
     　　　　　　　　  message: 'This value is not valid',
@@ -1028,22 +1040,17 @@
                         }
                     }
                 });
-            }
+    }
 
-            $('#update-btn').click(function(){
-                console.log(1111)
-                var ids = $('input[name=ids]:checked')
+
+    function change(){
+        var ids = $('input[name=ids]:checked')
                 if(ids.length == 1){
                     initValidator(ids[0].value)
 
                     $('#update_model_'+ids[0].value).show()
                 }
-            })
-
-        });
-
-
-
+    }
     </script>
 
 {% endblock %}
