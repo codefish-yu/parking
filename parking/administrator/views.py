@@ -5,6 +5,7 @@ from django.shortcuts import render
 
 from .models import Role
 from .decorators import page
+from django.http import JsonResponse
 
 
 '''系统设置模块'''
@@ -58,6 +59,20 @@ def role(request):
             ids = request.POST.getlist('ids', '')
             Role.objects.filter(id__in=ids).delete()
 
+        elif action == 'validate':
+            role_name = request.POST.get('role_name', '')
+            id = request.POST.get('id', '')
+
+            r = Role.objects.filter(role_name=role_name.strip())
+            if r.exists():
+                if id:
+                    if r.first().id != int(id):
+                        return JsonResponse({'valid': False})
+                else:
+                    return JsonResponse({'valid': False})
+
+            return JsonResponse({'valid': True})
+
     ctx['objects'] = roles
 
     return (ctx, 'role.html')
@@ -74,7 +89,7 @@ def _save_attr_(obj,request):
         print(field_name)
         print(value)
         if value:
-            obj.__setattr__(field_name, value)
+            obj.__setattr__(field_name, value.strip())
         else:
             value = request.FILES.get(field_name, '')
             if value:
