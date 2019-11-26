@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from .models import *
-from .decorators import page
+from .decorators import page, _save_attr_
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .decorators import user_required
@@ -185,31 +185,5 @@ def save_auth(r, request):
             auth.operation.add(j)
 
     return
-
-
-
-def _save_attr_(obj,request):
-    fields = obj._meta.fields
-
-    for field in fields:
-        field_name = field.name
-        value = request.POST.get(field_name, '')
-        print(field_name)
-        print(value)
-        if value:
-            obj.__setattr__(field_name, value.strip())
-            print(111)
-            print(value.strip())
-        else:
-            value = request.FILES.get(field_name, '')
-            print(222)
-            print(value)
-            if value:
-                obj.__setattr__(field_name, value)
-    # try:
-        obj.save()
-    # except Exception:
-    #     print(11111)
-    #     print(Exception)
 
 

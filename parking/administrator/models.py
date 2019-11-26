@@ -65,12 +65,21 @@ class Options(models.Model):
 class Log(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '操作日志'
+        indexes = [
+            models.Index(
+                fields=['create_day'],
+                name='create_day_idx',
+            ),
+        ]
+    ip = models.CharField(max_length=100, null=True, blank=True, verbose_name='ip')
+    operation = models.CharField(max_length=100, null=True, blank=True, verbose_name='操作')
+    content = models.CharField(max_length=100, null=True, blank=True, verbose_name='操作内容')
+    model = models.CharField(max_length=100, null=True, blank=True, verbose_name='操作模块')
+    user = models.ForeignKey(AdminUser, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='操作用户')
 
-    pass
+    create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    create_day = models.IntegerField(null=True, blank=True)
 
-
-
+ 
 
    
-            
-        

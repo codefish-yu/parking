@@ -1,0 +1,353 @@
+{% extends 'iframe.html' %}
+{% block content %}
+<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <ol class="col-lg-5 breadcrumb">
+                            <li>车辆管理</li>
+                            <li>车辆信息</li>
+                        </ol>
+                        <div class="ibox-tools">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#" onclick="location.reload()"><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
+                                </li>
+                            </ul>
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" id="searchForm">
+                        <div class="form-inline ">
+                            <div class="form-inline">
+                                <form id='query_form' action='' method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <select data-placeholder="选择停车场" class="form-control chosen-select" id="Parking_ID" name="Parking_ID" style="display: none;">
+                                            <option value="">选择停车场</option>
+                                        </select><div class="chosen-container chosen-container-single" style="width:196px" title="" id="Parking_ID_chosen"><a class="chosen-single chosen-default" tabindex="-1"><span>选择停车场</span><div><b></b></div></a><div class="chosen-drop"><div class="chosen-search"><input type="text" autocomplete="off"></div><ul class="chosen-results"></ul></div></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <select data-placeholder="状态" class="form-control chosen-select" id="CarSpace_Status" name="CarSpace_Status">
+                                            <option value="" selected="selected">状态</option>
+                                            <option value="1">启用</option>
+                                            <option value="0">禁用</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" placeholder="车牌号码" class="form-control" id="Car_CarNo" name="Car_CarNo">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" placeholder="角色名" class="form-control" id="role_name" name="role_name" value='{{role_name}}'>
+                                    </div>
+                                </div>
+                                <div class="form-inline">
+                                    <div class="form-group">
+                                        <input placeholder="开始日期起" class="laydate-icon form-control layer-date" id="sstart" name="sstart">
+                                        <input placeholder="开始日期止" class="laydate-icon form-control layer-date" id="send" name="send">
+                                    </div>
+                                    <div class="form-group">
+                                        <input placeholder="结束日期起" class="laydate-icon form-control layer-date" id="estart" name="estart">
+                                        <input placeholder="结束日期止" class="laydate-icon form-control layer-date" id="eend" name="eend">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type='hidden' name='action' value='search' />
+                                        <input type='hidden' name='page' value='1' id='page' />
+                                        <input type='hidden' name='pagesize' value='10' id='pagesize' />
+                                        <button id='search-btn' class="btn btn-primary search-btn " type="button" style="display: inline-block;">
+                                            <i class="fa fa-search"></i> 查 询
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-6 m-b-xs">
+                                <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                                <button type="button" id="update-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;启用</button>
+                                <button type="button" id="UnBind" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-unlink"></i>&nbsp;解除车位</button>
+                                <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
+                                <button type="button" id="Export" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-download"></i>&nbsp;导出</button>
+                            </div>
+                            <div class="col-sm-3 m-b-xs"></div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped  table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>编号</th>
+                                        <th>名字</th>
+                                        <th>性别</th>
+                                        <th>出生日期</th>
+                                        <th>所属车场</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-view">
+                                    <form id='delete-form' action="" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value='delete'>
+                                    {% for i in objects %}
+                                        <tr>
+                                         <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
+                                            <td>{{ i.number }}</td>
+                                            <td>{{ i.worker_name }}</td>
+                                            <td>{{ i.get_sex_display }}</td>
+                                            <td>{{ i.birth|date:'%Y/%m/%d' }}</td>
+                                            <td>{{ i.parkingflot.name }}</td>
+                                        </tr>
+                                    {% empty %}
+                                    <tr class="text-center">
+                                        <td colspan="11">没有找到匹配的记录</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </form>
+
+                                </tbody>
+
+                                <script id="data-tmpl" type="text/x-jquery-tmpl">
+                                     
+                                </script>
+
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="ibox-content page-box">
+                                <div class="col-sm-5 page-size no-padding-y">
+
+                                    每页显示
+                                    <select id="page-size">
+                                        <option {% if pagesize == 10 %} selected {% endif %} value="10">10</option>
+                                        <option {% if pagesize == 25 %} selected {% endif %} value="25">25</option>
+                                        <option {% if pagesize == 50 %} selected {% endif %} value="50">50</option>
+                                        <option {% if pagesize == 100 %} selected {% endif %} value="100">100</option>
+                                    </select>
+                                    条记录
+                                </div>
+                                <div class="col-sm-7 no-padding-y">
+
+                                    <div class="dataTables_paginate paging_simple_numbers" style="padding:0">
+                                      <ul class="pagination" style="margin:0">
+                                          {% if objects.has_previous %}
+                                          <li class="paginate_button previous">
+                                              <a onclick="$('input[name=page]').val({{ objects.previous_page_number }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="0" tabindex="0">上一页</a>
+                                          </li>
+                                          {% endif %}
+                                          {% for i in objects.paginator.page_range %}
+                                          <li {% ifequal i  objects.number %}class="paginate_button active" {% else %}class="paginate_button"{% endifequal %}>
+                                              <a onclick="$('input[name=page]').val({{ i }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="{{ i }}" tabindex="0">{{ i }}</a>
+                                          </li>
+                                          {% endfor %}
+                                          {% if objects.has_next %}
+                                          <li class="paginate_button next" id="example2_next">
+                                              <a onclick="$('input[name=page]').val({{ objects.next_page_number }});$('#query_form').submit();"  aria-controls="example2" data-dt-idx="7" tabindex="0">下一页</a>
+                                          </li>
+                                          {% endif %}
+                                      </ul>
+                                  </div>
+                                    <div class=" m-b-xs fa-pull-right text-right dataTables_paginate paging_simple_numbers" id="page-btm"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- update model -->
+        <div id='update_model' class='model'>
+        </div>
+<!-- add model -->
+       <div id='add_role_model' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
+
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 新增角色</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+                <div class="form-horizontal" id="verifyCheck">
+                    <form id='add_form' action='' method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">角色名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="role_name" class="form-control required">
+                            </div>
+                            <label class="col-sm-1 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">权限明细</label>
+                            <div class="col-sm-4">
+    
+{% for menu in menus %}
+<div>
+    <input type='checkbox' value='{{ menu.id }}' class='menu' name='menu' />  {{ menu.menu_name }}
+        {% for child in menu.menu_set.all %}
+        <div style="padding-left: 30px">
+            <input type='checkbox' value='{{ child.id }}' class='child_menu' name='child_menu'
+            parent='menu_{{ menu.id }}' />  {{ child.menu_name }}
+                <div style="padding-left: 30px">
+                {% for op in child.operation.all %}
+                    <input type='checkbox' value='{{ op.id }}' class='operation' name='operation' />   {{op.operation_name}}
+                {% empty %}
+                {% endfor %}
+                </div>
+        </div>
+        {% empty %}
+        {% endfor %}
+</div>
+{% empty %}
+{% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='add'>
+
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div></div>
+            <span class="layui-layer-setwin">
+                <!-- <a class="layui-layer-min" href="javascript:;"><cite></cite></a>
+                <a class="layui-layer-ico layui-layer-max" href="javascript:;"></a> -->
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span></div>
+       </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+ <script>
+
+    $(function () { 
+
+        // add form validate
+        $('#add_form').bootstrapValidator({
+
+　　　　　　　　  message: 'This value is not valid',
+        　 feedbackIcons: {
+            　　　　　　　　valid: 'glyphicon glyphicon-ok',
+            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+        　　　　　　　　   },
+
+            fields: {
+                role_name: {
+                    message: '角色名不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '角色名不能为空'
+                        },
+                        stringLength: {
+                                 min: 3,
+                                 max: 20,
+                                 message: '角色名长度必须在3到20之间'
+                             },
+                        remote:{
+                            url: '',
+                            data:function(validator) {
+                                return {
+                                    role_name: $('#add_form input[name=role_name]').val(),
+                                    action: 'validate',
+                                    csrfmiddlewaretoken:'{{ csrf_token  }}'
+                                }
+                            },
+                            type:'post',
+                            message: '角色名已存在'
+                        }
+                    }
+                }
+            }
+        });
+
+
+// update form validate 
+        
+
+        $('#update-btn').click(function(){
+            var ids = $('input[name=ids]:checked')
+            console.info(ids)
+            if(ids.length == 1){
+                var id = $(ids[0]).val()
+                $('#update_model_'+id).show()
+
+                // $.ajax({
+                //     url: '/administrator/worker/'+id+'/',
+                //     method: 'post',
+                //     dataType: 'html',
+                //     success: function(data){
+                //         $('#update_model').html(data)
+                //     }
+                // })
+            }
+        });
+ 
+        function initValidator(id){
+            $('#update_form_'+id).bootstrapValidator({
+
+    　　　　　　  message: 'This value is not valid',
+            　  feedbackIcons: {
+                　　　　　　　　valid: 'glyphicon glyphicon-ok',
+                　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+                　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+            　　　　　　　　   },
+
+                fields: {
+                    role_name: {
+                        message: '角色名不能为空',
+                        validators: {
+                            notEmpty: {
+                                message: '角色名不能为空'
+                            },
+                            stringLength: {
+                                 min: 3,
+                                 max: 20,
+                                 message: '角色名长度必须在3到20之间'
+                             },
+                            remote:{
+                                url: '',
+                                data:function(validator) {
+                                    return {
+                                        id: $( '#update_form_'+id + ' input[name=id]').val(),
+                                        role_name: $('#update_form_'+id + ' input[name=role_name]').val(),
+                                        action: 'validate',
+                                    }
+                                },
+                                type:'post',
+                                message: '角色名已存在'
+                            }
+                        },
+
+                        
+                    }
+                }
+            });
+        }
+
+
+    });
+
+
+
+    </script>
+
+{% endblock %}
