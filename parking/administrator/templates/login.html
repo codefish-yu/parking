@@ -1,4 +1,195 @@
-{% extends 'iframe.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.top !== window.self) {
+            window.top.location = window.location;
+        }
+    </script>
+    <meta name=renderer content=webkit>
+    <meta name="viewport" content="width=device-width"/>
+    <title>登录</title>
+    <meta name="keywords" content="欢迎使用智慧停车平台云车场">
+    <meta name="description" content="领先行业的互联网云停车系统">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/Static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+    <link href="/Static/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+    <link href="/Static/css/animate.min.css" rel="stylesheet">
+    <link href="/Static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
+    <link href="/Static/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <style>
+        body {background: url(../Static/css/patterns/bg.png) no-repeat;background-size: 100% 100%;background-position-y: 0px; }
+        .gray-bg { background-color: #02c17e; }
+        .logo-name { color: #fff; }
+        .form-control, .single-line { border: 1px solid #5db1a0; }
+        .tabs-container .nav-tabs { border-bottom: none; }
+        .tabs-container .nav-tabs > li {width: 50%;margin-bottom: 0px; }
+        .tabs-container .nav-tabs > li > a {margin-right: 0px;border-radius: 0px;color: #555;background: rgba(255, 255, 255, 0.4); }
+        .tabs-container .nav-tabs > li.active > a, .tabs-container .nav-tabs > li.active > a:focus, .tabs-container .nav-tabs > li.active > a:hover { background-color: rgba(255, 255, 255, 1); }
+        .tabs-container .nav-tabs > li > a:hover { background-color: rgba(255, 255, 255, 0.3); }
+        .tabs-container .panel-body {border-radius: 0px;background: rgba(255, 255, 255, 1); }
+        .sk-spinner-three-bounce div {width: 9px;height: 9px;margin-left: 5px;background-color: #fff; }
+        .sk-spinner-three-bounce.sk-spinner { width: 60px; }
+        #liPlatform a { border-top-left-radius: 3px; }
+        #liBiz a { border-top-right-radius: 3px; }
+        .tabs-container .panel-body {border-bottom-right-radius: 3px;border-bottom-left-radius: 3px; }
 
-{% endblock %}
+        .btn-w-m{min-width:258px !important;}
+    </style>
+</head>
+<body class="gray-bg">
+<div class="middle-box text-center loginscreen  animated fadeInDown">
+    <div style="text-align: center;">
+        <div>
+            <!-- <img src="../Static/css/patterns/logo.png" alt="智慧停车互联网平台" style="height: 50px; margin-top: 140px;" /> -->
+        </div>
+        <h3 style="color: #fff; margin-top: 20px;">畅停智慧停车互联网平台</h3>
+        <form id="LoginForm" class="m-t" role="form" action="#" method="post">
+        	{% csrf_token %}
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                   
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <input type="text" id="Account" name='user_name' class="form-control" placeholder="用户名" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" id="Pwd" name='user_pass' class="form-control" placeholder="密码" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" name="action" ="actiom"  value="login" required>
+                            </div>
+                            <div>
+                                <button type="button" id="submit" data-loading-text="<div style='text-align:center; margin:0 auto;'><div style='display:inline-block;width:45px;'>登录中</div><div class='sk-spinner sk-spinner-three-bounce' style='display:inline-block;width:45px;'><div class='sk-bounce1'></div><div class='sk-bounce2'></div><div class='sk-bounce3'></div></div></div>" class="btn btn-w-m btn-primary pull-center">登&nbsp;&nbsp;录</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="/Static/js/jquery.min.js?v=2.1.4"></script>
+<script src="/Static/js/bootstrap.min.js?v=3.3.6"></script>
+<script src="/Scripts/jquery.md5.js"></script>
+<script src="/Static/js/plugins/layer/layer.js?v=5"></script>
+<script src="/Static/js/jquery.common.js"></script>
+<script src="/Static/js/plugins/iCheck/icheck.min.js"></script>
+<script src="/Static/js/localData.js"></script>
+
+<script>
+
+    // //判断当前浏览器是否是谷歌内核
+    // var browser = {
+    //     versions: function () {
+    //         var u = navigator.userAgent;
+    //         return {
+    //             trident: u.indexOf('Trident') > -1, //IE内核
+    //             presto: u.indexOf('Presto') > -1, //opera内核
+    //             webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+    //             gecko: u.indexOf('Firefox') > -1, //火狐内核Gecko
+    //             mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+    //             ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios
+    //             android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android
+    //             iPhone: u.indexOf('iPhone') > -1, //iPhone
+    //             iPad: u.indexOf('iPad') > -1, //iPad
+    //             webApp: u.indexOf('Safari') > -1 //Safari
+    //         };
+    //     }()
+    // }
+
+    // window.onload = function () {
+    //     if (!browser.versions.webKit) {
+    //         layer.msg("当前浏览器非谷歌内核 兼容性可能存在瑕疵<br/>建议使用谷歌内核浏览器", { offset: 'rb', time: 8000 });
+    //     }
+    // }
+
+    // function CheckPwdStrength(val) {
+    //     var lv = 0;
+    //     //纯数字
+    //     if (val.match(/^\d+$/)) { lv=1; }
+    //     //纯字母
+    //     if (val.match(/^[a-zA-Z]+$/)) { lv=1; }
+    //     //纯特殊字符
+    //     if (val.match(/^[@#$%^&]+$/)) { lv=1; }
+    //     //字母+数字
+    //     if (val.match(/^(?!\d+$)(?![a-zA-Z]+$)[a-zA-Z\d]+$/)) { lv=2; }
+    //     //字母+特殊字符
+    //     if (val.match(/^(?![a-zA-Z]+$)(?![@#$%^&]+$)[a-zA-Z@#$%^&]+$/)) { lv=2; }
+    //     //数字+特殊字符
+    //     if (val.match(/^(?!\d+)(?![@#$%^&]+$)[\d@#$%^&]+$/)) { lv=2; }
+    //     //字母+数字+特殊字符
+    //     if (val.match(/^(?=.*?[a-zA-Z])(?=.*?[\d])(?=.*?[@#$%^&])[a-zA-Z\d@#$%^&]+$/)) { lv = 3; }
+    //     return lv;
+    // };
+
+    // function login(account, pwd, channel) {
+    //     $.post("/Login/Login", { Account: account, Pwd: $.md5(pwd), channel: channel },
+    //         function (data) {
+    //             if (data.Success) {
+    //                 window.localStorage.setItem("sfmchannel", channel);
+    //                 if (channel) {
+    //                     localData.set('logintype', 'platform');
+    //                     var pwdStrength = CheckPwdStrength(pwd);
+    //                     localData.set('pwdStrength', pwdStrength);
+    //                     document.location.href = "../Index?top-search=#";
+    //                 } else {
+    //                     localData.set('logintype', 'business');
+    //                     document.location.href = "../BizIndex";
+    //                 }
+    //                 localData.set("Account", account);
+    //             } else {
+    //                 setTimeout(function () {
+    //                     $('#submit').button('reset');
+    //                 }, 500);
+    //                 layer.tips("提示：" + data.Message, '#submit', { tips: [3] });
+    //             }
+    //         }, "json");
+    // }
+
+    // $(function() {
+    //     if (localData.get('logintype') == "platform" || localData.get('logintype') == null) {
+    //         $("#liPlatform").addClass("active").next().removeClass("active");
+    //         $("#liPlatform").click();
+    //     } else {
+    //         $("#liPlatform").removeClass("active").next().addClass("active");
+    //         $("#liBiz").click();
+    //     }
+
+    //     var account = $.getUrlParam("account");
+    //     var pwd = $.getUrlParam("password");
+    //     var channel = $.getUrlParam("channel");
+    //     if (account != "" && pwd != "" && channel != "") {
+    //         if (channel == "platform")
+    //             channel = true;
+    //         else 
+    //             channel = false;
+    //         login(account, pwd, channel)
+    //     }
+    // });
+
+    // $('#LoginForm').submit(function () {
+    //     var channel = $("#liPlatform").hasClass("active");
+    //     var account = $("#Account").val().trim();
+    //     var pwd = $("#Pwd").val().trim();
+    //     if (account.length < 5) {
+    //         layer.tips("提示：用户名为5-20位字符", '#Account', { tips: [3] });
+    //         return false;
+    //     }
+    //     if (pwd.length < 6) {
+    //         layer.tips("提示：密码为6-20位字符", '#Pwd', { tips: [3] });
+    //         return false;
+    //     }
+    //     $('#submit').button('loading');
+    //     login(account, pwd,channel);
+    //     return false; //防止submit按钮自动刷新一次页面
+    // });
+    // $('#submit').click(function(){
+    	
+    // })
+</script>
+</body>
+</html>

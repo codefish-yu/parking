@@ -1,0 +1,123 @@
+{% extends 'iframe.html' %}
+{% block content %}
+<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <ol class="col-lg-5 breadcrumb">
+                            <li>系统配置</li>
+                            <li>资料修改</li>
+                        </ol>
+                        <div class="ibox-tools">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#" onclick="location.reload()"><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
+                                </li>
+                            </ul>
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                   
+                       
+                   
+                </div>
+            </div>
+        </div>
+
+<!-- modify infor -->
+   
+      
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改信息</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+                <div class="form-horizontal" id="verifyCheck">
+                    <form id='update_form_{{i.id}}' action='' method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">用户账号</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="user_name" class="form-control required" value="{{ me.user_name }} ">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">用户密码</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="user_pass" class="form-control" value="{{ me.user_pass}} ">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">确认密码</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="conf_pass" class="form-control required" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">用户角色</label>
+                            <div class="col-sm-4">
+                                <select data-placeholder="所属商家" class="form-control chosen-select" name="user_role">
+                                            <option value="" selected="selected">{{ me.role_name}} </option>
+                                            {% for j in roles %}
+                                            <option value="{{i.id}} ">{{j.role_name}} </option>
+                                            {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">电话号码</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="phone" class="form-control required" value="{{ me.phone}} ">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">性别</label>
+                            <div class="col-sm-4">
+                                <select data-placeholder="性别" class="form-control chosen-select" name="sex">
+                                            <option value="{{ i.sex}} " selected="selected">{{ me.display_sex }} </option>
+                                            <option value="0">男</option>
+                                            <option value="1">女</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">姓名</label>
+                            <div class="col-sm-4">
+                                <input type="text"  name="real_name" class="form-control required" value="{{ me.real_name}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-4">
+                                <textarea name='remark'>{{ me.remark}} </textarea>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="id" class="form-control" value='{{me.id}}'>
+                                <input type="hidden" name="action" class="form-control" value='update'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 提交</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+         
+     
+
+{% endblock %}
+
+{% block js %}
+ <script>
+
+       
+    </script>
+
+{% endblock %}

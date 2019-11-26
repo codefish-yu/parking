@@ -6,23 +6,40 @@ from django.shortcuts import render
 from .models import *
 from .decorators import page
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 '''系统设置模块'''
 
-
+@csrf_exempt
 def login(request):
 
-    if request == 'POST':
-        pass
+    if request.method == 'POST':
+        action = request.POST.get('action','')
+
+        if action == 'login':
+            user_name = request.POST.get('user_name')
+            password = request.POST.get('user_pass')
+            user = AdminUser.objects.filter(user_name=user_name,user_pass=password).first()
+            if user :
+                return render(request, 'base.html')
+            else:
+                return render(request, 'login.html')
 
         return render(request, 'base.html')
 
     return render(request, 'login.html')
 
 
+# @user_required
 def base(request):
     return render(request, 'base.html')
+
+
+def modify(request):
+    ctx={}
+
+    return render(request,'perModify.html',ctx)
 
 
 def skin(request):

@@ -27,11 +27,13 @@ urlpatterns = [
 
 
     # administrator
-    path('', a.base),
-    path('login/', a.login),
+    path('',a.base),
+    path('login/',a.login),
+    path('base/', a.base),   
     path('index/', a.index),
     path('administrator/role/', a.role),
     path('administrator/user/',a.user),
+    path('administrator/modify/',a.modify),
 
 
     # user
