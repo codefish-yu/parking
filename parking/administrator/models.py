@@ -10,6 +10,7 @@ class AdminUser(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '系统用户'
 
+    status = models.IntegerField(unique=True,default=0)
     user_name = models.CharField(max_length=30, unique=True, verbose_name='用户账号')
     user_pass = models.CharField(max_length=30, unique=True, verbose_name='密码')
     role_name = models.ForeignKey('Role',null=True,on_delete=models.CASCADE)
@@ -32,48 +33,19 @@ class Role(models.Model):
     role_name = models.CharField(max_length=100, unique=True, verbose_name='用户名')
     detail = models.CharField(max_length=200, null=True, verbose_name='说明')
 
-    def get_auth(self):
-        auths = Authority.objects.filter(role=self)
-        menu = set()
-        child_menu = set()
-        operation = set()
-
-        for i in auths:
-            menu.add(i.menu.id)
-            child_menu.add(i.child_menu.id)
-            for j in i.operation.all():
-                operation.add(j.id)
-
-        return {'menu': menu, 'child_menu': child_menu, 'operation': operation}
-
 
 class Menu(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '菜单'
 
-    menu_name = models.CharField(max_length=100, default='', unique=True, verbose_name='菜单名称')
-    parent = models.ForeignKey('Menu', null=True, on_delete=models.CASCADE)
-    url = models.CharField(max_length=200, unique=True, null=True, verbose_name='相对路径url')
-
-    operation = models.ManyToManyField('Operation', verbose_name='操作')
+    pass
 
 
 class Operation(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '操作(功能)'
 
-    operation_name = models.CharField(max_length=100, default='', verbose_name='操作名称')
-    action = models.CharField(max_length=100, default='', verbose_name='方法名')
-
-
-class Authority(models.Model):
-    class Meta:
-        verbose_name = verbose_name_plural = '权限'
-
-    role = models.ForeignKey(Role, on_delete=models.CASCADE, verbose_name='角色')
-    menu = models.ForeignKey(Menu, on_delete=models.SET_NULL,null=True, related_name='parent_menu', verbose_name='以及菜单')
-    child_menu = models.ForeignKey(Menu, on_delete=models.SET_NULL,null=True, related_name='child_menu', verbose_name='二级菜单')
-    operation = models.ManyToManyField(Operation)
+    pass
 
 
 class Settings(models.Model):
@@ -108,22 +80,14 @@ class Log(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     create_day = models.IntegerField(null=True, blank=True)
 
+ 
+class ParkingLot(models.Model):
+    class meta:
+        verbose_name = verbose_name_plural = '停车场'
 
-class Worker(models.Model):
-    class Meta:
-        verbose_name = verbose_name_plural = '车场员工'
+    status = models.IntegerField(unique=True,default=0)
+    name = models.CharField(max_length=30, unique=True, verbose_name='停车场名称')
+    zone_num = models.IntegerField(unique=True,default=0,verbose_name='区域数')
+    place_num = models.IntegerField(unique=True,default=0,verbose_name='车位数')
 
-    number = models.CharField(max_length=100, unique=True, null=True, blank=True, verbose_name='员工号')
-    name = models.CharField(max_length=100, null=True, blank=True, verbose_name='员工名称')
-    birth = models.DateField(null=True, blank=True, verbose_name='出生日期')
-    sex = models.IntegerField(choices=[(0, '男'),(1, '女')], verbose_name='性别')
-
-    is_delete = models.IntegerField(choices=[(0, '否'),(1, '是')], verbose_name='是否删除')
-    forbidden = models.IntegerField(choices=[(0, '否'),(1, '是')], verbose_name='是否禁用')
-    # parkinglot = models.ForeignKey('Parkinglot',  on_delete=models.SET_NULL, verbose_name='所属车场')
-
-    create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    update_time = models.DateTimeField(auto_now=True, blank=True, null=True)
-
-
-
+   

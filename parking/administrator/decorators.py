@@ -1,5 +1,6 @@
 from django.urls import path
 from django.shortcuts import render
+from .models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -9,7 +10,16 @@ import re
 import json
 
 
-def user_required(func):
+def user_required(view_func):
+
+    def wrapper(request, *args, **kwargs):
+        if 'uid' not in request.session:
+            return redirect('login')
+
+        user = AdminUser.objects.filter(id=request.session['uid']).first()
+        return view_func(request, me=user, *args, **kwargs)
+
+    return wrapper
     pass
 
 
@@ -42,3 +52,24 @@ def page(func):
 
     return view
 
+
+''' 小工具 ''' 
+def _save_attr_(obj,request):
+    fields = obj._meta.fields
+
+    for field in fields:
+        field_name = field.name
+        value = request.POST.get(field_name, '')
+        print(field_name)
+        print(value)
+        if value:
+            obj.__setattr__(field_name, value.strip())
+        else:
+            value = request.FILES.get(field_name, '')
+            if value:
+                obj.__setattr__(field_name, value)
+    try:
+        obj.save()
+    except Exception:
+        print(11111)
+        print(Exception)

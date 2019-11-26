@@ -27,12 +27,14 @@ urlpatterns = [
 
 
     # administrator
-    path('', a.base),
-    path('login/', a.login),
+    path('',a.base),
+    path('login/',a.login),
+    path('base/', a.base),   
     path('index/', a.index),
     path('administrator/role/', a.role),
     path('administrator/role/<int:id>/', a.get_role),
     path('administrator/user/',a.user),
+    path('administrator/modify/',a.modify),
 
 
     # user
@@ -40,6 +42,10 @@ urlpatterns = [
 
     # car 
     path('car/inner_car/', car.inner_car),
+    
+
+
+    path('parkinglot/worker/', parkinglot.worker),
     
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

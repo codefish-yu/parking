@@ -5,25 +5,64 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from .models import *
-from .decorators import page
+from .decorators import page, _save_attr_
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .decorators import user_required
+from django.shortcuts import redirect
 
 
 '''系统设置模块'''
 
-
+@csrf_exempt
 def login(request):
+    
+    if request.method == 'POST':
+        
+        action = request.POST.get('action','')
 
-    if request == 'POST':
-        pass
+
+        if action == 'login':
+            user_name = request.POST.get('user_name')
+            password = request.POST.get('user_pass')
+            user = AdminUser.objects.filter(user_name=user_name,user_pass=password).first()
+            if user :
+                request.session['uid'] = user.id
+
+                return render(request, 'base.html')
+            else:
+                return render(request, 'login.html')
 
         return render(request, 'base.html')
 
     return render(request, 'login.html')
 
 
+# @user_required
 def base(request):
     return render(request, 'base.html')
+
+@user_required
+def modify(request,me):
+    ctx={}
+    
+    if request.method == 'POST':
+
+        action = request.POST.get('action','')
+        if action == 'update':
+            id = request.POST.get('id', '')
+
+            r = AdminUser.objects.filter(id=id)
+            _save_attr_(r.first(), request)
+
+            return redirect('/administrator/modify/')
+
+
+
+    ctx['me'] =  me
+    ctx['roles'] = roles = Role.objects.all()
+
+    return render(request,'perModify.html',ctx)
 
 
 def skin(request):
@@ -55,8 +94,10 @@ def user(request):
 
         elif action == 'delete':
             ids = request.POST.getlist('ids', '')
-            print(ids)
-            AdminUser.objects.filter(id__in=ids).delete()
+            u = AdminUser.objects.filter(id__in=ids).all()
+            for item in u:
+                item.status = -1
+                item.save()
 
 
 
@@ -145,69 +186,5 @@ def save_auth(r, request):
 
     return
 
-
-@page
-def worker(request):
-    ctx = {}
-
-    workers = Worker.objects.all()
-
-    if request.method == 'POST':
-        action = request.POST.get('action', '')
-        if action == 'add':
-            r = Worker()
-            _save_attr_(r, request)
-
-
-        elif action == 'update':
-            id = request.POST.get('id', '')
-
-            r = Worker.objects.filter(id=id).first()
-            _save_attr_(r, request)
-            save_auth(r, request)
-
-        elif action == 'search':
-            ctx['worker_name'] = worker_name = request.POST.get('worker_name', '')
-            roles = Worker.objects.filter(worker_name__contains=worker_name.strip())
-
-        elif action == 'delete':
-            ids = request.POST.getlist('ids', '')
-            Worker.objects.filter(id__in=ids).delete()
-
-        elif action == 'validate':
-            number = request.POST.get('number', '')
-            id = request.POST.get('id', '')
-
-            r = Worker.objects.filter(number=number.strip())
-            if r.exists():
-                if id:
-                    if r.first().id != int(id):
-                        return JsonResponse({'valid': False})
-                else:
-                    return JsonResponse({'valid': False})
-
-            return JsonResponse({'valid': True})
-
-    ctx['objects'] = workers
-
-    return (ctx, 'worker.html')
-
-
-
-def _save_attr_(obj,request):
-    fields = obj._meta.fields
-
-    for field in fields:
-        field_name = field.name
-        value = request.POST.get(field_name, '')
-        print(field_name)
-        print(value)
-        if value:
-            obj.__setattr__(field_name, value.strip())
-        else:
-            value = request.FILES.get(field_name, '')
-            if value:
-                obj.__setattr__(field_name, value)
-    obj.save()
 
 
