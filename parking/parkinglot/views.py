@@ -9,6 +9,7 @@ from administrator.decorators import page, _save_attr_
 
 
 def parking_lot(request):
+    
     ctx = {'menu': 'parkinglot'}
 
     if request.method == 'POST':
@@ -32,6 +33,7 @@ def parking_lot(request):
     ctx['parkinglot'] = parkinglot = ParkingLot.objects.filter(status=0).all()
     
     return render(request, 'parking_lot.html', ctx)
+
 
 
 @page
@@ -82,3 +84,5 @@ def worker(request):
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
 
     return (ctx, 'worker.html')
+
+

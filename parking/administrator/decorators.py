@@ -71,5 +71,4 @@ def _save_attr_(obj,request):
     try:
         obj.save()
     except Exception:
-        print(11111)
         print(Exception)
