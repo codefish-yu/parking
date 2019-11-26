@@ -6,8 +6,8 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <ol class="col-lg-5 breadcrumb">
-                            <li>车辆管理</li>
-                            <li>车辆信息</li>
+                            <li>系统配置</li>
+                            <li>用户管理</li>
                         </ol>
                         <div class="ibox-tools">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -55,7 +55,7 @@
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>用户名</th>
+                                        <th>用户账号</th>
                                         <th>用户角色</th>
                                         <th>姓名</th>
                                         <th>手机号码</th>
@@ -74,7 +74,7 @@
                                             <td>{{ i.role_name }}</td>
                                             <td>{{i.real_name}} </td>
                                             <td>{{i.phone}} </td>
-                                            <td>{{i.sex}} </td>
+                                            <td>{{ i.display_sex }}</td>
                                             <td>{{i.remark}} </td>
                                         </tr>
                                     {% empty %}
@@ -110,19 +110,19 @@
 
                                     <div class="dataTables_paginate paging_simple_numbers" style="padding:0">
                                       <ul class="pagination" style="margin:0">
-                                          {% if objects.has_previous %}
+                                          {% if user.has_previous %}
                                           <li class="paginate_button previous">
-                                              <a onclick="$('input[name=page]').val({{ objects.previous_page_number }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="0" tabindex="0">上一页</a>
+                                              <a onclick="$('input[name=page]').val({{ users.previous_page_number }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="0" tabindex="0">上一页</a>
                                           </li>
                                           {% endif %}
-                                          {% for i in objects.paginator.page_range %}
-                                          <li {% ifequal i  objects.number %}class="paginate_button active" {% else %}class="paginate_button"{% endifequal %}>
+                                          {% for i in users.paginator.page_range %}
+                                          <li {% ifequal i  users.number %}class="paginate_button active" {% else %}class="paginate_button"{% endifequal %}>
                                               <a onclick="$('input[name=page]').val({{ i }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="{{ i }}" tabindex="0">{{ i }}</a>
                                           </li>
                                           {% endfor %}
-                                          {% if objects.has_next %}
+                                          {% if users.has_next %}
                                           <li class="paginate_button next" id="example2_next">
-                                              <a onclick="$('input[name=page]').val({{ objects.next_page_number }});$('#query_form').submit();"  aria-controls="example2" data-dt-idx="7" tabindex="0">下一页</a>
+                                              <a onclick="$('input[name=page]').val({{ users.next_page_number }});$('#query_form').submit();"  aria-controls="example2" data-dt-idx="7" tabindex="0">下一页</a>
                                           </li>
                                           {% endif %}
                                       </ul>
@@ -185,9 +185,9 @@
                             <label class="col-sm-2 control-label">性别</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="性别" class="form-control chosen-select" name="sex">
-                                            <option value="" selected="selected">{{ i.sex }} </option>
-                                            <option value="1">男</option>
-                                            <option value="0">女</option>
+                                            <option value="{{ i.sex}} " selected="selected">{{ i.display_sex }} </option>
+                                            <option value="0">男</option>
+                                            <option value="1">女</option>
                                 </select>
                             </div>
                         </div>

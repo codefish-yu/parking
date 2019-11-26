@@ -18,6 +18,12 @@ class AdminUser(models.Model):
     real_name = models.CharField(max_length=30, unique=True, verbose_name='姓名')
     remark = models.CharField(max_length=100,verbose_name='备注')
 
+    def display_sex(self):
+        if self.sex == 0:
+            return '男'
+        else:
+            return '女'
+
 
 class Role(models.Model):
     class Meta:

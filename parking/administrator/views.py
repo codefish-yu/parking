@@ -48,14 +48,14 @@ def user(request):
             r = AdminUser()
             _save_attr_(r, request)
         elif action == 'update':
-
             id = request.POST.get('id', '')
-            r = Role.objects.filter(id=id)
+            r = AdminUser.objects.filter(id=id)
             _save_attr_(r.first(), request)
 
         elif action == 'delete':
             ids = request.POST.getlist('ids', '')
-            Role.objects.filter(id__in=ids).delete()
+            print(ids)
+            AdminUser.objects.filter(id__in=ids).delete()
 
 
 
