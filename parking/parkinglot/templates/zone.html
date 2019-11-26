@@ -7,7 +7,7 @@
                     <div class="ibox-title">
                         <ol class="col-lg-5 breadcrumb">
                             <li>停车场管理</li>
-                            <li>停车场管理</li>
+                            <li>区域管理</li>
                         </ol>
                         <div class="ibox-tools">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -41,8 +41,8 @@
                                     <tr>
                                         <th></th>
                                         <th>编号</th>
-                                        <th>车场名称</th>
-                                        <th>区域数</th>
+                                        <th>区域名称</th>
+                                        <th>所属停车场</th>
                                         <th>泊位数</th>
                                     </tr>
                                 </thead>
@@ -50,12 +50,12 @@
                                     <form id='delete-form' action="" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="action" value='delete'>
-                                    {% for i in parkinglot %}
+                                    {% for i in zone %}
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{i.id}} </td>
-                                            <td>{{ i.name }}</td>
-                                            <td>{{i.zone_num}} </td>
+                                            <td>{{ i.zone_name }}</td>
+                                            <td>{{i.parkinglot.name}} </td>
                                             <td>{{i.place_num}} </td>
                                         </tr>
                                     {% empty %}
@@ -118,25 +118,25 @@
         </div>
 
 <!-- update model -->
-    {% for i in parkinglot %}
+    {% for i in zone %}
         <div id='update_model_{{ i.id }}' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改用户</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改区域</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{i.id}}' action='' method="post">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">车场名称</label>
+                            <label class="col-sm-2 control-label">区域名称</label>
                             <div class="col-sm-4">
-                                <input type="text" name="name" class="form-control required" value="{{ i.name }} ">
+                                <input type="text" name="zone_name" class="form-control required" value="{{ i.zone_name }} ">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">区域数</label>
+                            <label class="col-sm-2 control-label">所属停车场</label>
                             <div class="col-sm-4">
-                                <input type="text" name="user_pass" class="form-control" value="{{ i.zone_num}} ">
+                                <input type="text" name="name" class="form-control" value="{{ i.parkinglot.name }} ">
                             </div>
                         </div>
                         <div class="form-group">
@@ -177,15 +177,15 @@
                     <form id='add_form' action='' method="post">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">车场名称</label>
+                            <label class="col-sm-2 control-label">区域名称</label>
                             <div class="col-sm-4">
-                                <input type="text" id='name' name="name" class="form-control required">
+                                <input type="text" id='zone_name' name="zone_name" class="form-control required">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">区域数</label>
+                            <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <input type="text" id='user_pass' name="zone_num" class="form-control">
+                                <input type="text" id='user_pass' name="name" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">

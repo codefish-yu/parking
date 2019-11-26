@@ -9,31 +9,56 @@ from administrator.decorators import page, _save_attr_
 
 
 def parking_lot(request):
-    
-    ctx = {'menu': 'parkinglot'}
 
-    if request.method == 'POST':
-        action = request.POST.get('action','')
-        if action == 'add':
+	ctx = {'menu': 'parkinglot'}
 
-            r = ParkingLot()
-            _save_attr_(r, request)
-        elif action == 'update':
-            id = request.POST.get('id', '')
-            r = ParkingLot.objects.filter(id=id)
-            _save_attr_(r.first(), request)
+	if request.method == 'POST':
+		action = request.POST.get('action','')
+		if action == 'add':
 
-        elif action == 'delete':
-            ids = request.POST.getlist('ids', '')
-            u = ParkingLot.objects.filter(id__in=ids).all()
-            for item in u:
-                item.status = -1
-                item.save()
+			r = ParkingLot()
+			_save_attr_(r, request)
+		elif action == 'update':
+			id = request.POST.get('id', '')
+			r = ParkingLot.objects.filter(id=id)
+			_save_attr_(r.first(), request)
 
-    ctx['parkinglot'] = parkinglot = ParkingLot.objects.filter(status=0).all()
-    
-    return render(request, 'parking_lot.html', ctx)
+		elif action == 'delete':
+			ids = request.POST.getlist('ids', '')
+			u = ParkingLot.objects.filter(id__in=ids).all()
+			for item in u:
+				item.status = -1
+				item.save()
 
+	ctx['parkinglot'] = parkinglot = ParkingLot.objects.filter(status=0).all()
+	
+	return render(request, 'parking_lot.html', ctx)
+
+
+def gate(request):
+	ctx = {}
+
+	if request.method == 'POST':
+		action = request.POST.get('action','')
+		if action == 'add':
+
+			r = Gate()
+			_save_attr_(r, request)
+		elif action == 'update':
+			id = request.POST.get('id', '')
+			r = Gate.objects.filter(id=id)
+			_save_attr_(r.first(), request)
+
+		elif action == 'delete':
+			ids = request.POST.getlist('ids', '')
+			u = Gate.objects.filter(id__in=ids).all()
+			for item in u:
+				item.status = -1
+				item.save()
+
+	ctx['gates'] = gate = Gate.objects.filter(status=0).all()
+
+	return render(request,'gate.html',ctx)
 
 
 @page
@@ -102,6 +127,35 @@ def worker(request):
     ctx['objects'] = workers
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
 
-    return (ctx, 'worker.html')
+    return render(ctx, 'worker.html')
+
+
+def zone(request):
+	ctx ={}
+
+	if request.method == 'POST':
+		action = request.POST.get('action','')
+		if action == 'add':
+
+			r = Zone()
+			_save_attr_(r, request)
+		elif action == 'update':
+			id = request.POST.get('id', '')
+			r = Zone.objects.filter(id=id)
+			_save_attr_(r.first(), request)
+
+		elif action == 'delete':
+			ids = request.POST.getlist('ids', '')
+			u = Zone.objects.filter(id__in=ids).all()
+			for item in u:
+				item.status = -1
+				item.save()
+
+	ctx['zone'] = Zone.objects.filter(status=0).all()
+
+	return render(request,'zone.html',ctx)
+
+
+
 
 
