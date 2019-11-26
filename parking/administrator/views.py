@@ -94,8 +94,10 @@ def user(request):
 
         elif action == 'delete':
             ids = request.POST.getlist('ids', '')
-            print(ids)
-            AdminUser.objects.filter(id__in=ids).delete()
+            u = AdminUser.objects.filter(id__in=ids).all()
+            for item in u:
+                item.status = -1
+                item.save()
 
 
 
