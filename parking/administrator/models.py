@@ -75,19 +75,11 @@ class Log(models.Model):
     operation = models.CharField(max_length=100, null=True, blank=True, verbose_name='操作')
     content = models.CharField(max_length=100, null=True, blank=True, verbose_name='操作内容')
     model = models.CharField(max_length=100, null=True, blank=True, verbose_name='操作模块')
-    user = models.ForeignKey(on_delete=models.SET_NULL, null=True, blank=True, verbose_name='操作用户')
+    user = models.ForeignKey(AdminUser, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='操作用户')
 
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     create_day = models.IntegerField(null=True, blank=True)
 
  
-class ParkingLot(models.Model):
-    class meta:
-        verbose_name = verbose_name_plural = '停车场'
-
-    status = models.IntegerField(unique=True,default=0)
-    name = models.CharField(max_length=30, unique=True, verbose_name='停车场名称')
-    zone_num = models.IntegerField(unique=True,default=0,verbose_name='区域数')
-    place_num = models.IntegerField(unique=True,default=0,verbose_name='车位数')
 
    

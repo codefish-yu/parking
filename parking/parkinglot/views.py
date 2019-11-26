@@ -3,24 +3,40 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
-from .models import Worker
+from .models import *
 from administrator.decorators import page, _save_attr_
 '''停车场管理模块'''
 
 
 def parking_lot(request):
-	ctx = {'menu': 'parkinglot'}
-	
-	return render(request, 'parking_lot.html', ctx)
+    ctx = {'menu': 'parkinglot'}
 
+    if request.method == 'POST':
+        action = request.POST.get('action','')
+        if action == 'add':
 
+            r = ParkingLot()
+            _save_attr_(r, request)
+        elif action == 'update':
+            id = request.POST.get('id', '')
+            r = ParkingLot.objects.filter(id=id)
+            _save_attr_(r.first(), request)
 
+        elif action == 'delete':
+            ids = request.POST.getlist('ids', '')
+            u = ParkingLot.objects.filter(id__in=ids).all()
+            for item in u:
+                item.status = -1
+                item.save()
 
+    ctx['parkinglot'] = parkinglot = ParkingLot.objects.filter(status=0).all()
+    
+    return render(request, 'parking_lot.html', ctx)
 
 
 @page
 def worker(request):
-	''' 车场员工 ''' 
+    ''' 车场员工 ''' 
     
     ctx = {}
 
@@ -63,5 +79,6 @@ def worker(request):
             return JsonResponse({'valid': True})
 
     ctx['objects'] = workers
+    ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
 
     return (ctx, 'worker.html')

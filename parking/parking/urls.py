@@ -20,7 +20,8 @@ from django.conf import settings
 
 
 from administrator import views as a
-from car import views as car 
+from car import views as car
+from parkinglot import views as park
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,8 +36,6 @@ urlpatterns = [
     path('administrator/role/<int:id>/', a.get_role),
     path('administrator/user/',a.user),
     path('administrator/modify/',a.modify),
-
-
     # user
 
 
@@ -45,7 +44,10 @@ urlpatterns = [
     
 
 
-    path('parkinglot/worker/', parkinglot.worker),
     
+    #parkinglot
+    path('parkinglot/parking_lot/',park.parking_lot,name='parking_lot'),
+    path('parkinglot/worker/', park.worker),
+
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
