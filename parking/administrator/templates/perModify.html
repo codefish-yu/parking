@@ -37,7 +37,7 @@
             <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改信息</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
-                    <form id='update_form_{{i.id}}' action='' method="post">
+                    <form id='modify_form action='' method="post">
                         {% csrf_token %}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">用户账号</label>
@@ -61,9 +61,9 @@
                             <label class="col-sm-2 control-label">用户角色</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="所属商家" class="form-control chosen-select" name="user_role">
-                                            <option value="" selected="selected">{{ me.role_name}} </option>
+                                            <option value="{{ me.role_name.id}}" selected="selected">{{ me.role_name}} </option>
                                             {% for j in roles %}
-                                            <option value="{{i.id}} ">{{j.role_name}} </option>
+                                            <option value="{{ j.id}} ">{{j.role_name}} </option>
                                             {% endfor %}
                                 </select>
                             </div>
@@ -78,7 +78,7 @@
                             <label class="col-sm-2 control-label">性别</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="性别" class="form-control chosen-select" name="sex">
-                                            <option value="{{ i.sex}} " selected="selected">{{ me.display_sex }} </option>
+                                            <option value="{{ m.sex}} " selected="selected">{{ me.display_sex }} </option>
                                             <option value="0">男</option>
                                             <option value="1">女</option>
                                 </select>

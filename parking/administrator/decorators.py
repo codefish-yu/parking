@@ -1,5 +1,6 @@
 from django.urls import path
 from django.shortcuts import render
+from .models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -9,7 +10,16 @@ import re
 import json
 
 
-def user_required(func):
+def user_required(view_func):
+
+    def wrapper(request, *args, **kwargs):
+        if 'uid' not in request.session:
+            return redirect('login')
+
+        user = AdminUser.objects.filter(id=request.session['uid']).first()
+        return view_func(request, me=user, *args, **kwargs)
+
+    return wrapper
     pass
 
 

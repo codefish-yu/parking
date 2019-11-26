@@ -8,21 +8,27 @@ from .models import *
 from .decorators import page
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from .decorators import user_required
+from django.shortcuts import redirect
 
 
 '''系统设置模块'''
 
 @csrf_exempt
 def login(request):
-
+    
     if request.method == 'POST':
+        
         action = request.POST.get('action','')
+
 
         if action == 'login':
             user_name = request.POST.get('user_name')
             password = request.POST.get('user_pass')
             user = AdminUser.objects.filter(user_name=user_name,user_pass=password).first()
             if user :
+                request.session['uid'] = user.id
+
                 return render(request, 'base.html')
             else:
                 return render(request, 'login.html')
@@ -36,9 +42,25 @@ def login(request):
 def base(request):
     return render(request, 'base.html')
 
-
-def modify(request):
+@user_required
+def modify(request,me):
     ctx={}
+    
+    if request.method == 'POST':
+
+        action = request.POST.get('action','')
+        if action == 'update':
+            id = request.POST.get('id', '')
+
+            r = AdminUser.objects.filter(id=id)
+            _save_attr_(r.first(), request)
+
+            return redirect('/administrator/modify/')
+
+
+
+    ctx['me'] =  me
+    ctx['roles'] = roles = Role.objects.all()
 
     return render(request,'perModify.html',ctx)
 
@@ -178,6 +200,10 @@ def _save_attr_(obj,request):
             value = request.FILES.get(field_name, '')
             if value:
                 obj.__setattr__(field_name, value)
-    obj.save()
+    try:
+        obj.save()
+    except Exception:
+        print(11111)
+        print(Exception)
 
 
