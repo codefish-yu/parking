@@ -47,16 +47,27 @@ def worker(request):
     if request.method == 'POST':
         action = request.POST.get('action', '')
         if action == 'add':
-            r = Worker()
+            r = Worker()            
             _save_attr_(r, request)
 
+            parkinglot_id = request.POST.get('parkinglot_id', '')
+            if parkinglot_id:
+                p = ParkingLot.objects.filter(id=parkinglot_id).first()
+                if p: 
+                    r.parkinglot = p
+                    r.save()
 
         elif action == 'update':
             id = request.POST.get('id', '')
 
             r = Worker.objects.filter(id=id).first()
             _save_attr_(r, request)
-            save_auth(r, request)
+            parkinglot_id = request.POST.get('parkinglot_id', '')
+            if parkinglot_id:
+                p = ParkingLot.objects.filter(id=parkinglot_id).first()
+                if p: 
+                    r.parkinglot = p
+                    r.save()
 
         elif action == 'search':
             ctx['worker_name'] = worker_name = request.POST.get('worker_name', '')
@@ -64,7 +75,15 @@ def worker(request):
 
         elif action == 'delete':
             ids = request.POST.getlist('ids', '')
-            Worker.objects.filter(id__in=ids).delete()
+            Worker.objects.filter(id__in=ids).update(is_delete=1)
+
+        elif action == 'forbidden':
+            ids = request.POST.getlist('ids', '')
+            Worker.objects.filter(id__in=ids).update(forbidden=1)
+
+        elif action == 'awaken':
+            ids = request.POST.getlist('ids', '')
+            Worker.objects.filter(id__in=ids).update(forbidden=0)
 
         elif action == 'validate':
             number = request.POST.get('number', '')
