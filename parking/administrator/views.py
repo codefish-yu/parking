@@ -198,14 +198,18 @@ def _save_attr_(obj,request):
         print(value)
         if value:
             obj.__setattr__(field_name, value.strip())
+            print(111)
+            print(value.strip())
         else:
             value = request.FILES.get(field_name, '')
+            print(222)
+            print(value)
             if value:
                 obj.__setattr__(field_name, value)
-    try:
+    # try:
         obj.save()
-    except Exception:
-        print(11111)
-        print(Exception)
+    # except Exception:
+    #     print(11111)
+    #     print(Exception)
 
 
