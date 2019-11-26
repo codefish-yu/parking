@@ -45,5 +45,6 @@ urlpatterns = [
 
     #parkinglot
     path('parkinglot/parking_lot/',park.parking_lot,name='parking_lot'),
+    path('parkinglot/gate/',park.gate,name='gate'),
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
