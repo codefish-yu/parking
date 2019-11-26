@@ -49,6 +49,7 @@ urlpatterns = [
     path('parkinglot/parking_lot/',park.parking_lot,name='parking_lot'),
     path('parkinglot/gate/',park.gate,name='gate'),
     path('parkinglot/worker/', park.worker),
+    path('parkinglot/zone/',park.zone,name='zone'),
 
 
 

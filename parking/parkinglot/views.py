@@ -108,6 +108,35 @@ def worker(request):
     ctx['objects'] = workers
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
 
-    return (ctx, 'worker.html')
+    return render(ctx, 'worker.html')
+
+
+def zone(request):
+	ctx ={}
+
+	if request.method == 'POST':
+		action = request.POST.get('action','')
+		if action == 'add':
+
+			r = Zone()
+			_save_attr_(r, request)
+		elif action == 'update':
+			id = request.POST.get('id', '')
+			r = Zone.objects.filter(id=id)
+			_save_attr_(r.first(), request)
+
+		elif action == 'delete':
+			ids = request.POST.getlist('ids', '')
+			u = Zone.objects.filter(id__in=ids).all()
+			for item in u:
+				item.status = -1
+				item.save()
+
+	ctx['zone'] = Zone.objects.filter(status=0).all()
+
+	return render(request,'zone.html',ctx)
+
+
+
 
 

@@ -52,3 +52,14 @@ class Worker(models.Model):
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True)
 
+
+class Zone(models.Model):
+	class Meta:
+		verbose_name=verbose_name_plural='区域管理'
+
+	status = models.IntegerField(default=0)
+	zone_name = models.CharField(max_length=30, unique=True, verbose_name='区域名称')
+	parkinglot = models.ForeignKey('ParkingLot',null=True,on_delete=models.CASCADE,verbose_name='所属车场')
+	place_num = models.IntegerField(default=0,verbose_name='泊位数')
+
+

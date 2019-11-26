@@ -7,7 +7,7 @@
                     <div class="ibox-title">
                         <ol class="col-lg-5 breadcrumb">
                             <li>停车场管理</li>
-                            <li>出入口管理</li>
+                            <li>区域管理</li>
                         </ol>
                         <div class="ibox-tools">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -31,7 +31,7 @@
                                 <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
                                 <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button>
-                                <button type="button" id="Downcode" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;下载绑定出入口二维码</button>
+                                <!-- <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button> -->
                             </div>
                             <div class="col-sm-3 m-b-xs"></div>
                         </div>
@@ -41,28 +41,22 @@
                                     <tr>
                                         <th></th>
                                         <th>编号</th>
-                                        <th>使用类型</th>
-                                        <th>控制类型</th>
-                                        <th>所属车场</th>
-                                        <th>所属区域</th>
-                                        <th>所属监控</th>
-                                        <th>收费规则</th>
+                                        <th>区域名称</th>
+                                        <th>所属停车场</th>
+                                        <th>泊位数</th>
                                     </tr>
                                 </thead>
                                 <tbody id="data-view">
                                     <form id='delete-form' action="" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="action" value='delete'>
-                                    {% for i in gates %}
+                                    {% for i in zone %}
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
-                                            <td>{{ i.id }} </td>
-                                            <td>{{ i.get_use_type_dispaly }}</td>
-                                            <td>{{ i.get_ctrl_type_display }} </td>
-                                            <td>{{ i.parkinglot.name}} </td>
-                                            <td>{{ i.get_zone_display }} </td>
-                                            <td>{{i.monitor}} </td>
-                                            <td>{{i.get_charge_rule_display}} </td>
+                                            <td>{{i.id}} </td>
+                                            <td>{{ i.zone_name }}</td>
+                                            <td>{{i.parkinglot.name}} </td>
+                                            <td>{{i.place_num}} </td>
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
@@ -124,67 +118,31 @@
         </div>
 
 <!-- update model -->
-    {% for i in gates %}
+    {% for i in zone %}
         <div id='update_model_{{ i.id }}' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改进出口</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改区域</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{i.id}}' action='' method="post">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">使用类型</label>
+                            <label class="col-sm-2 control-label">区域名称</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="使用类型" class="form-control chosen-select" name="use_type" value="{{ i.use_type}} ">
-                                            <option value="0">停车场内</option>
-                                            <option value="1">停车场入口</option>
-                                            <option value="2">停车场出口</option>
-                                </select>
+                                <input type="text" name="zone_name" class="form-control required" value="{{ i.zone_name }} ">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">控制类型</label>
+                            <label class="col-sm-2 control-label">所属停车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="控制类型" class="form-control chosen-select" name="ctrl_type" value="{{ i.ctrl_type}} ">
-                                            <option value="0">临停车控制</option>
-                                            <option value="1">入口不控制</option>
-                                            <option value="2">控制入车类型</option>
-                                            <option value="3">不控制只抓拍</option>
-                                            <option value="4">时间控制</option>
-                                            <option value="5">月租车控制</option>
-                                            <option value="6">卡票控制</option>
-                                </select>
+                                <input type="text" name="name" class="form-control" value="{{ i.parkinglot.name }} ">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">所属车场</label>
+                            <label class="col-sm-2 control-label">泊位数</label>
                             <div class="col-sm-4">
-                                <input type="text" name="name" class="form-control required" value="{{i.parkinglot.name }} ">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">所属区域</label>
-                            <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" name='zone' value='{{ i.zone}} '>
-                                    <option value="0">地面</option>
-                                    <option value="1">地库</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">所属监控</label>
-                            <div class="col-sm-4">
-                                <input type="text" name="monitor" class="form-control required" value="{{i.minitor }} ">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">收费规则</label>
-                            <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" name='charge_rule' value='{{ i.charge_rule}} '>
-                                    <option value="0">按出口所在区域收费</option>
-                                    <option value="1">按入口所在区域收费</option>
-                                </select>
+                                <input type="text" name="place_num" class="form-control required" value="{{i.place_num }} ">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -218,58 +176,22 @@
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='add_form' action='' method="post">
                         {% csrf_token %}
-                       <div class="form-group">
-                            <label class="col-sm-2 control-label">使用类型</label>
-                            <div class="col-sm-4">
-                                <select data-placeholder="使用类型" class="form-control chosen-select" name="use_type" >
-                                            <option value="0">停车场内</option>
-                                            <option value="1">停车场入口</option>
-                                            <option value="2">停车场出口</option>
-                                </select>
-                            </div>
-                        </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">控制类型</label>
+                            <label class="col-sm-2 control-label">区域名称</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="控制类型" class="form-control chosen-select" name="ctrl_type" >
-                                            <option value="0">临停车控制</option>
-                                            <option value="1">入口不控制</option>
-                                            <option value="2">控制入车类型</option>
-                                            <option value="3">不控制只抓拍</option>
-                                            <option value="4">时间控制</option>
-                                            <option value="5">月租车控制</option>
-                                            <option value="6">卡票控制</option>
-                                </select>
+                                <input type="text" id='zone_name' name="zone_name" class="form-control required">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <input type="text" name="parkinglot" class="form-control required" >
+                                <input type="text" id='user_pass' name="name" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">所属区域</label>
+                            <label class="col-sm-2 control-label">泊位数</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" name='zone' >
-                                    <option value="0">地面</option>
-                                    <option value="1">地库</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">所属监控</label>
-                            <div class="col-sm-4">
-                                <input type="text" name="monitor" class="form-control required" >
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">收费规则</label>
-                            <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" name='charge_rule' >
-                                    <option value="0">按出口所在区域收费</option>
-                                    <option value="1">按入口所在区域收费</option>
-                                </select>
+                                <input type="text" id='place_num' name="place_num" class="form-control required">
                             </div>
                         </div>
                         
