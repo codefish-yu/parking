@@ -35,6 +35,37 @@ def index(request):
     return render(request, 'index.html')
 
 
+# @page
+def user(request):
+    ctx = {}
+
+    users = AdminUser.objects.all()
+    roles = Role.objects.all()
+
+    if request.method == 'POST':
+        action = request.POST.get('action','')
+        if action == 'add':
+
+            r = AdminUser()
+            _save_attr_(r, request)
+        elif action == 'update':
+            id = request.POST.get('id', '')
+            r = AdminUser.objects.filter(id=id)
+            _save_attr_(r.first(), request)
+
+        elif action == 'delete':
+            ids = request.POST.getlist('ids', '')
+            print(ids)
+            AdminUser.objects.filter(id__in=ids).delete()
+
+
+
+    ctx['users'] = users
+    ctx['roles'] = roles
+
+    return render(request,'user.html',ctx)
+
+
 @csrf_exempt
 @page
 def role(request):
@@ -102,11 +133,7 @@ def save_auth(r, request):
     child_menus = request.POST.getlist('child_menu', [])
     operations = request.POST.getlist('operation', [])
 
-    # r = Authority.objects.filter(role=r)
-    # for i in r:
-    #     i.operation.all().delete()
-    #     i.delete()
-
+    Authority.objects.filter(role=r).delete()
 
     for i in child_menus:
         child_menu = Menu.objects.filter(id=i).first()
