@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -82,7 +83,7 @@ def user(request):
     return render(request,'user.html',ctx)
 
 
-
+@csrf_exempt
 @page
 def role(request):
     ctx = {}
@@ -95,10 +96,14 @@ def role(request):
             r = Role()
             _save_attr_(r, request)
 
+            save_auth(r, request)
+
         elif action == 'update':
             id = request.POST.get('id', '')
-            r = Role.objects.filter(id=id)
-            _save_attr_(r.first(), request)
+
+            r = Role.objects.filter(id=id).first()
+            _save_attr_(r, request)
+            save_auth(r, request)
 
         elif action == 'search':
             ctx['role_name'] = role_name = request.POST.get('role_name', '')
@@ -124,8 +129,38 @@ def role(request):
 
     ctx['objects'] = roles
 
+    ctx['menus'] = Menu.objects.filter(parent=None).order_by('id')
+
     return (ctx, 'role.html')
 
+
+@csrf_exempt
+def get_role(request, id):
+    ctx = {}
+
+    ctx['role'] = r = Role.objects.filter(id=id).first()
+    ctx['auth'] = r.get_auth()
+    ctx['menus'] = Menu.objects.filter(parent=None).order_by('id')
+
+    return render(request, 'edit_role.html', ctx)
+
+
+def save_auth(r, request):
+    menus = request.POST.getlist('menu', [])
+    child_menus = request.POST.getlist('child_menu', [])
+    operations = request.POST.getlist('operation', [])
+
+    Authority.objects.filter(role=r).delete()
+
+    for i in child_menus:
+        child_menu = Menu.objects.filter(id=i).first()
+        auth = Authority.objects.create(role=r, menu=child_menu.parent, child_menu=child_menu)
+        ops = child_menu.operation.filter(id__in=operations)
+
+        for j in ops:
+            auth.operation.add(j)
+
+    return
 
 
 
@@ -144,37 +179,5 @@ def _save_attr_(obj,request):
             if value:
                 obj.__setattr__(field_name, value)
     obj.save()
-
-
-
-def d(url):
-    path = url.split('Static/')
-    path = path[1]
-    dir = os.path.split(path)
-    path = dir[0]
-    file = dir[1]
-    if not os.path.exists(path):
-        os.mkdir(path)
-    with open(path+'/'+file, 'w') as f:
-        f.write(requests.get(url).text)
-        f.flush()
-        f.close()
-
-
-# def save_admin_user(request):
-#     user_name = request.POST.get('user_name')
-#     password = request.POST.get('user_pass')
-#     role = request.POST.get('user_role')
-#     phone = request.POST.get('phone')
-#     sex = request.POST.get('sex')
-#     real_name = request.POST.get('real_name')
-#     business = request.POST.get('belong_business')
-#     remark = request.POST.get('remark')
-
-
-
-
-
-
 
 

@@ -159,46 +159,8 @@
         </div>
 
 <!-- update model -->
-    {% for i in objects %}
-        <div id='update_model_{{ i.id }}' class='model'>
-        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
-        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 修改角色</div>
-            <div id="" class="layui-layer-content"><div class="ibox-content">
-                <div class="form-horizontal" id="verifyCheck">
-                    <form id='update_form_{{i.id}}' action='' method="post">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">角色名称</label>
-                            <div class="col-sm-4">
-                                <input type="text" name="role_name" value='{{i.role_name}}' class="form-control required">
-                            </div>
-                            <label class="col-sm-1 control-label">说明</label>
-                            <div class="col-sm-4">
-                                <input type="text" name="detail"  value='{{i.detail|default:""}}' class="form-control">
-                            </div>
-                        </div>
-                        <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <div class="col-sm-4 col-sm-offset-2">
-                                <input type="hidden" name="id" class="form-control" value='{{i.id}}'>
-                                <input type="hidden" name="action" class="form-control" value='update'>
-                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
-                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div></div>
-            <span class="layui-layer-setwin">
-                <!-- <a class="layui-layer-min" href="javascript:;"><cite></cite></a>
-                <a class="layui-layer-ico layui-layer-max" href="javascript:;"></a> -->
-                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
-            </span>
-            <span class="layui-layer-resize"></span></div>
-       </div>
-       {% endfor %}
-
+        <div id='update_model' class='model'>
+        </div>
 <!-- add model -->
        <div id='add_role_model' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
@@ -219,7 +181,32 @@
                                 <input type="text" name="detail" class="form-control">
                             </div>
                         </div>
-                        
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">权限明细</label>
+                            <div class="col-sm-4">
+    
+{% for menu in menus %}
+<div>
+    <input type='checkbox' value='{{ menu.id }}' class='menu' name='menu' />  {{ menu.menu_name }}
+        {% for child in menu.menu_set.all %}
+        <div style="padding-left: 30px">
+            <input type='checkbox' value='{{ child.id }}' class='child_menu' name='child_menu'
+            parent='menu_{{ menu.id }}' />  {{ child.menu_name }}
+                <div style="padding-left: 30px">
+                {% for op in child.operation.all %}
+                    <input type='checkbox' value='{{ op.id }}' class='operation' name='operation' />   {{op.operation_name}}
+                {% empty %}
+                {% endfor %}
+                </div>
+        </div>
+        {% empty %}
+        {% endfor %}
+</div>
+{% empty %}
+{% endfor %}
+                            </div>
+                        </div>
+
                         <div class="hr-line-dashed"></div>
                         
                         <div class="form-group">
@@ -869,12 +856,10 @@
 
 
 
-        $(function () { 
+    $(function () { 
             // pager.init(); 
 
-
-
-// add form validate
+        // add form validate
             $('#add_form').bootstrapValidator({
 
 　　　　　　　　  message: 'This value is not valid',
@@ -915,57 +900,58 @@
 
 
 // update form validate 
-            function initValidator(id){
-                $('#update_form_'+id).bootstrapValidator({
-
-    　　　　　　　　  message: 'This value is not valid',
-                　 feedbackIcons: {
-                    　　　　　　　　valid: 'glyphicon glyphicon-ok',
-                    　　　　　　　　invalid: 'glyphicon glyphicon-remove',
-                    　　　　　　　　validating: 'glyphicon glyphicon-refresh'
-                　　　　　　　　   },
-
-                    fields: {
-                        role_name: {
-                            message: '角色名不能为空',
-                            validators: {
-                                notEmpty: {
-                                    message: '角色名不能为空'
-                                },
-                                stringLength: {
-                                     min: 3,
-                                     max: 20,
-                                     message: '角色名长度必须在3到20之间'
-                                 },
-                                remote:{
-                                    url: '',
-                                    data:function(validator) {
-                                        return {
-                                            id: $('#update_form_'+id + ' input[name=id]').val(),
-                                            role_name: $('#update_form_'+id + ' input[name=role_name]').val(),
-                                            action: 'validate',
-                                            csrfmiddlewaretoken:'{{ csrf_token  }}'
-                                        }
-                                    },
-                                    type:'post',
-                                    message: '角色名已存在'
-                                }
-                            },
-
-                            
-                        }
-                    }
-                });
-            }
+            
 
             $('#update-btn').click(function(){
                 var ids = $('input[name=ids]:checked')
+                console.info(ids)
                 if(ids.length == 1){
-                    initValidator(ids[0].value)
+                    var id = $(ids[0]).val()
+                    $.ajax({
+                        url: '/administrator/role/'+id+'/',
+                        method: 'post',
+                        dataType: 'html',
+                        success: function(data){
+                            $('#update_model').html(data)
+                            $('#update_model').show()
+                        }
+                    })
+                }
+            });
 
-                    $('#update_model_'+ids[0].value).show()
+            $('.menu').click(function(){
+                var checked = $(this).prop('checked')
+                $(this).parent().find('input[type=checkbox]').prop('checked', checked)
+            })
+            $('.child_menu').click(function(){
+                var checked = $(this).prop('checked')
+                $(this).parent().find('.operation').prop('checked', checked)
+                
+                if($(this).parent().parent().find('.child_menu:checked').length >0){
+                    $(this).parent().parent().find('.menu').prop('checked', true)
+                }else{
+                    $(this).parent().parent().find('.menu').prop('checked', false)
                 }
             })
+            $('.operation').click(function(){
+                var checked = $(this).prop('checked')
+
+                if($(this).parent().find('.operation:checked').length >0){
+                    $(this).parent().parent().find('.child_menu').prop('checked', true)
+                }else{
+                    $(this).parent().parent().find('.child_menu').prop('checked', false)
+                }
+
+                if($(this).parent().parent().find('.child_menu:checked').length >0){
+                    $(this).parent().parent().parent().find('.menu').prop('checked', true)
+                }else{
+                    $(this).parent().parent().parent().find('.menu').prop('checked', false)
+                }
+
+            })
+
+
+
 
         });
 
