@@ -43,11 +43,11 @@ def gate(request):
 		if action == 'add':
 
 			r = Gate()
-			a._save_attr_(r, request)
+			_save_attr_(r, request)
 		elif action == 'update':
 			id = request.POST.get('id', '')
 			r = Gate.objects.filter(id=id)
-			a._save_attr_(r.first(), request)
+			_save_attr_(r.first(), request)
 
 		elif action == 'delete':
 			ids = request.POST.getlist('ids', '')
@@ -58,7 +58,7 @@ def gate(request):
 
 	ctx['gates'] = gate = Gate.objects.filter(status=0).all()
 
-	return render(request,'gate.html')
+	return render(request,'gate.html',ctx)
 
 
 @page
