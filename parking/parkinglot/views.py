@@ -205,10 +205,12 @@ def zone(request):
 
 # 泊位管理
 @page
+@csrf_exempt
 def place(request):
 
 	ctx ={}
 	place = Place.objects.filter(status=0).all()
+	zone = Zone.objects.filter(status=0).all()
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')
@@ -265,8 +267,30 @@ def place(request):
 			if zon:
 				place = place.filter(zone__id=zon)
 
+			ctx['u'] = use_type
+			ctx['c'] = car_type
+			ctx['p'] = int(park)
+
+		elif action == 'getZone':
+			
+			id = request.POST.get('id')
+			print(11111)
+			print(id)
+			zones = zone.filter(parkinglot__id=id).all()
+			tmp =[]
+
+			for i in zones:
+				d = {
+				'id':i.id,
+				'name':i.zone_name
+				}
+				tmp.append(d)
+
+			return JsonResponse({'data':tmp})
+
+				
+
 	ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
-	ctx['zones'] = Zone.objects.filter(status=0).all()
 	ctx['place'] = ctx['objects'] = place
 
 	return (ctx,'place.html')
