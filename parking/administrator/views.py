@@ -29,18 +29,18 @@ def login(request):
             if user :
                 request.session['uid'] = user.id
 
-                return render(request, 'base.html')
+                return render(request, 'common/base.html')
             else:
                 return render(request, 'login.html')
 
-        return render(request, 'base.html')
+        return render(request, 'common/base.html')
 
     return render(request, 'login.html')
 
 
 # @user_required
 def base(request):
-    return render(request, 'base.html')
+    return render(request, 'common/base.html')
 
 @user_required
 def modify(request,me):
