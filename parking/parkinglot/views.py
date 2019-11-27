@@ -76,14 +76,14 @@ def gate(request):
 
 	return render(request,'gate.html',ctx)
 
-
+@csrf_exempt
 @page
 def worker(request):
     ''' 车场员工 ''' 
     
     ctx = {}
 
-    workers = Worker.objects.all()
+    workers = Worker.objects.all().filter(is_delete=0)
 
     if request.method == 'POST':
         action = request.POST.get('action', '')
@@ -111,20 +111,35 @@ def worker(request):
                     r.save()
 
         elif action == 'search':
-            ctx['worker_name'] = worker_name = request.POST.get('worker_name', '')
-            roles = Worker.objects.filter(worker_name__contains=worker_name.strip())
+            ctx['name'] = name = request.POST.get('name', '')
+            ctx['number'] = number = request.POST.get('number', '')
+            forbidden = request.POST.get('forbidden', '')
+            parkinglot = request.POST.get('parkinglot', '')
+
+            if forbidden:
+                ctx['forbidden'] = int(forbidden)
+                workers = workers.filter(forbidden=int(forbidden))
+            if parkinglot:
+                ctx['parkinglot'] = int(parkinglot)
+                workers = workers.filter(parkinglot_id=int(parkinglot))
+            if number:
+                workers = workers.filter(number__contains=number)
+            if name:
+                workers = workers.filter(name__contains=name)
 
         elif action == 'delete':
             ids = request.POST.getlist('ids', '')
             Worker.objects.filter(id__in=ids).update(is_delete=1)
 
         elif action == 'forbidden':
-            ids = request.POST.getlist('ids', '')
-            Worker.objects.filter(id__in=ids).update(forbidden=1)
+            id = request.POST.get('id', '')
+            Worker.objects.filter(id=id).update(forbidden=1)
+            return JsonResponse({'success': True})
 
         elif action == 'awaken':
-            ids = request.POST.getlist('ids', '')
-            Worker.objects.filter(id__in=ids).update(forbidden=0)
+            id = request.POST.get('id', '')
+            Worker.objects.filter(id=id).update(forbidden=0)
+            return JsonResponse({'success': True})
 
         elif action == 'validate':
             number = request.POST.get('number', '')
@@ -143,7 +158,7 @@ def worker(request):
     ctx['objects'] = workers
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
 
-    return render(ctx, 'worker.html')
+    return (ctx, 'worker.html')
 
 
 def zone(request):

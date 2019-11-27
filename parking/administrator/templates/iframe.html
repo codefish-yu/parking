@@ -99,12 +99,6 @@
     <script src="/static/js/jquery.download.js"></script>
 
     <script src="https://cdn.bootcss.com/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.min.js"></script>
-
-
-    {% block js %}
-
-
-    {% endblock %}
     <script type="text/javascript">
         $('.model-btn').click(function(){
             $('#' + $(this).attr('data-target')).show()
@@ -117,7 +111,7 @@
         })
 
         $('#search-btn').click(()=>{
-            $('#page').val(0)
+            $('#page').val(1)
             $('#query_form').submit()
         })
 
@@ -129,7 +123,25 @@
             $('#pagesize').val($(this).val())
             $('#query_form').submit()
         })
+
+
+        function myajax(url, data, callback, type){
+            type = type || 'json'
+            $.ajax({
+                url: url, 
+                data: data,
+                type: 'post',
+                dataType: 'json',
+                success: callback
+            })
+        }
     </script>
+
+    {% block js %}
+
+
+    {% endblock %}
+    
 
 </body>
 
