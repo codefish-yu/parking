@@ -37,17 +37,27 @@ def parking_lot(request):
 
 def gate(request):
 	ctx = {}
+	gate = Gate.objects.filter(status=0).all()
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')
 		if action == 'add':
-
 			r = Gate()
+			park = request.POST.get('parkinglot')
+			if park:
+				r.parkinglot = ParkingLot.objects.filter(id=int(park)).first()
+				r.save()
+
 			_save_attr_(r, request)
 		elif action == 'update':
 			id = request.POST.get('id', '')
-			r = Gate.objects.filter(id=id)
-			_save_attr_(r.first(), request)
+			r = Gate.objects.filter(id=id).firtst()
+			park = request.POST.get('parkinglot')
+			if park:
+				r.parkinglot = ParkingLot.objects.filter(id=int(park)).first()
+				r.save()
+
+			_save_attr_(r, request)
 
 		elif action == 'delete':
 			ids = request.POST.getlist('ids', '')
@@ -55,8 +65,14 @@ def gate(request):
 			for item in u:
 				item.status = -1
 				item.save()
+		elif action == 'select':
+			use_type = request.POST.get('use_type')
+			if use_type:
+				gate = Gate.objects.filter(use_type=use_type).all()
+				ctx['tip'] = use_type
 
-	ctx['gates'] = gate = Gate.objects.filter(status=0).all()
+	ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
+	ctx['gates'] = gate 
 
 	return render(request,'gate.html',ctx)
 
@@ -138,11 +154,23 @@ def zone(request):
 		if action == 'add':
 
 			r = Zone()
+
+			park = request.POST.get('parkinglot')
+			if park:
+				r.parkinglot = ParkingLot.objects.filter(id=int(park)).first()
+				r.save()
+
 			_save_attr_(r, request)
 		elif action == 'update':
 			id = request.POST.get('id', '')
-			r = Zone.objects.filter(id=id)
-			_save_attr_(r.first(), request)
+			r = Zone.objects.filter(id=id).first()
+
+			park = request.POST.get('parkinglot')
+			if park:
+				r.parkinglot = ParkingLot.objects.filter(id=int(park)).first()
+				r.save()
+
+			_save_attr_(r, request)
 
 		elif action == 'delete':
 			ids = request.POST.getlist('ids', '')
@@ -151,6 +179,7 @@ def zone(request):
 				item.status = -1
 				item.save()
 
+	ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
 	ctx['zone'] = Zone.objects.filter(status=0).all()
 
 	return render(request,'zone.html',ctx)
@@ -160,17 +189,40 @@ def zone(request):
 def place(request):
 
 	ctx ={}
+	place = Place.objects.filter(status=0).all()
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')
 		if action == 'add':
 
 			r = Place()
+
+			park = request.POST.get('parkinglot')
+			if park:
+				r.parkinglot = ParkingLot.objects.filter(id=int(park)).first()
+				r.save()
+
+			zon = request.POST.get('zone')
+			if zon:
+				r.zone = Zone.objects.filter(id=int(zon)).first()
+				r.save()
+
 			_save_attr_(r, request)
 		elif action == 'update':
 			id = request.POST.get('id', '')
-			r = Place.objects.filter(id=id)
-			_save_attr_(r.first(), request)
+			r = Place.objects.filter(id=id).first()
+
+			park = request.POST.get('parkinglot')
+			if park:
+				r.parkinglot = ParkingLot.objects.filter(id=int(park)).first()
+				r.save()
+
+			zon = request.POST.get('zone')
+			if zon:
+				r.zone = Zone.objects.filter(id=int(zon)).first()
+				r.save()
+
+			_save_attr_(r, request)
 
 		elif action == 'delete':
 			ids = request.POST.getlist('ids', '')
@@ -179,11 +231,24 @@ def place(request):
 				item.status = -1
 				item.save()
 
-		# elif action == 'select':
+		elif action == 'select':
+			use_type = request.POST.get('use_type')
+			car_type = request.POST.get('car_type')
+			park = request.POST.get('parkinglot')
+			zon = request.POST.get('zone')
+
+			if use_type:
+				place = place.filter(use_type=use_type)
+			if car_type:
+				place = place.filter(car_type=car_type)
+			if park:
+				place = place.filter(parkinglot__id=park)
+			if zon:
+				place = place.filter(zone__id=zon)
 
 	ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
 	ctx['zones'] = Zone.objects.filter(status=0).all()
-	ctx['place'] = Place.objects.filter(status=0).all()
+	ctx['place'] = place
 
 	return render(request,'place.html',ctx)
 
