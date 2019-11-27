@@ -46,7 +46,7 @@ class Worker(models.Model):
     sex = models.IntegerField(choices=[(0, '男'),(1, '女')], verbose_name='性别')
 
     is_delete = models.IntegerField(choices=[(0, '否'),(1, '是')], default=0, verbose_name='是否删除')
-    forbidden = models.IntegerField(choices=[(0, '否'),(1, '是')], default=0,  verbose_name='是否禁用')
+    forbidden = models.IntegerField(choices=[(0, '启用'),(1, '禁用')], default=0,  verbose_name='是否禁用')
     parkinglot = models.ForeignKey(ParkingLot, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='所属车场')
 
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)

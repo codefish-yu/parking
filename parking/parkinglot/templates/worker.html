@@ -28,19 +28,23 @@
                             <div class="form-inline">
                                 <form id='query_form' action='' method="post">
                                     {% csrf_token %}
-                                    <div class="form-group">
+                                    <div class="form-group" style="width: 200px">
                                         <select data-placeholder="选择停车场" class="form-control chosen-select" name="parkinglot" style="display: none;">
                                             <option value=''>选择停车场</option>
                                             {% for i in parkinglots %}
-                                                <option value='{{i.id}}'>{{i.name}}</option>
+                                                <option value='{{i.id}}' 
+                                                {% if parkinglot == i.id %}selected{% endif %}
+                                                >{{i.name}}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
                                     <div class="form-group">
                                         <select data-placeholder="状态" class="form-control chosen-select" id="CarSpace_Status" name="forbidden">
                                             <option value="" selected="selected">状态</option>
-                                            <option value="1">启用</option>
-                                            <option value="0">禁用</option>
+                                            <option value="0" 
+                                            {% if forbidden == 0 %}selected{% endif %}>启用</option>
+                                            <option value="1"
+                                            {% if forbidden == 1 %}selected{% endif %}>禁用</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
@@ -51,8 +55,8 @@
                                     </div>
                                     <div class="form-group">
                                         <input type='hidden' name='action' value='search' />
-                                        <input type='hidden' name='page' value='1' id='page' />
-                                        <input type='hidden' name='pagesize' value='10' id='pagesize' />
+                                        <input type='hidden' name='page' value='{{page}}' id='page' />
+                                        <input type='hidden' name='pagesize' value='{{pagesize}}' id='pagesize' />
                                         <button id='search-btn' class="btn btn-primary search-btn " type="button" style="display: inline-block;">
                                             <i class="fa fa-search"></i> 查 询
                                         </button>
@@ -74,12 +78,14 @@
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>编号</th>
-                                        <th>名字</th>
+                                        <th>序号</th>
+                                        <th>员工编号</th>
+                                        <th>员工名称</th>
                                         <th>性别</th>
                                         <!-- <th>出生日期</th> -->
                                         <th>所属车场</th>
-                                        <th>锁定</th>
+                                        <th>状态</th>
+                                        <th>创建时间</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
@@ -90,19 +96,21 @@
                                     {% for i in objects %}
                                         <tr>
                                          <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
+                                            <td>{{ forloop.counter }}</td>
                                             <td>{{ i.number }}</td>
                                             <td>{{ i.name }}</td>
                                             <td>{{ i.get_sex_display }}</td>
                                             <!-- <td>{{ i.birth|date:'%Y/%m/%d' }}</td> -->
                                             <td>{{ i.parkinglot.name }}</td>
                                             <td>{{ i.get_forbidden_display }}</td>
+                                            <td>{{ i.create_time|date:'Y-m-d' }}</td>
                                             <td>
                                                 <button type="button" id="update-btn" _id='{{i.id}}' class="btn btn-primary " style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
-
-                                                <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;启用</button>
-                                                
-                                                <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;禁用</button>
-
+                                                {% if i.forbidden == 1 %}
+                                                <button type="button" class="btn btn-primary awaken" _id='{{i.id}}'><i class="fa fa-check-circle-o"></i>&nbsp;启用</button>
+                                                {% else %}
+                                                <button type="button" class="btn btn-warning forbidden" _id='{{i.id}}'><i class="fa fa-check--o"></i>&nbsp;禁用</button>
+                                                {% endif %}
                                             </td>
                                         </tr>
                                     {% empty %}
@@ -120,44 +128,7 @@
 
                             </table>
                         </div>
-                        <div class="row">
-                            <div class="ibox-content page-box">
-                                <div class="col-sm-5 page-size no-padding-y">
-
-                                    每页显示
-                                    <select id="page-size">
-                                        <option {% if pagesize == 10 %} selected {% endif %} value="10">10</option>
-                                        <option {% if pagesize == 25 %} selected {% endif %} value="25">25</option>
-                                        <option {% if pagesize == 50 %} selected {% endif %} value="50">50</option>
-                                        <option {% if pagesize == 100 %} selected {% endif %} value="100">100</option>
-                                    </select>
-                                    条记录
-                                </div>
-                                <div class="col-sm-7 no-padding-y">
-
-                                    <div class="dataTables_paginate paging_simple_numbers" style="padding:0">
-                                      <ul class="pagination" style="margin:0">
-                                          {% if objects.has_previous %}
-                                          <li class="paginate_button previous">
-                                              <a onclick="$('input[name=page]').val({{ objects.previous_page_number }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="0" tabindex="0">上一页</a>
-                                          </li>
-                                          {% endif %}
-                                          {% for i in objects.paginator.page_range %}
-                                          <li {% ifequal i  objects.number %}class="paginate_button active" {% else %}class="paginate_button"{% endifequal %}>
-                                              <a onclick="$('input[name=page]').val({{ i }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="{{ i }}" tabindex="0">{{ i }}</a>
-                                          </li>
-                                          {% endfor %}
-                                          {% if objects.has_next %}
-                                          <li class="paginate_button next" id="example2_next">
-                                              <a onclick="$('input[name=page]').val({{ objects.next_page_number }});$('#query_form').submit();"  aria-controls="example2" data-dt-idx="7" tabindex="0">下一页</a>
-                                          </li>
-                                          {% endif %}
-                                      </ul>
-                                  </div>
-                                    <div class=" m-b-xs fa-pull-right text-right dataTables_paginate paging_simple_numbers" id="page-btm"></div>
-                                </div>
-                            </div>
-                        </div>
+                        {% include 'page.html' %}
                     </div>
                 </div>
             </div>
@@ -181,7 +152,7 @@
                             </div>
                             <label class="col-sm-1 control-label">姓名</label>
                             <div class="col-sm-4">
-                                <input type="text" name="name" class="form-control" value="{{i.name}}">
+                                <input type="text" name="name" class="form-control required" value="{{i.name}}">
                             </div>
                         </div>
                          <div class="form-group">
@@ -196,9 +167,9 @@
                             <div class="col-sm-4">
                                 <select data-placeholder="选择停车场" class="form-control chosen-select" name="parkinglot_id" style="display: none;width: 100%">
                                     <option value=''>选择停车场</option>
-                                    {% for i in parkinglots %}
-                                        <option value='{{i.id}}'{% if i.parkinglot.id == i.id %} selected {% endif %}>
-                                            {{i.name}}
+                                    {% for x in parkinglots %}
+                                        <option value='{{x.id}}'{% if i.parkinglot.id == x.id %} selected {% endif %}>
+                                            {{x.name}}
                                         </option>
                                     {% endfor %}
                                 </select>
@@ -224,6 +195,7 @@
        </div>
         </div>
 {% endfor %}
+
 <!-- add model -->
        <div id='add_model' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
@@ -300,15 +272,15 @@
 
             fields: {
                 number: {
-                    message: '角色名不能为空',
+                    message: '员工编号不能为空',
                     validators: {
                         notEmpty: {
-                            message: '不能为空'
+                            message: '员工编号不能为空'
                         },
                         stringLength: {
                                  min: 3,
                                  max: 20,
-                                 message: '角色名长度必须在3到20之间'
+                                 message: '员工编号长度必须在3到20之间'
                              },
                         remote:{
                             url: '',
@@ -320,16 +292,16 @@
                                 }
                             },
                             type:'post',
-                            message: '角色名已存在'
+                            message: '员工编号已存在'
                         }
                     }
                 },
 
-                worker_name: {
-                    message: '角色名不能为空',
+                name: {
+                    message: '员工名城不能为空',
                     validators: {
                         notEmpty: {
-                            message: '角色名不能为空'
+                            message: '员工名城不能为空'
                         }
                     }
                 },
@@ -344,6 +316,7 @@
 
         $('#update-btn').click(function(){
             var id = $(this).attr('_id')
+            initValidator(id)
             $('#update_model_'+id).show()
         });
  
@@ -358,38 +331,63 @@
             　　　　　　　　   },
 
                 fields: {
-                    role_name: {
-                        message: '角色名不能为空',
+
+                    number: {
+                        message: '员工编号不能为空',
                         validators: {
                             notEmpty: {
-                                message: '角色名不能为空'
+                                message: '员工编号不能为空'
                             },
                             stringLength: {
-                                 min: 3,
-                                 max: 20,
-                                 message: '角色名长度必须在3到20之间'
-                             },
+                                     min: 3,
+                                     max: 20,
+                                     message: '员工编号长度必须在3到20之间'
+                                 },
                             remote:{
                                 url: '',
                                 data:function(validator) {
                                     return {
                                         id: $( '#update_form_'+id + ' input[name=id]').val(),
-                                        role_name: $('#update_form_'+id + ' input[name=role_name]').val(),
+                                        number: $('#update_form_'+id + ' input[name=number]').val(),
                                         action: 'validate',
                                     }
                                 },
                                 type:'post',
-                                message: '角色名已存在'
+                                message: '员工编号已存在'
                             }
-                        },
+                        }
+                    },
 
-                        
-                    }
+                    name: {
+                        message: '员工名称不能为空',
+                        validators: {
+                            notEmpty: {
+                                message: '员工名称不能为空'
+                            }
+                        }
+                    },
+ 
                 }
             });
         }
 
+        $('.awaken').click(function(){
+            var id = $(this).attr('_id')
+            myajax('/parkinglot/worker/', {id: id, action:'awaken'}, (data)=>{
+                if(data.success){
+                    $('#query_form').submit()
+                }
+            })
+        })
 
+        $('.forbidden').click(function(){
+            var id = $(this).attr('_id')
+            myajax('/parkinglot/worker/', {id: id, action:'forbidden'}, (data)=>{
+                if(data.success){
+                    $('#query_form').submit()
+                }
+            })
+        })
 
         $('.chosen-select').chosen();
         $('.chosen-select').next().css('width', '100%');
