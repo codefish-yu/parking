@@ -68,7 +68,6 @@ def _save_attr_(obj,request):
             value = request.FILES.get(field_name, '')
             if value:
                 obj.__setattr__(field_name, value)
-    try:
-        obj.save()
-    except Exception:
-        print(Exception)
+    
+    obj.save()
+  
