@@ -30,7 +30,7 @@
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
                                 <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
-                                <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button>
+                                <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
                                 <!-- <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button> -->
                             </div>
                             <div class="col-sm-3 m-b-xs"></div>
@@ -91,19 +91,19 @@
 
                                     <div class="dataTables_paginate paging_simple_numbers" style="padding:0">
                                       <ul class="pagination" style="margin:0">
-                                          {% if user.has_previous %}
+                                          {% if zone.has_previous %}
                                           <li class="paginate_button previous">
-                                              <a onclick="$('input[name=page]').val({{ users.previous_page_number }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="0" tabindex="0">上一页</a>
+                                              <a onclick="$('input[name=page]').val({{ zone.previous_page_number }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="0" tabindex="0">上一页</a>
                                           </li>
                                           {% endif %}
-                                          {% for i in users.paginator.page_range %}
+                                          {% for i in zone.paginator.page_range %}
                                           <li {% ifequal i  users.number %}class="paginate_button active" {% else %}class="paginate_button"{% endifequal %}>
                                               <a onclick="$('input[name=page]').val({{ i }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="{{ i }}" tabindex="0">{{ i }}</a>
                                           </li>
                                           {% endfor %}
-                                          {% if users.has_next %}
+                                          {% if zone.has_next %}
                                           <li class="paginate_button next" id="example2_next">
-                                              <a onclick="$('input[name=page]').val({{ users.next_page_number }});$('#query_form').submit();"  aria-controls="example2" data-dt-idx="7" tabindex="0">下一页</a>
+                                              <a onclick="$('input[name=page]').val({{ zone.next_page_number }});$('#query_form').submit();"  aria-controls="example2" data-dt-idx="7" tabindex="0">下一页</a>
                                           </li>
                                           {% endif %}
                                       </ul>
@@ -136,7 +136,11 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属停车场</label>
                             <div class="col-sm-4">
-                                <input type="text" name="name" class="form-control" value="{{ i.parkinglot.name }} ">
+                               <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" >
+                                            {% for m in parkinglots %}
+                                            <option value="{{m.id}} ">{{ m.name }} </option>
+                                            {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -185,7 +189,12 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <input type="text" id='user_pass' name="name" class="form-control">
+                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" >
+                                            <option value="">选择停车场</option>
+                                            {% for m in parkinglots %}
+                                            <option value="{{m.id}} ">{{ m.name }} </option>
+                                            {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">

@@ -56,14 +56,17 @@ def page(func):
 ''' 小工具 ''' 
 def _save_attr_(obj,request):
     fields = obj._meta.fields
+    import json
 
     for field in fields:
         field_name = field.name
         value = request.POST.get(field_name, '')
-        print(field_name)
-        print(value)
+
         if value:
-            obj.__setattr__(field_name, value.strip())
+            if str(type(field)) == "<class 'django.db.models.fields.related.ForeignKey'>":
+                pass
+            else:
+                obj.__setattr__(field_name, value.strip())
         else:
             value = request.FILES.get(field_name, '')
             if value:

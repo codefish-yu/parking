@@ -30,7 +30,7 @@
                                     {% csrf_token %}
                                     <div class="form-group">
                                         <select data-placeholder="车辆类型" class="form-control chosen-select" id="Parking_ID" name="car_type" >
-                                            <option val="" selected>选择车辆类型</option>
+                                            <option value="" selected>选择车辆类型</option>
                                             <option value="0">小型车</option>
                                             <option value="1">中型车</option>
                                             <option value="2">大型车</option>
@@ -38,27 +38,28 @@
                                     </div>
                                     <div class="form-group">
                                         <select data-placeholder="使用类型" class="form-control chosen-select" id="Parking_ID" name="use_type" >
-                                            <option val="" selected>选择使用类型</option>
+                                            <option value="" selected>选择使用类型</option>
                                             <option value="0">临停车</option>
                                             <option value="1">长停车</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
                                         <select data-placeholder="所属车场" class="form-control chosen-select" id="Parking_ID" name="parkinglot" >
-                                            <option val="" selected>选择停车场</option>
+                                            <option value="" selected>选择停车场</option>
                                             {% for m in parkinglots %}
-                                            <option value="{{m}} ">{{m.name}} </option>
+                                            <option value="{{m.id}} ">{{m.name}} </option>
                                             {% endfor %}
                                         </select>
                                     </div>
                                     <div class="form-group">
                                         <select data-placeholder="所属区域" class="form-control chosen-select" id="Parking_ID" name="zone" >
-                                            <option val="" selected>选择区域</option>
+                                            <option value="" selected>选择区域</option>
                                             {% for n in zones %}
-                                            <option value="{{n}} ">{{n.name}} </option>
+                                            <option value="{{n.id}} ">{{n.name}} </option>
                                             {% endfor %}
                                         </select>
                                     </div>
+                                    <input type="hidden" name="action" value="select">
                             </form>
                         </div>
                     </div>
@@ -68,7 +69,7 @@
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
                                 <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
-                                <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button>
+                                <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o" onclick="query()"></i>&nbsp;查询</button>
                             </div>
                             <div class="col-sm-3 m-b-xs"></div>
                         </div>
@@ -92,8 +93,8 @@
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{ i.id}}</td>
-                                            <td>{{i.car_type}} </td>
-                                            <td>{{ i.use_type }}</td>
+                                            <td>{{i.get_car_type_display }} </td>
+                                            <td>{{ i.get_use_type_display }}</td>
                                             <td>{{i.parkinglot.name}} </td>
                                             <td>{{i.zone.name}} </td>
                                            
@@ -173,7 +174,7 @@
                                <select data-placeholder="车辆类型" class="form-control chosen-select" name="car_type" value="{{ i.car_type}}">
                                             <option value="0">小型车</option>
                                             <option value="1">中型车</option>
-                                            <option value="1">大型车</option>
+                                            <option value="2">大型车</option>
                                 </select>
                             </div>
                         </div>
@@ -189,12 +190,11 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" value="{{ i.parkinglot }}">
+                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" >
                                             {% for m in parkinglots %}
-                                            <option value="{{m}} ">{{ m.name }} </option>
+                                            <option value="{{m.id}}" {% if m.id == i.parkinglot.id %}selected {% endif %} >{{ m.name }} </option>
                                             {% endfor %}
                                 </select>
-                            </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -202,13 +202,13 @@
                             <div class="col-sm-4">
                                 <select data-placeholder="所属区域" class="form-control chosen-select" name="zone" value="{{ i.zone }} ">
                                             {% for n in zones %}
-                                            <option value="{{n}} ">{{n.name}} </option>
+                                            <option value="{{n.id}}" {% if n.id == i.zone.id %}selected {% endif %}>{{n.name}} </option>
                                             {% endfor %}
                                 </select>
                             </div>
                         </div>
                        
-                        <div class="hr-line-dashed"></div>
+                       <!--  <div class="hr-line-dashed"></div> -->
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <input type="hidden" name="id" class="form-control" value='{{i.id}}'>
@@ -243,9 +243,10 @@
                             <label class="col-sm-2 control-label">车辆类型</label>
                             <div class="col-sm-4">
                                <select data-placeholder="车辆类型" class="form-control chosen-select" name="car_type" >
+                                            <option value="">选择车辆类型</option>
                                             <option value="0">小型车</option>
                                             <option value="1">中型车</option>
-                                            <option value="1">大型车</option>
+                                            <option value="2">大型车</option>
                                 </select>
                             </div>
                         </div>
@@ -253,6 +254,7 @@
                             <label class="col-sm-2 control-label">使用类型</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="使用类型" class="form-control chosen-select" name="use_type" >
+                                            <option value="">选择使用类型</option>
                                             <option value="0">临停车</option>
                                             <option value="1">长停车</option>
                                 </select>
@@ -262,25 +264,26 @@
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" >
+                                            <option value="">选择停车场</option>
                                             {% for m in parkinglots %}
-                                            <option value="{{m}} ">{{ m.name }} </option>
+                                            <option value="{{m.id}} ">{{ m.name }} </option>
                                             {% endfor %}
                                 </select>
-                            </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属区域</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="所属区域" class="form-control chosen-select" name="zone" >
+                                            <option value="">选择区域</option>
                                             {% for n in zones %}
-                                            <option value="{{n}} ">{{n.name}} </option>
+                                            <option value="{{n.id}} ">{{n.name}} </option>
                                             {% endfor %}
                                 </select>
                             </div>
                         </div>
                         
-                        <div class="hr-line-dashed"></div>
+                        <!-- <div class="hr-line-dashed"></div> -->
                         
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
@@ -1038,6 +1041,10 @@
 
                     $('#update_model_'+ids[0].value).show()
                 }
+    }
+    function query(){
+        $('#query_form').submit()
+
     }
     </script>
 
