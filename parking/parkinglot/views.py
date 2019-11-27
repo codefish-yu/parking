@@ -138,5 +138,39 @@ def zone(request):
 
 
 
+def place(request):
+
+	ctx ={}
+
+	if request.method == 'POST':
+		action = request.POST.get('action','')
+		if action == 'add':
+
+			r = Place()
+			_save_attr_(r, request)
+		elif action == 'update':
+			id = request.POST.get('id', '')
+			r = Place.objects.filter(id=id)
+			_save_attr_(r.first(), request)
+
+		elif action == 'delete':
+			ids = request.POST.getlist('ids', '')
+			u = Place.objects.filter(id__in=ids).all()
+			for item in u:
+				item.status = -1
+				item.save()
+
+		# elif action == 'select':
+
+	ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
+	ctx['zones'] = Zone.objects.filter(status=0).all()
+	ctx['place'] = Place.objects.filter(status=0).all()
+
+	return render(request,'place.html',ctx)
+
+
+
+
+
 
 

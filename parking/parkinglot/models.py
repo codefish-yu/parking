@@ -11,7 +11,7 @@ class ParkingLot(models.Model):
         verbose_name = verbose_name_plural = '停车场管理'
 
     status = models.IntegerField(default=0)
-    name = models.CharField(max_length=30, unique=True, verbose_name='停车场名称')
+    name = models.CharField(max_length=30,verbose_name='停车场名称')
     zone_num = models.IntegerField(default=0,verbose_name='区域数')
     place_num = models.IntegerField(default=0,verbose_name='车位数')
 
@@ -58,8 +58,24 @@ class Zone(models.Model):
 		verbose_name=verbose_name_plural='区域管理'
 
 	status = models.IntegerField(default=0)
-	zone_name = models.CharField(max_length=30, unique=True, verbose_name='区域名称')
+	zone_name = models.CharField(max_length=30,null=True, verbose_name='区域名称')
 	parkinglot = models.ForeignKey('ParkingLot',null=True,on_delete=models.CASCADE,verbose_name='所属车场')
-	place_num = models.IntegerField(default=0,verbose_name='泊位数')
+	place_num = models.IntegerField(default=0,null=True, verbose_name='泊位数')
+
+
+
+
+class Place(models.Model):
+	class Meta:
+		verbose_name = verbose_name_plural = '泊位管理'
+
+
+	status = models.IntegerField(default=0)
+	car_type = models.CharField(max_length=30,null=True, choices=[(0,'小型车'),(1,'中型车'),(2,'大型车')], verbose_name='车辆类型')
+	use_type = models.IntegerField(verbose_name='使用类型',choices=[(0,'临停车'),(1,'长租车')] ,default=0,null=True)
+	parkinglot = models.ForeignKey('ParkingLot',null=True,on_delete=models.CASCADE,verbose_name='所属车场')
+	zone = models.ForeignKey('Zone',null=True,on_delete=models.CASCADE,verbose_name='所属区域')
+
+
 
 
