@@ -25,36 +25,11 @@
                     </div>
                     <div class="ibox-content" id="searchForm">
                         <div class="form-inline ">
-                            <div class="form-inline">
-                                <form id='query_form' action='' method="post">
-                                    {% csrf_token %}
-                                    <div class="form-group">
-                                        <select data-placeholder="选择停车场" class="form-control chosen-select" id="Parking_ID" name="Parking_ID" style="display: none;">
-                                            <option value="">选择停车场</option>
-                                        </select><div class="chosen-container chosen-container-single" style="width:196px" title="" id="Parking_ID_chosen"><a class="chosen-single chosen-default" tabindex="-1"><span>选择停车场</span><div><b></b></div></a><div class="chosen-drop"><div class="chosen-search"><input type="text" autocomplete="off"></div><ul class="chosen-results"></ul></div></div>
-                                    </div>
-                                    <div class="form-group">
-                                        <select data-placeholder="状态" class="form-control chosen-select" id="CarSpace_Status" name="CarSpace_Status">
-                                            <option value="" selected="selected">状态</option>
-                                            <option value="1">启用</option>
-                                            <option value="0">禁用</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" placeholder="车牌号码" class="form-control" id="Car_CarNo" name="Car_CarNo">
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" placeholder="角色名" class="form-control" id="role_name" name="role_name" value='{{role_name}}'>
-                                    </div>
-                                </div>
+                            <form id='query_form' action='' method="post">
+                                {% csrf_token %}
                                 <div class="form-inline">
                                     <div class="form-group">
-                                        <input placeholder="开始日期起" class="laydate-icon form-control layer-date" id="sstart" name="sstart">
-                                        <input placeholder="开始日期止" class="laydate-icon form-control layer-date" id="send" name="send">
-                                    </div>
-                                    <div class="form-group">
-                                        <input placeholder="结束日期起" class="laydate-icon form-control layer-date" id="estart" name="estart">
-                                        <input placeholder="结束日期止" class="laydate-icon form-control layer-date" id="eend" name="eend">
+                                        <input type="text" placeholder="角色名" class="form-control" id="role_name" name="role_name" value='{{role_name}}'>
                                     </div>
                                     <div class="form-group">
                                         <input type='hidden' name='action' value='search' />
@@ -73,10 +48,7 @@
                             <div class="col-sm-6 m-b-xs">
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
                                 <button type="button" id="update-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
-                                <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;启用</button>
-                                <button type="button" id="UnBind" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-unlink"></i>&nbsp;解除车位</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
-                                <button type="button" id="Export" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-download"></i>&nbsp;导出</button>
                             </div>
                             <div class="col-sm-3 m-b-xs"></div>
                         </div>
