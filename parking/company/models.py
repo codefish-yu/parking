@@ -1,4 +1,5 @@
 from django.db import models
+from administrator.models import AdminUser as User
 
 # Create your models here.
 
@@ -36,17 +37,61 @@ class Refund(models.Model):
 	status = models.IntegerField(default=0,verbose_name='状态',choices=[(-1,'删除'),(0,'未审核'),(1,'已审核')])
 
 
-# class  Recharge(object):
-# 	class Meta:
-# 		verbose_name = verbose_name_plural = '充值记录'
+class  Recharge(object):
+	class Meta:
+		verbose_name = verbose_name_plural = '充值记录'
 
-# 	type = models.ForeignKey('Ticket',null=True,on_delete=models.CASCADE)#代金，折扣，满时
-# 	denomination = models.FloatField(default=0,verbose_name='面额')
-# 	amount = models.IntegerField(default=0,verbose_name='张数')
-# 	valid_start = models.CharField(max_length=30,null=True,verbose_name='有效开始')
-# 	valid_end = models.CharField(max_length=30,null=True,verbose_name='有效结束')
-# 	status = models.IntegerField(default=0,verbose_name='状态',choices=[(-1,'删除'),(0,'未审核'),(1,'已审核')])
-# 	create_time = models.DateTimeField(auto_now_add=True)
+	type = models.ForeignKey('Ticket',null=True,on_delete=models.CASCADE)#代金，折扣，满时
+	denomination = models.FloatField(default=0,verbose_name='面额')
+	amount = models.IntegerField(default=0,verbose_name='张数')
+	valid_start = models.CharField(max_length=30,null=True,verbose_name='有效开始')
+	valid_end = models.CharField(max_length=30,null=True,verbose_name='有效结束')
+	status = models.IntegerField(default=0,verbose_name='状态',choices=[(-1,'删除'),(0,'未审核'),(1,'已审核')])
+	create_time = models.DateTimeField(auto_now_add=True)
+
+
+class NormalCard(models.Model):
+	class Meta:
+		verbose_name = verbose_name_plural = '普通月卡'
+
+	status = models.IntegerField(default=0)
+	valid_start = CharField(max_length=30,null=True,verbose_name='有效开始')
+	valid_end = models.CharField(max_length=30,null=True,verbose_name='有效结束')
+	holidays = models.TextField(null=True , blank=True, verbose_name='非工作日')
+
+class RerveseCard(models.Model):
+	class Meta:
+		verbose_name = verbose_name_plural = '错峰卡'
+
+	status = models.IntegerField(default=0)
+	valid_start = CharField(max_length=30,null=True,verbose_name='有效开始')
+	valid_end = models.CharField(max_length=30,null=True,verbose_name='有效结束')
+	valid_start1 = CharField(max_length=30,null=True,verbose_name='有效开始')
+	valid_end1 = models.CharField(max_length=30,null=True,verbose_name='有效结束')
+	holidays = models.TextField(null=True , blank=True, verbose_name='非工作日')
+
+
+class UserCard(models.Model):
+	class Meta:
+		verbose_name = verbose_name = '商家普通月卡'
+
+	status = models.IntegerField(default=0)
+	user = models.ForeignKey(User,null=True,on_delete=models.CASCADE)
+	normalcard = models.ForeignKey('NormalCard',null=True,blank=True, on_delete=models.CASCADE)
+	normalcard = models.ForeignKey('RerveseCard',null=True,blank=True,on_delete=models.CASCADE)
+
+
+
+
+
+
+		
+
+
+		
+
+
+
 
 
 
