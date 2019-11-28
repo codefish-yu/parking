@@ -61,7 +61,7 @@
                             <label class="col-sm-2 control-label">用户角色</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="所属商家" class="form-control chosen-select" name="user_role">
-                                            <option value="{{ me.role_name.id}}" selected="selected">{{ me.role_name}} </option>
+                                            <option value="{{ me.role_name.id}}" selected="selected">{{ me.role_name.role_name}} </option>
                                             {% for j in roles %}
                                             <option value="{{ j.id}} ">{{j.role_name}} </option>
                                             {% endfor %}

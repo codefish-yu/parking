@@ -73,45 +73,7 @@
 
                             </table>
                         </div>
-                        <div class="row">
-                            <div class="ibox-content page-box">
-                                <div class="col-sm-5 page-size no-padding-y">
-                                    显示<span id="item-begin">0</span> 到 <span id="item-end">0</span> 项，共 <span id="item-sum">0</span> 项，
-
-                                    每页显示
-                                    <select id="page-size">
-                                        <option {% if pagesize == 10 %} selected {% endif %} value="10">10</option>
-                                        <option {% if pagesize == 25 %} selected {% endif %} value="25">25</option>
-                                        <option {% if pagesize == 50 %} selected {% endif %} value="50">50</option>
-                                        <option {% if pagesize == 100 %} selected {% endif %} value="100">100</option>
-                                    </select>
-                                    条记录
-                                </div>
-                                <div class="col-sm-7 no-padding-y">
-
-                                    <div class="dataTables_paginate paging_simple_numbers" style="padding:0">
-                                      <ul class="pagination" style="margin:0">
-                                          {% if zone.has_previous %}
-                                          <li class="paginate_button previous">
-                                              <a onclick="$('input[name=page]').val({{ zone.previous_page_number }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="0" tabindex="0">上一页</a>
-                                          </li>
-                                          {% endif %}
-                                          {% for i in zone.paginator.page_range %}
-                                          <li {% ifequal i  users.number %}class="paginate_button active" {% else %}class="paginate_button"{% endifequal %}>
-                                              <a onclick="$('input[name=page]').val({{ i }});$('#query_form').submit();" aria-controls="example2" data-dt-idx="{{ i }}" tabindex="0">{{ i }}</a>
-                                          </li>
-                                          {% endfor %}
-                                          {% if zone.has_next %}
-                                          <li class="paginate_button next" id="example2_next">
-                                              <a onclick="$('input[name=page]').val({{ zone.next_page_number }});$('#query_form').submit();"  aria-controls="example2" data-dt-idx="7" tabindex="0">下一页</a>
-                                          </li>
-                                          {% endif %}
-                                      </ul>
-                                  </div>
-                                    <div class=" m-b-xs fa-pull-right text-right dataTables_paginate paging_simple_numbers" id="page-btm"></div>
-                                </div>
-                            </div>
-                        </div>
+                        {% include 'common/page.html' %}
                     </div>
                 </div>
             </div>

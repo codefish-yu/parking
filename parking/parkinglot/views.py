@@ -7,7 +7,8 @@ from .models import *
 from administrator.decorators import page, _save_attr_
 '''停车场管理模块'''
 
-
+# 停车场管理
+@page
 def parking_lot(request):
 
 	ctx = {'menu': 'parkinglot'}
@@ -30,11 +31,12 @@ def parking_lot(request):
 				item.status = -1
 				item.save()
 
-	ctx['parkinglot'] = parkinglot = ParkingLot.objects.filter(status=0).all()
+	ctx['parkinglot'] = ctx['objects'] = ParkingLot.objects.filter(status=0).all()
 	
-	return render(request, 'parking_lot.html', ctx)
+	return (ctx, 'parking_lot.html')
 
-
+# 出入口管理
+@page
 def gate(request):
 	ctx = {}
 	gate = Gate.objects.filter(status=0).all()
@@ -72,9 +74,9 @@ def gate(request):
 				ctx['tip'] = use_type
 
 	ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
-	ctx['gates'] = gate 
+	ctx['gates'] = ctx['objects'] = gate 
 
-	return render(request,'gate.html',ctx)
+	return (ctx,'gate.html')
 
 @csrf_exempt
 @page
@@ -160,7 +162,8 @@ def worker(request):
 
     return (ctx, 'worker.html')
 
-
+# 区域管理
+@page
 def zone(request):
 	ctx ={}
 
@@ -195,16 +198,19 @@ def zone(request):
 				item.save()
 
 	ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
-	ctx['zone'] = Zone.objects.filter(status=0).all()
+	ctx['zone'] = ctx['objects'] = Zone.objects.filter(status=0).all()
 
-	return render(request,'zone.html',ctx)
+	return (ctx,'zone.html')
 
 
-
+# 泊位管理
+@page
+@csrf_exempt
 def place(request):
 
 	ctx ={}
 	place = Place.objects.filter(status=0).all()
+	zone = Zone.objects.filter(status=0).all()
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')
@@ -261,11 +267,33 @@ def place(request):
 			if zon:
 				place = place.filter(zone__id=zon)
 
-	ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
-	ctx['zones'] = Zone.objects.filter(status=0).all()
-	ctx['place'] = place
+			ctx['u'] = use_type
+			ctx['c'] = car_type
+			ctx['p'] = int(park)
 
-	return render(request,'place.html',ctx)
+		elif action == 'getZone':
+			
+			id = request.POST.get('id')
+			print(11111)
+			print(id)
+			zones = zone.filter(parkinglot__id=id).all()
+			tmp =[]
+
+			for i in zones:
+				d = {
+				'id':i.id,
+				'name':i.zone_name
+				}
+				tmp.append(d)
+
+			return JsonResponse({'data':tmp})
+
+				
+
+	ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
+	ctx['place'] = ctx['objects'] = place
+
+	return (ctx,'place.html')
 
 
 

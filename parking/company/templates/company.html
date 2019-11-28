@@ -6,8 +6,8 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <ol class="col-lg-5 breadcrumb">
-                            <li>停车场配置</li>
-                            <li>泊位管理</li>
+                            <li>商家管理</li>
+                            <li>商家管理</li>
                         </ol>
                         <div class="ibox-tools">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -29,35 +29,10 @@
                                 <form id='query_form' action='' method="post">
                                     {% csrf_token %}
                                     <div class="form-group">
-                                        <select data-placeholder="车辆类型" class="form-control chosen-select" id="Parking_ID" name="car_type">
-                                            <option value="" {% if not c %}selected{% endif %} >选择车辆类型</option>
-                                            <option value="0" {% if c == '0' %}selected{% endif %}>小型车</option>
-                                            <option value="1" {% if c == '1' %}selected{% endif %}>中型车</option>
-                                            <option value="2" {% if c == '2' %}selected{% endif %}>大型车</option>
-                                        </select>
+                                        <input type="text" name="busi_name" placeholder="商家名称" class="form-control chosen-select">
                                     </div>
                                     <div class="form-group">
-                                        <select data-placeholder="使用类型" class="form-control chosen-select" id="Parking_ID" name="use_type">
-                                            <option value="" {% if not u %}selected{% endif %}>选择使用类型</option>
-                                            <option value="0" {% if u == '0' %}selected{% endif %}>临停车</option>
-                                            <option value="1" {% if u == '1' %}selected{% endif %}>长停车</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <select data-placeholder="所属车场" class="form-control chosen-select" id="Parking_ID" name="parkinglot" onchange="getZ(this,0)">
-                                            <option value="" {% if not p %}selected{% endif %}>选择停车场 </option>
-                                            {% for m in parkinglots %}
-                                            <option value="{{m.id}} " {% if p == m.id %}selected{% endif %}>{{m.name}} </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <select data-placeholder="所属区域" class="form-control chosen-select" id="zone0" name="zone" >
-                                            <option value="" selected>选择区域</option>
-                                            <!-- {% for n in zones %}
-                                            <option value="{{n.id}} ">{{n.zone_name}} </option>
-                                            {% endfor %} -->
-                                        </select>
+                                        <input type="text" name="associate_name" placeholder="联系人姓名" class="form-control chosen-select">
                                     </div>
                                     <input type="hidden" name="action" value="select">
                             </form>
@@ -65,10 +40,15 @@
                     </div>
                     <div class="ibox-content">
                         <div class="row">
-                            <div class="col-sm-6 m-b-xs">
+                            <div class="col-sm-10 m-b-xs">
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
                                 <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
+                                <button type="button" id="inactive-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;冻结</button>
+                                <button type="button" id="active-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;激活</button>
+                                <button type="button" id="recharge-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;充值</button>
+                                <button type="button" id="refund-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;退款</button>
+                                <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;导出</button>
                                 <button type="button" id="Enable" class="btn btn-primary" onclick="que()"><i class="fa fa-check-circle-o" ></i>&nbsp;查询</button>
                             </div>
                             <div class="col-sm-3 m-b-xs"></div>
@@ -79,10 +59,18 @@
                                     <tr>
                                         <th></th>
                                         <th>编号</th>
-                                        <th>车辆类型</th>
-                                        <th>使用类型</th>
-                                        <th>所属车场</th>
-                                        <th>所属区域</th>
+                                        <th>商家名称</th>
+                                        <th>商家地址</th>
+                                        <th>登录账号</th>
+                                        <th>联系人姓名</th>
+                                        <th>联系人电话</th>
+                                        <th>余额</th>
+                                        <th>时长</th>
+                                        <th>限制类型</th>
+                                        <th>限制规则</th>
+                                        <th>限制张数</th>
+                                        <th>商家描述</th>
+                                        <th>状态</th>
                                     </tr>
                                 </thead>
                                 <tbody id="data-view">
@@ -101,7 +89,7 @@
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
-                                        <td colspan="11">没有找到匹配的记录</td>
+                                        <td colspan="14">没有找到匹配的记录</td>
                                     </tr>
                                     {% endfor %}
                                     </form>
@@ -1028,3 +1016,4 @@
     </script>
 
 {% endblock %}
+

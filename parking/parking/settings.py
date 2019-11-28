@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'device',
     'company',
     'administrator',
-    'parkinglot'
+    'parkinglot',
 
 ]
 
