@@ -9,7 +9,7 @@ class Company(models.Model):
 	class Meta:
 		verbose_name = verbose_name_plural = '商户管理'
 
-	status = models.IntegerField(default=0,verbose_name='状态',choices=[(0,'激活'),(-1,'冻结')])
+	status = models.IntegerField(default=0,verbose_name='状态',choices=[(0,'冻结'),(1,'激活')])
 	name = models.CharField(max_length=30, verbose_name='商家名称')
 	account = models.CharField(max_length=30,unique=True,verbose_name='登录账号')
 	owner = models.CharField(max_length=30,verbose_name='联系人姓名')
