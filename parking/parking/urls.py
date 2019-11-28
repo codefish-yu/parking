@@ -22,6 +22,7 @@ from django.conf import settings
 from administrator import views as a
 from car import views as car
 from parkinglot import views as park
+from company import views as com
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -51,6 +52,9 @@ urlpatterns = [
     path('parkinglot/worker/', park.worker),
     path('parkinglot/zone/',park.zone),
     path('parkinglot/place/',park.place),
+
+    #company
+    path('company/company/',com.company),
 
 
 

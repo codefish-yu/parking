@@ -4,3 +4,8 @@ from django.shortcuts import render
 
 
 '''合作商户模块'''
+
+
+def company(request):
+
+	return render(request,'company.html')
