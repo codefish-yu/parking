@@ -44,10 +44,10 @@
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
                                 <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
-                                <button type="button" id="inactive-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;冻结</button>
-                                <button type="button" id="active-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;激活</button>
-                                <button type="button" id="recharge-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;充值</button>
-                                <button type="button" id="refund-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;退款</button>
+                                <button type="button" id="inactive-btn" class="btn btn-primary " onclick="inact()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;冻结</button>
+                                <button type="button" id="active-btn" class="btn btn-primary " onclick="act()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;激活</button>
+                                <button type="button" id="recharge-btn" class="btn btn-primary " onclick="recharge()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;充值</button>
+                                <button type="button" id="refund-btn" onclick="refund()" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;退款</button>
                                 <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;导出</button>
                                 <button type="button" id="Enable" class="btn btn-primary" onclick="que()"><i class="fa fa-check-circle-o" ></i>&nbsp;查询</button>
                             </div>
@@ -76,15 +76,23 @@
                                 <tbody id="data-view">
                                     <form id='delete-form' action="" method="post">
                                         {% csrf_token %}
-                                        <input type="hidden" name="action" value='delete'>
-                                    {% for i in place %}
+                                        <input type="hidden" id='chec' name="action" value='delete'>
+                                    {% for i in company %}
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
-                                            <td>{{ i.id}}</td>
-                                            <td>{{i.get_car_type_display }} </td>
-                                            <td>{{ i.get_use_type_display }}</td>
-                                            <td>{{i.parkinglot.name}} </td>
-                                            <td>{{i.zone.zone_name}} </td>
+                                            <td>{{i.id}} </td>
+                                            <td>{{ i.name}}</td>
+                                            <td>{{ i.address}}</td>
+                                            <td>{{ i.account}}</td>
+                                            <td>{{ i.owner}}</td>
+                                            <td>{{ i.phone}}</td>
+                                            <td>{{ i.balance}}</td>
+                                            <td>{{ i.duration}}</td>
+                                            <td>{{ i.get_type_display}}</td>
+                                            <td>{{ i.rule}}</td>
+                                            <td>{{ i.amount}}</td>
+                                            <td>{{ i.descript}}</td>
+                                            <td style="color:{% if i.status == 0 %}green{% elif i.status == 1 %}red{% endif %} " >{{ i.get_status_display}}</td>
                                            
                                         </tr>
                                     {% empty %}
@@ -107,56 +115,193 @@
                 </div>
             </div>
         </div>
+<!-- recharge -->
+{% for i in company %}
+        <div id='refund_model_{{ i.id }}' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 商家充值</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+                <div class="form-horizontal" id="verifyCheck">
+                    <form id='refund_form_{{i.id}}' action='' method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">退款金额</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="money" class="form-control chosen-select" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">退款时长</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="duration" class="form-control chosen-select" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">退还费用</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="cost" class="form-control chosen-select" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">退款原因</label>
+                            <div class="col-sm-4">
+                               <textarea name="reason" class="form-control chosen-select"></textarea>
+                            </div>
+                        </div>
+
+                        
+                       
+                       <!--  <div class="hr-line-dashed"></div> -->
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="id" class="form-control" value='{{i.id}}'>
+                                <input type="hidden" name="action" class="form-control" value='refund'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div></div>
+            <span class="layui-layer-setwin">
+                <!-- <a class="layui-layer-min" href="javascript:;"><cite></cite></a>
+                <a class="layui-layer-ico layui-layer-max" href="javascript:;"></a> -->
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span></div>
+       </div>
+       {% endfor %}
+<!-- refund -->
+{% for i in company %}
+        <div id='refund_model_{{ i.id }}' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 商家退款</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+                <div class="form-horizontal" id="verifyCheck">
+                    <form id='refund_form_{{i.id}}' action='' method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">退款金额</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="money" class="form-control chosen-select" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">退款时长</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="duration" class="form-control chosen-select" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">退还费用</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="cost" class="form-control chosen-select" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">退款原因</label>
+                            <div class="col-sm-4">
+                               <textarea name="reason" class="form-control chosen-select"></textarea>
+                            </div>
+                        </div>
+
+                        
+                       
+                       <!--  <div class="hr-line-dashed"></div> -->
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="id" class="form-control" value='{{i.id}}'>
+                                <input type="hidden" name="action" class="form-control" value='refund'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div></div>
+            <span class="layui-layer-setwin">
+                <!-- <a class="layui-layer-min" href="javascript:;"><cite></cite></a>
+                <a class="layui-layer-ico layui-layer-max" href="javascript:;"></a> -->
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span></div>
+       </div>
+       {% endfor %}
 
 <!-- update model -->
-    {% for i in place %}
+    {% for i in company %}
         <div id='update_model_{{ i.id }}' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改泊位</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改商家信息</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{i.id}}' action='' method="post">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">车辆类型</label>
+                            <label class="col-sm-2 control-label">商家名称</label>
                             <div class="col-sm-4">
-                               <select data-placeholder="车辆类型" class="form-control chosen-select" name="car_type" value="{{ i.car_type}}">
-                                            <option value="0">小型车</option>
-                                            <option value="1">中型车</option>
-                                            <option value="2">大型车</option>
+                               <input type="text" name="name" class="form-control chosen-select" value="{{ i.name}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">商家地址</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="address" class="form-control chosen-select" value="{{ i.address}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">登录账号</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="account" class="form-control chosen-select" value="{{ i.account}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系人姓名</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="owner" class="form-control chosen-select" value="{{ i.owner}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系人电话</label>
+                            <div class="col-sm-4">
+                               <input type="number" name="phone" class="form-control chosen-select" value="{{ i.phone}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">限制类型</label>
+                            <div class="col-sm-4">
+                               <select data-placeholder="限制类型" class="form-control chosen-select" name="type" value="{{ i.type}}">
+                               				<option value="" >选择限制类型</option>
+                                            <option value="0">无限制</option>
+                                            <option value="1">限制天</option>
+                                            <option value="2">限制周</option>
+                                            <option value="3">限制月</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">使用类型</label>
+                            <label class="col-sm-2 control-label">限制规则</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="使用类型" class="form-control chosen-select" name="use_type" value="{{ i.use_type}}">
-                                            <option value="0">临停车</option>
-                                            <option value="1">长停车</option>
-                                </select>
+                               <input type="text" name="rule" class="form-control chosen-select" value="{{ i.rule}}">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">所属车场</label>
+                            <label class="col-sm-2 control-label">限制张数</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" onchange="getZ(this,1)">
-                                            {% for m in parkinglots %}
-                                            <option value="{{m.id}}" {% if m.id == i.parkinglot.id %}selected {% endif %} >{{ m.name }} </option>
-                                            {% endfor %}
-                                </select>
+                               <input type="number" name="amount" class="form-control chosen-select" value="{{ i.amount}}">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">所属区域</label>
+                            <label class="col-sm-2 control-label">商家描述</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" id='zone1' name="zone" value="{{ i.zone }} ">
-                                            <!-- {% for n in zoness %}
-                                            <option value="{{n.id}}" {% if n.id == i.zone.id %}selected {% endif %}>{{n.zone_name}} </option>
-                                            {% endfor %} -->
-                                </select>
+                               <input type="number" name="descript" class="form-control chosen-select" value="{{ i.desctipt}}">
                             </div>
                         </div>
+
+                        
                        
                        <!--  <div class="hr-line-dashed"></div> -->
                         <div class="form-group">
@@ -184,54 +329,72 @@
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
 
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 新增泊位</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 新增商家</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='add_form' action='' method="post">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">车辆类型</label>
+                            <label class="col-sm-2 control-label">商家名称</label>
                             <div class="col-sm-4">
-                               <select data-placeholder="车辆类型" class="form-control chosen-select" name="car_type" >
-                                            <option value="">选择车辆类型</option>
-                                            <option value="0">小型车</option>
-                                            <option value="1">中型车</option>
-                                            <option value="2">大型车</option>
+                               <input type="text" name="name" class="form-control chosen-select" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">商家地址</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="address" class="form-control chosen-select" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">登录账号</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="account" class="form-control chosen-select">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系人姓名</label>
+                            <div class="col-sm-4">
+                               <input type="text" name="owner" class="form-control chosen-select">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系人电话</label>
+                            <div class="col-sm-4">
+                               <input type="number" name="phone" class="form-control chosen-select" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">限制类型</label>
+                            <div class="col-sm-4">
+                               <select data-placeholder="限制类型" class="form-control chosen-select" name="type" >
+                               				<option value="" >选择限制类型</option>
+                                            <option value="0">无限制</option>
+                                            <option value="1">限制天</option>
+                                            <option value="2">限制周</option>
+                                            <option value="3">限制月</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">使用类型</label>
+                            <label class="col-sm-2 control-label">限制规则</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="使用类型" class="form-control chosen-select" name="use_type" >
-                                            <option value="">选择使用类型</option>
-                                            <option value="0">临停车</option>
-                                            <option value="1">长停车</option>
-                                </select>
+                               <input type="text" name="rule" class="form-control chosen-select" >
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">所属车场</label>
+                            <label class="col-sm-2 control-label">限制张数</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" onchange="getZ(this,2)">
-                                            <option value="">选择停车场</option>
-                                            {% for m in parkinglots %}
-                                            <option value="{{m.id}} ">{{ m.name }} </option>
-                                            {% endfor %}
-                                </select>
+                               <input type="number" name="amount" class="form-control chosen-select" >
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">所属区域</label>
+                            <label class="col-sm-2 control-label">商家描述</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" id="zone2" class="form-control chosen-select" name="zone" >
-                                            <option value="">选择区域</option>
-                                            <!-- {% for n in zonesss %}
-                                            <option value="{{n.id}} ">{{n.zone_name}} </option>
-                                            {% endfor %} -->
-                                </select>
+                               <input type="number" name="descript" class="form-control chosen-select" >
                             </div>
                         </div>
+
                         
                         <!-- <div class="hr-line-dashed"></div> -->
                         
@@ -992,6 +1155,24 @@
                     $('#update_model_'+ids[0].value).show()
                 }
     }
+    function recharge(){
+    	var ids = $('input[name=ids]:checked')
+                if(ids.length == 1){
+                    initValidator(ids[0].value)
+
+                    $('#recharge_model_'+ids[0].value).show()
+                }
+
+    }
+    function refund(){
+    	var ids = $('input[name=ids]:checked')
+                if(ids.length == 1){
+                    initValidator(ids[0].value)
+
+                    $('#refund_model_'+ids[0].value).show()
+                }
+
+    }
     function que(){
         $('#query_form').submit()
     }
@@ -1012,6 +1193,14 @@
             }
         })
 
+    }
+    function inact(){
+    	$('#chec').val('inact');
+    	$('#delete-form').submit()
+    }
+    function act(){
+    	$('#chec').val('act');
+    	$('#delete-form').submit()
     }
     </script>
 
