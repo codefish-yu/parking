@@ -1,5 +1,5 @@
 from django.db import models
-from administrator.models import AdminUser as User
+
 
 # Create your models here.
 
@@ -47,38 +47,10 @@ class  Recharge(object):
 	valid_start = models.CharField(max_length=30,null=True,verbose_name='有效开始')
 	valid_end = models.CharField(max_length=30,null=True,verbose_name='有效结束')
 	status = models.IntegerField(default=0,verbose_name='状态',choices=[(-1,'删除'),(0,'未审核'),(1,'已审核')])
-	create_time = models.DateTimeField(auto_now_add=True)
+	create_time = models.DateTimeField(auto_now_add=True,null=True)
 
 
-class NormalCard(models.Model):
-	class Meta:
-		verbose_name = verbose_name_plural = '普通月卡'
 
-	status = models.IntegerField(default=0)
-	valid_start = CharField(max_length=30,null=True,verbose_name='有效开始')
-	valid_end = models.CharField(max_length=30,null=True,verbose_name='有效结束')
-	holidays = models.TextField(null=True , blank=True, verbose_name='非工作日')
-
-class RerveseCard(models.Model):
-	class Meta:
-		verbose_name = verbose_name_plural = '错峰卡'
-
-	status = models.IntegerField(default=0)
-	valid_start = CharField(max_length=30,null=True,verbose_name='有效开始')
-	valid_end = models.CharField(max_length=30,null=True,verbose_name='有效结束')
-	valid_start1 = CharField(max_length=30,null=True,verbose_name='有效开始')
-	valid_end1 = models.CharField(max_length=30,null=True,verbose_name='有效结束')
-	holidays = models.TextField(null=True , blank=True, verbose_name='非工作日')
-
-
-class UserCard(models.Model):
-	class Meta:
-		verbose_name = verbose_name = '商家普通月卡'
-
-	status = models.IntegerField(default=0)
-	user = models.ForeignKey(User,null=True,on_delete=models.CASCADE)
-	normalcard = models.ForeignKey('NormalCard',null=True,blank=True, on_delete=models.CASCADE)
-	normalcard = models.ForeignKey('RerveseCard',null=True,blank=True,on_delete=models.CASCADE)
 
 
 
