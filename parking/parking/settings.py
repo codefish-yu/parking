@@ -44,8 +44,9 @@ INSTALLED_APPS = [
     'data',
     'device',
     'company',
-    'administrator',
     'parkinglot',
+    'chargerule',
+    'administrator',
 
 ]
 

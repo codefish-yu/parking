@@ -24,10 +24,12 @@ from car import views as car
 from device import views as device
 from parkinglot import views as park
 from company import views as com
+from chargerule import views as charge
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
 
 
     # administrator
@@ -45,6 +47,7 @@ urlpatterns = [
     # user
 
 
+
     # car 
 
     path('car/inner_car/', car.inner_car),
@@ -60,8 +63,12 @@ urlpatterns = [
     path('parkinglot/zone/',park.zone),
     path('parkinglot/place/',park.place),
 
-    #company
+
+
+    # company
+
     path('company/company/',com.company),
+
 
 
     # device
@@ -72,4 +79,18 @@ urlpatterns = [
 
 
 
+    # chargerule
+
+    path('chargerule/baserule/',charge.base_rule),
+    path('chargerule/card/',charge.card),
+    path('chargerule/coupon/',charge.coupon),
+    path('chargerule/cardtype/',charge.card_type),
+    path('chargerule/coupontype/',charge.coupon_type),
+
+
+
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+
+
+
