@@ -21,13 +21,16 @@ from django.conf import settings
 
 from administrator import views as a
 from car import views as car
+from device import views as device
 from parkinglot import views as park
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
 
     # administrator
+
     path('',a.base),
     path('login/',a.login),
     path('base/', a.base),   
@@ -36,21 +39,32 @@ urlpatterns = [
     path('administrator/role/<int:id>/', a.get_role),
     path('administrator/user/',a.user),
     path('administrator/modify/',a.modify),
+    
+
     # user
 
 
     # car 
+
     path('car/inner_car/', car.inner_car),
     
 
 
     
-    #parkinglot
+    # parkinglot
+
     path('parkinglot/parking_lot/',park.parking_lot),
     path('parkinglot/gate/',park.gate),
     path('parkinglot/worker/', park.worker),
     path('parkinglot/zone/',park.zone),
     path('parkinglot/place/',park.place),
+
+
+    # device
+
+    path('device/brake/',device.brake),
+    path('device/camera/',device.camera),
+    path('device/groundsensor/',device.groundsensor),
 
 
 
