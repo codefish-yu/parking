@@ -27,12 +27,32 @@ class Refund(models.Model):
 	class Meta:
 		verbose_name = verbose_name_plural = '退款记录'
 
-
 	company = models.ForeignKey('Company',null=True,on_delete=models.CASCADE)
 	money = models.FloatField(default=0,verbose_name='退款金额')
 	duration = models.FloatField(default=0,verbose_name='退款时长')
 	cost = models.FloatField(default=0,verbose_name='退还费用')
 	reason = models.CharField(max_length=100,verbose_name='退款原因')
+	create_time = models.DateTimeField(auto_now_add=True)
+	status = models.IntegerField(default=0,verbose_name='状态',choices=[(-1,'删除'),(0,'未审核'),(1,'已审核')])
+
+
+# class  Recharge(object):
+# 	class Meta:
+# 		verbose_name = verbose_name_plural = '充值记录'
+
+# 	type = models.ForeignKey('Ticket',null=True,on_delete=models.CASCADE)#代金，折扣，满时
+# 	denomination = models.FloatField(default=0,verbose_name='面额')
+# 	amount = models.IntegerField(default=0,verbose_name='张数')
+# 	valid_start = models.CharField(max_length=30,null=True,verbose_name='有效开始')
+# 	valid_end = models.CharField(max_length=30,null=True,verbose_name='有效结束')
+# 	status = models.IntegerField(default=0,verbose_name='状态',choices=[(-1,'删除'),(0,'未审核'),(1,'已审核')])
+# 	create_time = models.DateTimeField(auto_now_add=True)
+
+
+
+
+
+	
 			
 		
 
