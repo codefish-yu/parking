@@ -1,6 +1,7 @@
 from django.db import models
 from administrator.models import AdminUser as User
 from parkinglot.models import ParkingLot 
+from company.models import Company
 import datetime
 
 # Create your models here.
