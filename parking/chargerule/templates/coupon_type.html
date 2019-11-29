@@ -1,1 +1,673 @@
-coupon_type.html
+{% extends 'iframe.html' %}
+{% block content %}
+<style type="text/css">
+	.add_form{
+		display: none;
+	}
+	.number{
+		width:100%;
+		float: left;
+	}
+</style>
+<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <ol class="col-lg-5 breadcrumb">
+                            <li>设备管理</li>
+                            <li>优惠券类型设置</li>
+                        </ol>
+                        <div class="ibox-tools">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#" onclick="location.reload()"><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
+                                </li>
+                            </ul>
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" id="searchForm">
+                        <div class="form-inline ">
+                            <div class="form-inline">
+                                <form id='query_form' action='' method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group" style="width: 200px">
+                                        <select data-placeholder="选择优惠券类型" class="form-control chosen-select"  name="type" style="display: none;">
+                                            <option value=''>选择优惠券类型</option>
+                                            <option value="0">打折券</option>
+                                            <option value="1">代金券</option>
+                                            <option value="2">抵扣券</option>
+                                            <option value="3">满时券</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="width: 200px">
+                                        <select data-placeholder="出入口" class="form-control chosen-select" name="gate_id" id='gate_a' style="display: none;">
+                                            <option value="" selected="selected">出入口</option>
+                                            {% for i in gates %}
+                                            <option value='{{i.id}}' 
+                                                {% if gate_id == i.id %}selected{% endif %}
+                                                >{{i.monitor}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" placeholder="类型" class="form-control" name="type" value='{{type}}'>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" placeholder="品牌" class="form-control" name="brand" value='{{brand}}'>
+                                    </div>
+                                     <div class="form-group">
+                                        <input type="text" placeholder="厂商" class="form-control" name="manufacturer" value='{{manufacturer}}'>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type='hidden' name='action' value='search' />
+                                        <input type='hidden' name='page' value='{{page}}' id='page' />
+                                        <input type='hidden' name='pagesize' value='{{pagesize}}' id='pagesize' />
+                                        <button id='search-btn' class="btn btn-primary search-btn " type="button" style="display: inline-block;">
+                                            <i class="fa fa-search"></i> 查 询
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-6 m-b-xs">
+                                <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                                <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
+                            </div>
+                            <div class="col-sm-3 m-b-xs"></div>
+                        </div>
+                        <div class="table-responsive">
+                        	{% if type == '0' %}
+                            <table class="table table-striped  table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>序号</th>
+                                        <th>折扣券名称</th>
+                                        <th>折扣率</th>
+                                        <th>细则</th>
+                                        <th>说明</th>
+                                        <th>创建时间</th>
+                                        <th>上次修改时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-view">
+                                    <form id='delete-form' action="" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value='delete'>
+                                        <input type="hidden" name="type" value='{{type}}'>
+                                    {% for i in objects %}
+                                        <tr>
+                                         <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ i.name }}</td>
+                                            <td>{{ i.rate }}</td>
+                                            <td>{{ i.rule }}</td>
+                                            <td>{{ i.detail }}</td>
+                                            <td>{{ i.create_time|date:'Y-m-d' }}</td>
+                                            <td>{{ i.update_time|date:'Y-m-d' }}</td>
+                                            <td>
+                                                <button type="button" _id='{{i.id}}' class="btn btn-primary update-btn" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                                
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                    <tr class="text-center">
+                                        <td colspan="11">没有找到匹配的记录</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </form>
+                                </tbody>
+                            </table>
+                            {% elif type == '1' %}
+                            <table class="table table-striped  table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>序号</th>
+                                        <th>代金券名称</th>
+                                        <th>抵扣金额</th>
+                                        <th>细则</th>
+                                        <th>说明</th>
+                                        <th>创建时间</th>
+                                        <th>上次修改时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-view">
+                                    <form id='delete-form' action="" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value='delete'>
+                                        <input type="hidden" name="type" value='{{type}}'>
+                                    {% for i in objects %}
+                                        <tr>
+                                         <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ i.name }}</td>
+                                            <td>{{ i.money }}</td>
+                                            <td>{{ i.rule }}</td>
+                                            <td>{{ i.detail }}</td>
+                                            <td>{{ i.create_time|date:'Y-m-d' }}</td>
+                                            <td>{{ i.update_time|date:'Y-m-d' }}</td>
+                                            <td>
+                                                <button type="button" _id='{{i.id}}' class="btn btn-primary update-btn" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                                
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                    <tr class="text-center">
+                                        <td colspan="11">没有找到匹配的记录</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </form>
+                                </tbody>
+                            </table>
+                            {% elif type == '2' %}
+                            <table class="table table-striped  table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>序号</th>
+                                        <th>抵扣券名称</th>
+                                        <th>抵扣金额</th>
+                                        <th>小时数</th>
+                                        <th>细则</th>
+                                        <th>说明</th>
+                                        <th>创建时间</th>
+                                        <th>上次修改时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-view">
+                                    <form id='delete-form' action="" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value='delete'>
+                                        <input type="hidden" name="type" value='{{type}}'>
+                                    {% for i in objects %}
+                                        <tr>
+                                         <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ i.name }}</td>
+                                            <td>{{ i.money }}</td>
+                                            <td>{{ i.hours1 }}</td>
+                                            <td>{{ i.rule }}</td>
+                                            <td>{{ i.detail }}</td>
+                                            <td>{{ i.create_time|date:'Y-m-d' }}</td>
+                                            <td>{{ i.update_time|date:'Y-m-d' }}</td>
+                                            <td>
+                                                <button type="button" _id='{{i.id}}' class="btn btn-primary update-btn" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                                
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                    <tr class="text-center">
+                                        <td colspan="11">没有找到匹配的记录</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </form>
+                                </tbody>
+                            </table>
+                            {% elif type == '3' %}
+                            <table class="table table-striped  table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>序号</th>
+                                        <th>抵扣券名称</th>
+                                        <th>抵扣金额</th>
+                                        <th>小时数</th>
+                                        <th>细则</th>
+                                        <th>说明</th>
+                                        <th>创建时间</th>
+                                        <th>上次修改时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-view">
+                                    <form id='delete-form' action="" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value='delete'>
+                                        <input type="hidden" name="type" value='{{type}}'>
+                                    {% for i in objects %}
+                                        <tr>
+                                         <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ i.name }}</td>
+                                            <td>{{ i.money }}</td>
+                                            <td>{{ i.hours1 }}</td>
+                                            <td>{{ i.rule }}</td>
+                                            <td>{{ i.detail }}</td>
+                                            <td>{{ i.create_time|date:'Y-m-d' }}</td>
+                                            <td>{{ i.update_time|date:'Y-m-d' }}</td>
+                                            <td>
+                                                <button type="button" _id='{{i.id}}' class="btn btn-primary update-btn" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                                
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                    <tr class="text-center">
+                                        <td colspan="11">没有找到匹配的记录</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </form>
+                                </tbody>
+                            </table>
+                            {% endif %}
+                        </div>
+                        {% include 'common/page.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- update model -->
+{% for i in objects %}
+    <div id='update_model_{{ i.id }}' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;">
+        </div>
+
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 新增摄像头</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+                <div class="form-horizontal" id="verifyCheck">
+                    <form id='update_form_{{ i.id }}' action='' method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">编号</label>
+                            <div class="col-sm-4">
+                                <input type="text" value='{{i.number}}' name="number" class="form-control required">
+                            </div>
+                            <label class="col-sm-1 control-label">类型</label>
+                            <div class="col-sm-4">
+                                <input type="text" value='{{i.type}}' name="type" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">设备名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" value='{{i.name}}' name="name" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">品牌</label>
+                            <div class="col-sm-4">
+                                <input type="text" value='{{i.brand}}' name="brand" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">厂商</label>
+                            <div class="col-sm-4">
+                                <input type="text" value='{{i.manufacturer}}' name="manufacturer" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">购买日期</label>
+                            <div class="col-sm-4">
+                                 <input placeholder="购买日期" class="laydate-icon form-control layer-date buy_time_update" name="buy_time" id='buy_time_{{forloop.counter}}' value='{{ i.buy_time|date:'Y-m-d' }}' >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">所属车场</label>
+                            <div class="col-sm-4">
+                                <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='gate_update_{{i.id}}' name="parkinglot_id" style="display: none;width: 100%">
+                                    <option value=''>选择停车场</option>
+                                    {% for x in parkinglots %}
+                                        <option value='{{i.id}}'
+                                        {% if x.id == i.parkinglot.id %}selected{% endif %}
+                                        >{{x.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <label class="col-sm-1 control-label">所属出入口</label>
+                            <div class="col-sm-4">
+                                <select data-placeholder="选择出入口" class="form-control chosen-select" name="gate_id" id='gate_update_{{i.id}}' style="display: none;width: 100%">
+                                    <option value=''>选择出入口</option>
+                                    {% for x in i.parkinglot.gate_set.all %}
+                                    <option value='{{ i.id }}'
+                                        {% if x.id == i.gate.id %}selected{% endif %}
+                                    >{{ x.monitor }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='update'>
+                                <input type="hidden" name="id" class="form-control" value='{{i.id}}'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+            <span class="layui-layer-setwin"> 
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span>
+        </div>
+    </div>
+{% endfor %}
+
+<!-- add model -->
+    <div id='add_model' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
+
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 新增优惠券</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+
+            	
+
+                <div class="form-horizontal" id="verifyCheck">
+                	<div class='form-group'>
+	                    <label class="col-sm-2 control-label">抵扣券名称</label>
+						<div class="col-sm-4">
+		                	<select data-placeholder="选择优惠券类型" class="form-control chosen-select"  name="type" style="display: none;" id='type_add'>
+		                        <option value=''>选择优惠券类型</option>
+		                        <option value="0">打折券</option>
+		                        <option value="1">代金券</option>
+		                        <option value="2">抵扣券</option>
+		                        <option value="3">满时券</option>
+		                    </select>
+		                </div>
+		                <div class="hr-line-dashed"></div>
+	                </div>	
+                    <form id='add_form0' action='' method="post" class='add_form'>
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">折扣名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">折扣率</label>
+                            <div class="col-sm-4">
+                                <input type="number" name="rate" class="form-control">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='add'>
+                                <input type="hidden" name="type" class="form-control" value='0'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                    <form id='add_form1' action='' method="post" class='add_form'>
+                        {% csrf_token %}
+                		
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">代金券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">抵扣金额</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="money" class="form-control">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='add'>
+                                <input type="hidden" name="type" class="form-control" value='1'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                    <form id='add_form2' action='' method="post" class='add_form'>
+                        {% csrf_token %}
+                		
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">抵扣券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" class="form-control">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                         	<label class="col-sm-2 control-label">时长范围</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="hours" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">金额</label>
+                            <div class="col-sm-4">
+                                <input type="number" name="money" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='add'>
+                                <input type="hidden" name="type" class="form-control" value='2'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                    <form id='add_form3' action='' method="post" class='add_form'>
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">满时券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours1" class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="money1" class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours2" class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="money2" class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours3" class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="money3" class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours4" class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="money4" class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                         
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='add'>
+                                <input type="hidden" name="type" class="form-control" value='3'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div></div>
+            <span class="layui-layer-setwin"> 
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span></div>
+       </div>
+
+
+{% endblock %}
+
+{% block js %}
+
+ <script>
+
+    $(function () { 
+
+        $('.chosen-select').chosen({'width': '200px'});
+ 
+ 
+        $('#type_add').on('change', function(){
+ 			var id = $(this).val()
+ 			console.info(id)
+ 			$('.add_form').hide()
+ 			$('#add_form'+id).show()
+        })
+
+
+        // add form validate
+        $('#add_form').bootstrapValidator({
+
+　　　　　　  message: 'This value is not valid',
+        　  feedbackIcons: {
+            　　　　　　　　valid: 'glyphicon glyphicon-ok',
+            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+        　　　　　　　　   },
+
+            fields: {
+                number: {
+                    message: '设备编号不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '设备编号不能为空'
+                        },
+                        stringLength: {
+                                 min: 3,
+                                 max: 20,
+                                 message: '设备编号长度必须在3到20之间'
+                             },
+                        remote:{
+                            url: '',
+                            data:function(validator) {
+                                return {
+                                    number: $('#add_form input[name=number]').val(),
+                                    action: 'validate',
+                                    csrfmiddlewaretoken:'{{ csrf_token  }}'
+                                }
+                            },
+                            type:'post',
+                            message: '设备编号已存在'
+                        }
+                    }
+                }
+            }
+        });
+
+
+// update form validate 
+        
+
+        $('.update-btn').click(function(){
+            var id = $(this).attr('_id')
+            console.info(id)
+            initValidator(id)
+
+            $('#update_model_'+id).show()
+        });
+ 
+        function initValidator(id){
+            $('#update_form_'+id).bootstrapValidator({
+    　　　　　　  message: 'This value is not valid',
+            　  feedbackIcons: {
+                　　　　　　　　valid: 'glyphicon glyphicon-ok',
+                　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+                　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+            　　　　　　　　   },
+
+                fields: {
+
+                    number: {
+                        message: '设备编号不能为空',
+                        validators: {
+                            notEmpty: {
+                                message: '设备编号不能为空'
+                            },
+                            stringLength: {
+                                     min: 3,
+                                     max: 20,
+                                     message: '设备编号长度必须在3到20之间'
+                                 },
+                            remote:{
+                                url: '',
+                                data:function(validator) {
+                                    return {
+                                        id: $( '#update_form_'+id + ' input[name=id]').val(),
+                                        number: $('#update_form_'+id + ' input[name=number]').val(),
+                                        action: 'validate',
+                                    }
+                                },
+                                type:'post',
+                                message: '设备编号已存在'
+                            }
+                        }
+                    },
+
+                }
+            });
+        }
+
+
+    });
+
+
+
+    </script>
+
+{% endblock %}

@@ -16,7 +16,12 @@ class Discount(models.Model):
     rate = models.FloatField(null=True, blank=True, verbose_name='折扣率')
     name = models.CharField(max_length=200, verbose_name='名称')
     detail = models.CharField(max_length=200, verbose_name='备注')
- 
+    rule = models.CharField(max_length=200, verbose_name='细则')
+
+    is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
+    create_time = models.DateTimeField(auto_now_add=True, null=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
+
 
 class Voucher(models.Model):
     class Meta:
@@ -25,7 +30,12 @@ class Voucher(models.Model):
     money = models.FloatField(null=True, blank=True, verbose_name='金额')
     name = models.CharField(max_length=200, verbose_name='名称')
     detail = models.CharField(max_length=200, verbose_name='备注')
+    rule = models.CharField(max_length=200, verbose_name='细则')
     
+    is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
+    create_time = models.DateTimeField(auto_now_add=True, null=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
+
 
 class Coupon(models.Model):
     class Meta: 
@@ -36,7 +46,12 @@ class Coupon(models.Model):
     hours = models.FloatField(null=True, blank=True, verbose_name='小时数')
     name = models.CharField(max_length=200, verbose_name='名称')
     detail = models.CharField(max_length=200, verbose_name='备注')
- 
+    rule = models.CharField(max_length=200, verbose_name='细则')
+    
+    is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
+    create_time = models.DateTimeField(auto_now_add=True, null=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
+
 
 class HourTicket(models.Model):
     class Meta:
@@ -52,6 +67,11 @@ class HourTicket(models.Model):
     hours4 = models.FloatField(null=True, blank=True, verbose_name='小时数')
     name = models.CharField(max_length=200, verbose_name='名称')
     detail = models.CharField(max_length=200, verbose_name='备注')
+    rule = models.CharField(max_length=200, verbose_name='细则')
+    
+    is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
+    create_time = models.DateTimeField(auto_now_add=True, null=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
 
 
 class CardType(models.Model):
