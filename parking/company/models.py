@@ -1,4 +1,5 @@
 from django.db import models
+from parkinglot.models import ParkingLot
 
 
 # Create your models here.
@@ -8,7 +9,7 @@ from django.db import models
 
 class Company(models.Model):
 	class Meta:
-		verbose_name = verbose_name_plural = '商户管理'
+		verbose_name = verbose_name_plural = '商户'
 
 	status = models.IntegerField(default=0,verbose_name='状态',choices=[(-1,'删除'),(0,'冻结'),(1,'激活')])
 	name = models.CharField(max_length=30, null=True,verbose_name='商家名称')
@@ -22,6 +23,8 @@ class Company(models.Model):
 	rule = models.CharField(max_length=100,null=True,verbose_name='限制规则')
 	amount = models.IntegerField(default=0,verbose_name='限制张数')
 	descript = models.CharField(max_length=100,verbose_name='商家描述',null=True)
+	parkinglot = models.ForeignKey(ParkingLot,null=True,on_delete=models.CASCADE)
+
 
 
 class Refund(models.Model):

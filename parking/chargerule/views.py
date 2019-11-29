@@ -175,18 +175,19 @@ def card(request):
             if p: 
                 r.owner = p
 
-        if my_card:
+        if card_id:
             p = CardType.objects.filter(id=card_id).first()
             if p: 
-                r.owner = p
+                r.my_card = p
         r.save()
 
     if request.method == 'POST':
         action = request.POST.get('action','')
         if action == 'add':
-            r = CardType()
+            r = Card()
             correct_obj(request,r)
             _save_attr_(r, request)
+            
 
 
         if action == 'update':
@@ -194,6 +195,7 @@ def card(request):
             r = Card.objects.filter(id=id).first()
             correct_obj(request,r)
             _save_attr_(r, request)
+           
 
         if action == 'delete':
             ids = request.POST.getlist('ids', '')
