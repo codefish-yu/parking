@@ -56,7 +56,6 @@ def page(func):
 ''' 小工具 ''' 
 def _save_attr_(obj,request):
     fields = obj._meta.fields
-    import json
 
     for field in fields:
         field_name = field.name
