@@ -1,9 +1,9 @@
 from django.db import models
+
+
 from administrator.models import AdminUser as User
 from parkinglot.models import ParkingLot 
-
-# Create your models here.
-
+from company.models import Company
 
 
 '''计费规则模块'''
@@ -72,6 +72,33 @@ class HourTicket(models.Model):
     is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
     create_time = models.DateTimeField(auto_now_add=True, null=True)
     update_time = models.DateTimeField(auto_now=True, null=True)
+
+
+class TicketRecord(models.Model):
+    class Meta:
+        verbose_name = verbose_name_plural = '优惠券出售记录'
+
+    parkinglot = models.ForeignKey(ParkingLot, on_delete=models.SET_NULL, null=True)
+    company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True)
+
+    ticket_type = models.IntegerField(choices=[(0, '折扣券'),(1, '代金券'),(2, '抵扣券'),(3, '满时券')])
+
+    discount = models.ForeignKey(Discount, on_delete=models.SET_NULL, null=True)
+    voucher = models.ForeignKey(Voucher, on_delete=models.SET_NULL, null=True)
+    coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True)
+    hourticket = models.ForeignKey(HourTicket, on_delete=models.SET_NULL, null=True)
+
+    buy_time = models.DateTimeField(null=True, verbose_name='购买时间')
+    amount = models.IntegerField(null=True, verbose_name='购买数量')
+
+    start_date = models.DateTimeField(null=True, verbose_name='起始日期')
+    end_date = models.DateTimeField(null=True, verbose_name='截止日期')
+
+    start_time1 = models.FloatField(null=True, verbose_name='优惠时段起点')
+    end_time1 = models.FloatField(null=True, verbose_name='优惠时段截止')
+
+    start_time2 = models.FloatField(null=True, verbose_name='优惠时段起点')
+    end_time2 = models.FloatField(null=True, verbose_name='优惠时段截止')
 
 
 class CardType(models.Model):

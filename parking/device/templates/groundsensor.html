@@ -313,7 +313,7 @@
 
         $('.chosen-select').chosen({'width': '200px'});
 
-        var start = { elem: "#buy_time1", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
+        var start = { elem: "#buy_time1", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: true };
         laydate(start)
         $('#buy_time1').val('')
 
@@ -322,8 +322,6 @@
             laydate(buy_time)  
         }
               
-       
-
 
         var all_gates = {{ all_gates|safe }}
         
