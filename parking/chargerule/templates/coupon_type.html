@@ -39,32 +39,18 @@
                                     {% csrf_token %}
                                     <div class="form-group" style="width: 200px">
                                         <select data-placeholder="选择优惠券类型" class="form-control chosen-select"  name="type" style="display: none;">
-                                            <option value=''>选择优惠券类型</option>
-                                            <option value="0">打折券</option>
-                                            <option value="1">代金券</option>
-                                            <option value="2">抵扣券</option>
-                                            <option value="3">满时券</option>
+                                            <!-- <option value=''>选择优惠券类型</option> -->
+                                            <option value="0" selected >打折券</option>
+                                            <option value="1" {% if type == '1' %}selected{% endif %}>代金券</option>
+                                            <option value="2" {% if type == '2' %}selected{% endif %}>抵扣券</option>
+                                            <option value="3" {% if type == '3' %}selected{% endif %}>满时券</option>
                                         </select>
                                     </div>
-                                    <div class="form-group" style="width: 200px">
-                                        <select data-placeholder="出入口" class="form-control chosen-select" name="gate_id" id='gate_a' style="display: none;">
-                                            <option value="" selected="selected">出入口</option>
-                                            {% for i in gates %}
-                                            <option value='{{i.id}}' 
-                                                {% if gate_id == i.id %}selected{% endif %}
-                                                >{{i.monitor}}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
+                                     
                                     <div class="form-group">
-                                        <input type="text" placeholder="类型" class="form-control" name="type" value='{{type}}'>
+                                        <input type="text" placeholder="名称" class="form-control" name="name" value='{{name}}'>
                                     </div>
-                                    <div class="form-group">
-                                        <input type="text" placeholder="品牌" class="form-control" name="brand" value='{{brand}}'>
-                                    </div>
-                                     <div class="form-group">
-                                        <input type="text" placeholder="厂商" class="form-control" name="manufacturer" value='{{manufacturer}}'>
-                                    </div>
+                                      
                                     <div class="form-group">
                                         <input type='hidden' name='action' value='search' />
                                         <input type='hidden' name='page' value='{{page}}' id='page' />
@@ -94,7 +80,6 @@
                                         <th>序号</th>
                                         <th>折扣券名称</th>
                                         <th>折扣率</th>
-                                        <th>细则</th>
                                         <th>说明</th>
                                         <th>创建时间</th>
                                         <th>上次修改时间</th>
@@ -110,11 +95,10 @@
                                          <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{ forloop.counter }}</td>
                                             <td>{{ i.name }}</td>
-                                            <td>{{ i.rate }}</td>
-                                            <td>{{ i.rule }}</td>
+                                            <td>{{ i.rate }} %</td>
                                             <td>{{ i.detail }}</td>
-                                            <td>{{ i.create_time|date:'Y-m-d' }}</td>
-                                            <td>{{ i.update_time|date:'Y-m-d' }}</td>
+                                            <td>{{ i.create_time|date:'Y-m-d H:i' }}</td>
+                                            <td>{{ i.update_time|date:'Y-m-d H:i' }}</td>
                                             <td>
                                                 <button type="button" _id='{{i.id}}' class="btn btn-primary update-btn" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                                 
@@ -136,7 +120,6 @@
                                         <th>序号</th>
                                         <th>代金券名称</th>
                                         <th>抵扣金额</th>
-                                        <th>细则</th>
                                         <th>说明</th>
                                         <th>创建时间</th>
                                         <th>上次修改时间</th>
@@ -153,10 +136,9 @@
                                             <td>{{ forloop.counter }}</td>
                                             <td>{{ i.name }}</td>
                                             <td>{{ i.money }}</td>
-                                            <td>{{ i.rule }}</td>
                                             <td>{{ i.detail }}</td>
-                                            <td>{{ i.create_time|date:'Y-m-d' }}</td>
-                                            <td>{{ i.update_time|date:'Y-m-d' }}</td>
+                                            <td>{{ i.create_time|date:'Y-m-d H:i' }}</td>
+                                            <td>{{ i.update_time|date:'Y-m-d H:i' }}</td>
                                             <td>
                                                 <button type="button" _id='{{i.id}}' class="btn btn-primary update-btn" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                                 
@@ -196,11 +178,12 @@
                                             <td>{{ forloop.counter }}</td>
                                             <td>{{ i.name }}</td>
                                             <td>{{ i.money }}</td>
-                                            <td>{{ i.hours1 }}</td>
-                                            <td>{{ i.rule }}</td>
+                                            <td>{{ i.hours }}</td>
+                                            <td>{{ i.rule }} 
+                                            {{ i.hours }}小时内均计费为{{i.money}}元</td>
                                             <td>{{ i.detail }}</td>
-                                            <td>{{ i.create_time|date:'Y-m-d' }}</td>
-                                            <td>{{ i.update_time|date:'Y-m-d' }}</td>
+                                            <td>{{ i.create_time|date:'Y-m-d H:i' }}</td>
+                                            <td>{{ i.update_time|date:'Y-m-d H:i' }}</td>
                                             <td>
                                                 <button type="button" _id='{{i.id}}' class="btn btn-primary update-btn" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                                 
@@ -220,9 +203,7 @@
                                     <tr>
                                         <th></th>
                                         <th>序号</th>
-                                        <th>抵扣券名称</th>
-                                        <th>抵扣金额</th>
-                                        <th>小时数</th>
+                                        <th>满时券名称</th>
                                         <th>细则</th>
                                         <th>说明</th>
                                         <th>创建时间</th>
@@ -239,12 +220,21 @@
                                          <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{ forloop.counter }}</td>
                                             <td>{{ i.name }}</td>
-                                            <td>{{ i.money }}</td>
-                                            <td>{{ i.hours1 }}</td>
-                                            <td>{{ i.rule }}</td>
+                                            <td>{{ i.rule }}
+                                            	前 {{ i.hours1 }} 小时计费为 {{ i.money1 }}元;
+                                            	{% if i.hours2 %}
+                                            	<br>前 {{ i.hours2 }} 小时计费为 {{ i.money2 }}元;
+												{% endif %}
+												{% if i.hours3 %}
+                                            	<br>前 {{ i.hours3 }} 小时计费为 {{ i.money3 }}元;
+												{% endif %}
+                                            	{% if i.hours4 %}
+                                            	<br>前 {{ i.hours4 }} 小时计费为 {{ i.money4 }}元;
+												{% endif %}
+                                            </td>
                                             <td>{{ i.detail }}</td>
-                                            <td>{{ i.create_time|date:'Y-m-d' }}</td>
-                                            <td>{{ i.update_time|date:'Y-m-d' }}</td>
+                                            <td>{{ i.create_time|date:'Y-m-d H:i' }}</td>
+                                            <td>{{ i.update_time|date:'Y-m-d H:i' }}</td>
                                             <td>
                                                 <button type="button" _id='{{i.id}}' class="btn btn-primary update-btn" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                                 
@@ -278,60 +268,127 @@
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{ i.id }}' action='' method="post">
                         {% csrf_token %}
+                        <input type="hidden" name="type" value='{{type}}'>
+                    {% if type == '0' %}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">编号</label>
+                            <label class="col-sm-2 control-label">折扣名称</label>
                             <div class="col-sm-4">
-                                <input type="text" value='{{i.number}}' name="number" class="form-control required">
+                                <input type="text" name="name" value='{{i.name}}' class="form-control">
                             </div>
-                            <label class="col-sm-1 control-label">类型</label>
+                            <label class="col-sm-1 control-label">折扣率</label>
                             <div class="col-sm-4">
-                                <input type="text" value='{{i.type}}' name="type" class="form-control">
+                                <input type="text" name="rate" value='{{i.rate}}' class="form-control" 
+                                οnkeyup="this.value=this.value.replace(/[^\d]/g,'');" >
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" value='{{i.detail}}' class="form-control">
+                            </div>
+                        </div>
+                       
+                    {% elif type == '1' %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">代金券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" value='{{i.name}}' class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">抵扣金额</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="money" value='{{i.money}}' class="form-control">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" value='{{i.detail}}' class="form-control">
+                            </div>
+                        </div>
+                  
+                    {% elif type == '2' %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">抵扣券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" value='{{i.name}}' class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" value='{{i.detail}}' class="form-control">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                         	<label class="col-sm-2 control-label">时长范围</label>
+                            <div class="col-sm-4">
+                                <input type="number" name="hours" value='{{i.hours}}' class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">金额</label>
+                            <div class="col-sm-4">
+                                <input type="number" name="money" value='{{i.money}}'  class="form-control">
+                            </div>
+                        </div>
+                        
+                    {% elif type == '3' %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">满时券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" value='{{i.name}}' class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" value='{{i.detail}}' class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">设备名称</label>
-                            <div class="col-sm-4">
-                                <input type="text" value='{{i.name}}' name="name" class="form-control">
-                            </div>
-                            <label class="col-sm-1 control-label">品牌</label>
-                            <div class="col-sm-4">
-                                <input type="text" value='{{i.brand}}' name="brand" class="form-control">
-                            </div>
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours1" value='{{i.hours1}}' class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours1" value='{{i.hours1}}' class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">厂商</label>
-                            <div class="col-sm-4">
-                                <input type="text" value='{{i.manufacturer}}' name="manufacturer" class="form-control">
-                            </div>
-                            <label class="col-sm-1 control-label">购买日期</label>
-                            <div class="col-sm-4">
-                                 <input placeholder="购买日期" class="laydate-icon form-control layer-date buy_time_update" name="buy_time" id='buy_time_{{forloop.counter}}' value='{{ i.buy_time|date:'Y-m-d' }}' >
-                            </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours2" value='{{i.hours2}}' class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="money2" value='{{i.money2}}' class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">所属车场</label>
-                            <div class="col-sm-4">
-                                <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='gate_update_{{i.id}}' name="parkinglot_id" style="display: none;width: 100%">
-                                    <option value=''>选择停车场</option>
-                                    {% for x in parkinglots %}
-                                        <option value='{{i.id}}'
-                                        {% if x.id == i.parkinglot.id %}selected{% endif %}
-                                        >{{x.name}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <label class="col-sm-1 control-label">所属出入口</label>
-                            <div class="col-sm-4">
-                                <select data-placeholder="选择出入口" class="form-control chosen-select" name="gate_id" id='gate_update_{{i.id}}' style="display: none;width: 100%">
-                                    <option value=''>选择出入口</option>
-                                    {% for x in i.parkinglot.gate_set.all %}
-                                    <option value='{{ i.id }}'
-                                        {% if x.id == i.gate.id %}selected{% endif %}
-                                    >{{ x.monitor }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours3" value='{{i.money}}' class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="money3" value='{{i.money3}}' class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
                         </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours4" value='{{i.hours4}}'  class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="money4" value='{{i.money3}}' class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                        {% endif %}
+
                         <div class="hr-line-dashed"></div>
                         
                         <div class="form-group">
@@ -361,9 +418,6 @@
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
             <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 新增优惠券</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
-
-            	
-
                 <div class="form-horizontal" id="verifyCheck">
                 	<div class='form-group'>
 	                    <label class="col-sm-2 control-label">抵扣券名称</label>
@@ -387,7 +441,8 @@
                             </div>
                             <label class="col-sm-1 control-label">折扣率</label>
                             <div class="col-sm-4">
-                                <input type="number" name="rate" class="form-control">
+                                <input type="number" name="rate" class="form-control"
+                                οnkeyup="this.value=this.value.replace(/[^\d]/g,'');">
                             </div>
                         </div>
                          <div class="form-group">
@@ -453,7 +508,7 @@
                          <div class="form-group">
                          	<label class="col-sm-2 control-label">时长范围</label>
                             <div class="col-sm-4">
-                                <input type="text" name="hours" class="form-control">
+                                <input type="number" name="hours" class="form-control">
                             </div>
                             <label class="col-sm-1 control-label">金额</label>
                             <div class="col-sm-4">
@@ -572,7 +627,7 @@
 
 
         // add form validate
-        $('#add_form').bootstrapValidator({
+    	$('#add_form0').bootstrapValidator({
 
 　　　　　　  message: 'This value is not valid',
         　  feedbackIcons: {
@@ -582,33 +637,24 @@
         　　　　　　　　   },
 
             fields: {
-                number: {
-                    message: '设备编号不能为空',
+                name: {
+                    message: '优惠名称不能为空',
                     validators: {
                         notEmpty: {
-                            message: '设备编号不能为空'
+                            message: '优惠名称不能为空'
                         },
                         stringLength: {
                                  min: 3,
                                  max: 20,
-                                 message: '设备编号长度必须在3到20之间'
-                             },
-                        remote:{
-                            url: '',
-                            data:function(validator) {
-                                return {
-                                    number: $('#add_form input[name=number]').val(),
-                                    action: 'validate',
-                                    csrfmiddlewaretoken:'{{ csrf_token  }}'
-                                }
-                            },
-                            type:'post',
-                            message: '设备编号已存在'
+                                 message: '优惠名称长度必须在3到20之间'
                         }
                     }
-                }
+                },
+                
             }
         });
+      
+        
 
 
 // update form validate 
