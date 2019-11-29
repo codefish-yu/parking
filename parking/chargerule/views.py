@@ -1,6 +1,7 @@
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
-# Create your views here.
+
 from administrator.decorators import page, _save_attr_
 from .models import *
 
@@ -59,11 +60,19 @@ def coupon_type(request):
     
     ctx = {}
 
-    objects = None
+    objects = []
 
     if request.method == 'POST':
         action = request.POST.get('action', '')
         ctx['type'] = type = request.POST.get('type', '')
+        if type == 0:
+            objects = Discount.objects.all().filter(is_delete=0)
+        elif type == 1:
+            objects = Voucher.objects.all().filter(is_delete=0)
+        elif type == 2:
+            objects = Coupon.objects.all().filter(is_delete=0)
+        else:
+            objects = HourTicket.objects.all().filter(is_delete=0)
 
         if action == 'add':
             if type == 0:
@@ -108,7 +117,14 @@ def coupon_type(request):
 
         elif action == 'delete':
             ids = request.POST.getlist('ids', '')
-            Worker.objects.filter(id__in=ids).update(is_delete=1)
+            if type == 0:
+                Discount.objects.filter(id__in=ids).update(is_delete=1)
+            elif type == 1:
+                Voucher.objects.filter(id__in=ids).update(is_delete=1)
+            elif type == 2:
+                Coupon.objects.filter(id__in=ids).update(is_delete=1)
+            else:
+                HourTicket.objects.filter(id__in=ids).update(is_delete=1)
 
         elif action == 'forbidden':
             id = request.POST.get('id', '')
@@ -134,11 +150,9 @@ def coupon_type(request):
 
             return JsonResponse({'valid': True})
 
-    ctx['objects'] = workers
+    ctx['objects'] = objects
    
-    return (ctx, 'worker.html')
-
-    return render(request, 'coupon_type.html')
+    return (ctx, 'coupon_type.html')
 
 
 def card(request):
