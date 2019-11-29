@@ -127,10 +127,40 @@ class Card(models.Model):
 
     status = models.IntegerField(default=0)
     owner = models.ForeignKey(User,null=True,on_delete=models.CASCADE,verbose_name='持卡人')
-    my_card = models.ForeignKey('Card',null=True,blank=True, on_delete=models.CASCADE,verbose_name='卡片类型')
+    my_card = models.ForeignKey('CardType',null=True,blank=True, on_delete=models.CASCADE,verbose_name='卡片类型')
     valid_start = models.DateTimeField(null=True , blank=True, verbose_name='有效开始')
     valid_end = models.DateTimeField(null=True , blank=True, verbose_name='有效结束')
-    holidays = models.TextField(null=True , blank=True, verbose_name='非工作日')
+    work_start = models.CharField(max_length=30,null=True,verbose_name='工作开始')
+    work_start = models.CharField(max_length=30,null=True,verbose_name='工作结束')
+    workdays = models.TextField(null=True , blank=True, verbose_name='工作日')
+    holidays = models.TextField(null=True , blank=True, verbose_name='节假日')
+
+
+    def set_valid_date(self):
+        import datetime
+
+        self.valid_start =now
+        now = datetime.datetime.now()
+        end = now
+        diff = end.month - now.month
+        if now.day == 1:
+            
+            while  diff == 0:
+                end += datetime.timedelta(days=1)
+        else:
+            while  diff < 2:
+                end += datetime.timedelta(days=1)
+        str = datetime.date.strftime(now,"%Y %m %H:%M:%S")
+        # end = end - datetime.timedelta(days=1)
+        st = str(end.year)+'-'+str(end.month)+'-'+str(end.day) +' '+'00:00:00'
+        self.valid_end = datetime.datetime.strptime(st,'%Y-%m-%d %H:%M:%S')
+
+
+
+
+
+
+        
 
 
 
