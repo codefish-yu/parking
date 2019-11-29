@@ -1,4 +1,6 @@
 from django.db import models
+from administrator.models import AdminUser as User
+from parkinglot.models import ParkingLot 
 
 # Create your models here.
 
@@ -50,4 +52,28 @@ class HourTicket(models.Model):
     hours4 = models.FloatField(null=True, blank=True, verbose_name='小时数')
     name = models.CharField(max_length=200, verbose_name='名称')
     detail = models.CharField(max_length=200, verbose_name='备注')
+
+
+class CardType(models.Model):
+    class Meta:
+        verbose_name = verbose_name_plural = '月卡类型'
+
+    status = models.IntegerField(default=0)
+    name = models.CharField(max_length=30, verbose_name='名称')
+    rule = models.CharField(max_length=100,verbose_name='描述',null=True)
+    suit = models.duoshipin = models.ManyToManyField(ParkingLot, verbose_name='可用停车场')
  
+
+class Card(models.Model):
+    class Meta:
+        verbose_name = verbose_name = '月卡'
+
+    status = models.IntegerField(default=0)
+    owner = models.ForeignKey(User,null=True,on_delete=models.CASCADE,verbose_name='持卡人')
+    my_card = models.ForeignKey('Card',null=True,blank=True, on_delete=models.CASCADE,verbose_name='卡片类型')
+    valid_start = models.TextField(null=True , blank=True, verbose_name='有效开始')
+    valid_end = models.TextField(null=True , blank=True, verbose_name='有效结束')
+    holidays = models.TextField(null=True , blank=True, verbose_name='非工作日')
+
+
+
