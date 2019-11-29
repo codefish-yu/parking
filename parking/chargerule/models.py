@@ -100,7 +100,17 @@ class TicketRecord(models.Model):
     start_time2 = models.FloatField(null=True, verbose_name='优惠时段起点')
     end_time2 = models.FloatField(null=True, verbose_name='优惠时段截止')
 
+    # is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
 
+    def ticket_name(self):
+        if self.discount:
+            return self.discount.name
+        elif self.voucher:
+            return self.voucher.name
+        elif self.coupon:
+            return self.coupon.name
+        elif self.hourticket:
+            return self.hourticket.name
 class CardType(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '月卡类型'
