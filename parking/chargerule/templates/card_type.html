@@ -56,7 +56,11 @@
                                             <td>{{i.id}} </td>
                                             <td>{{ i.name }}</td>
                                             <td>{{i.rule}} </td>
-                                            <td>{{i.suit}} </td>
+                                            <td>
+                                                {% for m in i.suit.all %}
+                                                <div>{{ m.name}} </div>
+                                                {% endfor %}
+                                            </td>
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
@@ -104,7 +108,12 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">适用停车场</label>
                             <div class="col-sm-4">
-                                <input type="text" name="suit" class="form-control required" value="{{i.suit }} ">
+                                <select name='suit' multiple="true" class="form-control required">
+                                    <option value="">选择停车场</option>
+                                    {% for j in parkinglots %}
+                                    <option value="{{j.id}}">{{ j.name}} </option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -150,10 +159,14 @@
                                 <textarea name='rule' class="form-control required"></textarea>
                             </div>
                         </div>
-                        <div class="form-group">
+                       <div class="form-group">
                             <label class="col-sm-2 control-label">适用停车场</label>
                             <div class="col-sm-4">
-                                <input type="text" id='suit' name="suuit" class="form-control required">
+                                <select name='suit' multiple="true" class="form-control required">
+                                    {% for j in parkinglots %}
+                                    <option value="{{j.id}}">{{ j.name}} </option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         

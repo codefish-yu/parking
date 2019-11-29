@@ -118,8 +118,8 @@ class Card(models.Model):
     status = models.IntegerField(default=0)
     owner = models.ForeignKey(User,null=True,on_delete=models.CASCADE,verbose_name='持卡人')
     my_card = models.ForeignKey('Card',null=True,blank=True, on_delete=models.CASCADE,verbose_name='卡片类型')
-    valid_start = models.TextField(null=True , blank=True, verbose_name='有效开始')
-    valid_end = models.TextField(null=True , blank=True, verbose_name='有效结束')
+    valid_start = models.DateTimeField(null=True , blank=True, verbose_name='有效开始')
+    valid_end = models.DateTimeField(null=True , blank=True, verbose_name='有效结束')
     holidays = models.TextField(null=True , blank=True, verbose_name='非工作日')
 
 

@@ -4,6 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from administrator.decorators import page, _save_attr_
 from .models import *
+from parkinglot.models import ParkingLot
+from administrator.models import AdminUser 
 
 
 '''计费规则管理'''
@@ -24,10 +26,16 @@ def card_type(request):
     def correct_card_type(request,obj):
         name = request.POST.get('name')
         rule = request.POST.get('rule')
-        # suit = request.POST
+        suit = request.POST.getlist('suit',[])
 
-        obj.name = name if name else null
-        obj.rule = rule if rule else null
+        obj.name = name if name else ''
+        obj.rule = rule if rule else ''
+        obj.save()
+        obj.suit.clear()
+
+        for i in suit:
+            obj.suit.add(ParkingLot.objects.filter(id=int(i)).first())
+
         obj.save()
 
     if request.method == 'POST':
@@ -48,8 +56,8 @@ def card_type(request):
                 item.status = -1
                 item.save()
 
-
-    ctx['cardtype'] = ctx['objects'] = CardType.objects.all()
+    ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
+    ctx['cardtype'] = ctx['objects'] = CardType.objects.filter(status=0).all()
     return (ctx,'card_type.html')
 
 
@@ -235,14 +243,54 @@ def coupon(request):
 
     ctx['all_tickets'] = all_tickets
 
-
     return (ctx, 'coupon.html')
 
+
+@page
 def card(request):
     '''卡片管理'''
-    pass
 
-    return render(request, 'card.html')
+    ctx ={}
+    def correct_obj(request,r):
+        owner_id = request.POST.get('owner', '')
+        card_id = request.POST.get('my_card', '')
+        if owner_id:
+            p = AdminUser.objects.filter(id=owner_id).first()
+            if p: 
+                r.owner = p
+
+        if my_card:
+            p = CardType.objects.filter(id=card_id).first()
+            if p: 
+                r.owner = p
+        r.save()
+
+    if request.method == 'POST':
+        action = request.POST.get('action','')
+        if action == 'add':
+            r = CardType()
+            correct_obj(request,r)
+            _save_attr_(r, request)
+
+
+        if action == 'update':
+            id = request.POST.get('id','')
+            r = Card.objects.filter(id=id).first()
+            correct_obj(request,r)
+            _save_attr_(r, request)
+
+        if action == 'delete':
+            ids = request.POST.getlist('ids', '')
+            u = Card.objects.filter(id__in=ids).all()
+            for item in u:
+                item.status = -1
+                item.save()
+
+
+    ctx['users'] = AdminUser.objects.all()
+    ctx['cardtypes'] = CardType.objects.filter(status=0).all()
+    ctx['cards'] = ctx['objects'] = Card.objects.filter(status=0).all()
+    return (ctx, 'card.html')
 
 
 
