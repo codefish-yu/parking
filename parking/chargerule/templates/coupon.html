@@ -6,8 +6,8 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <ol class="col-lg-5 breadcrumb">
-                            <li>设备管理</li>
-                            <li>摄像头管理</li>
+                            <li>计费规则</li>
+                            <li>优惠券管理</li>
                         </ol>
                         <div class="ibox-tools">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -39,24 +39,35 @@
                                         </select>
                                     </div>
                                     <div class="form-group" style="width: 200px">
-                                        <select data-placeholder="出入口" class="form-control chosen-select" name="gate_id" id='gate_a' style="display: none;">
-                                            <option value="" selected="selected">出入口</option>
-                                            {% for i in gates %}
+                                        <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" id='company' style="display: none;">
+                                            <option value="" selected="selected">选择商家</option>
+                                            {% for i in companies %}
                                             <option value='{{i.id}}' 
-                                                {% if gate_id == i.id %}selected{% endif %}
-                                                >{{i.monitor}}</option>
+                                                {% if company_id == i.id %}selected{% endif %}
+                                                >{{i.name}}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" placeholder="类型" class="form-control" name="type" value='{{type}}'>
+                                        <select data-placeholder="优惠券类型" class="form-control chosen-select" child-id='ticket_search' name="ticket_type" style="display: none;width: 100%">
+                                           <option value='' >优惠券类型</option>
+                                           <option value="0"{% if ticket_type == 0 %} selected{% endif %}>打折券</option>
+                                           <option value="1"{% if ticket_type == 1 %} selected{% endif %}>代金券</option>
+                                           <option value="2"{% if ticket_type == 2 %} selected{% endif %}>抵扣券</option>
+                                           <option value="3"{% if ticket_type == 3 %} selected{% endif %}>满时券</option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" placeholder="品牌" class="form-control" name="brand" value='{{brand}}'>
+                                       <select data-placeholder="优惠券类型" class="form-control chosen-select" id='ticket_search' name="ticket_id" style="display: none;width: 100%">
+                                        <option value="" >选择券</option>
+                                        {% for i in tickets %}
+                                            <option value='{{ i.id }}'
+                                            {% if ticket_id == i.id %}selected {% endif %}
+                                            >{{ i.name }}</option>
+                                        {% endfor %}
+                                        </select>
                                     </div>
-                                     <div class="form-group">
-                                        <input type="text" placeholder="厂商" class="form-control" name="manufacturer" value='{{manufacturer}}'>
-                                    </div>
+                                      
                                     <div class="form-group">
                                         <input type='hidden' name='action' value='search' />
                                         <input type='hidden' name='page' value='{{page}}' id='page' />
@@ -83,14 +94,13 @@
                                     <tr>
                                         <th></th>
                                         <th>序号</th>
-                                        <th>摄像头编号</th>
-                                        <th>摄像头名称</th>
-                                        <th>类型</th>
-                                        <th>厂商</th>
-                                        <th>品牌</th>
-                                        <th>所属车场</th>
-                                        <th>出入口</th>
-                                        <th>采购时间</th>
+                                        <th>停车场</th>
+                                        <th>商家</th>
+                                        <th>优惠券类型</th>
+                                        <th>优惠券</th>
+                                        <th>数量</th>
+                                        <th>购买日期</th>
+                                        <!-- <th>优惠时段</th> -->
                                         <th>操作</th>
                                     </tr>
                                 </thead>
@@ -102,15 +112,19 @@
                                         <tr>
                                          <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{ forloop.counter }}</td>
-                                            <td>{{ i.number }}</td>
-                                            <td>{{ i.name }}</td>
-                                            <td>{{ i.type }}</td>
-                                            <td>{{ i.manufacturer }}</td>
-                                            <!-- <td>{{ i.birth|date:'%Y/%m/%d' }}</td> -->
-                                            <td>{{ i.brand }}</td>
                                             <td>{{ i.parkinglot.name }}</td>
-                                            <td>{{ i.gate.monitor }}</td>
+                                            <td>{{ i.company.name }}</td>
+                                            <td>{% if i.ticket_type == 0 %}打折券
+                                                {% elif i.ticket_type == 1 %}代金券
+                                                {% elif i.ticket_type == 2 %}抵扣券
+                                                {% elif i.ticket_type == 3 %}满时券
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ i.ticket_name }}</td>
+                                            <td>{{ i.amount }}</td>
                                             <td>{{ i.buy_time|date:'Y-m-d' }}</td>
+                                            <!-- <td></td> -->
+                                            <!-- <td>{{ i.buy_time|date:'Y-m-d' }}</td> -->
                                             <td>
                                                 <button type="button" _id='{{i.id}}' class="btn btn-primary update-btn" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                                 
@@ -150,65 +164,114 @@
                     <form id='update_form_{{ i.id }}' action='' method="post">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">编号</label>
-                            <div class="col-sm-4">
-                                <input type="text" value='{{i.number}}' name="number" class="form-control required">
-                            </div>
-                            <label class="col-sm-1 control-label">类型</label>
-                            <div class="col-sm-4">
-                                <input type="text" value='{{i.type}}' name="type" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">设备名称</label>
-                            <div class="col-sm-4">
-                                <input type="text" value='{{i.name}}' name="name" class="form-control">
-                            </div>
-                            <label class="col-sm-1 control-label">品牌</label>
-                            <div class="col-sm-4">
-                                <input type="text" value='{{i.brand}}' name="brand" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">厂商</label>
-                            <div class="col-sm-4">
-                                <input type="text" value='{{i.manufacturer}}' name="manufacturer" class="form-control">
-                            </div>
-                            <label class="col-sm-1 control-label">购买日期</label>
-                            <div class="col-sm-4">
-                                 <input placeholder="购买日期" class="laydate-icon form-control layer-date buy_time_update" name="buy_time" id='buy_time_{{forloop.counter}}' value='{{ i.buy_time|date:'Y-m-d' }}' >
-                            </div>
-                        </div>
-                        <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='gate_update_{{i.id}}' name="parkinglot_id" style="display: none;width: 100%">
+                                <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='gate_add' name="parkinglot_id" style="display: none;width: 100%">
                                     <option value=''>选择停车场</option>
                                     {% for x in parkinglots %}
-                                        <option value='{{i.id}}'
-                                        {% if x.id == i.parkinglot.id %}selected{% endif %}
+                                        <option value='{{x.id}}'
+                                        {% if x.id == i.parkinglot.id %}selected {% endif %}
                                         >{{x.name}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
-                            <label class="col-sm-1 control-label">所属出入口</label>
+                            <label class="col-sm-1 control-label">商家</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="选择出入口" class="form-control chosen-select" name="gate_id" id='gate_update_{{i.id}}' style="display: none;width: 100%">
-                                    <option value=''>选择出入口</option>
-                                    {% for x in i.parkinglot.gate_set.all %}
-                                    <option value='{{ i.id }}'
-                                        {% if x.id == i.gate.id %}selected{% endif %}
-                                    >{{ x.monitor }}</option>
+                                <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" style="display: none;width: 100%">
+                                    <option value=''>选择商家</option>
+                                    {% for i in companies %}
+                                        <option value="{{i.id}}">{{i.name}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">优惠券类型</label>
+                            <div class="col-sm-4">
+                                <select data-placeholder="优惠券类型" class="form-control chosen-select" child-id='ticket_add' name="ticket_type" style="display: none;width: 100%">
+                                   <option value=''>优惠券类型</option>
+                                   <option value="0" {% if i.ticket_type == 0 %}selected{% endif %}>打折券</option>
+                                   <option value="1" {% if i.ticket_type == 1 %}selected{% endif %}>代金券</option>
+                                   <option value="2" {% if i.ticket_type == 2 %}selected{% endif %}>抵扣券</option>
+                                   <option value="3" {% if i.ticket_type == 3 %}selected{% endif %}>满时券</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-1 control-label">选择券</label>
+                            <div class="col-sm-4">
+                                <select data-placeholder="选择优惠券" class="form-control chosen-select" name="ticket_id" id='ticket_add'
+                                style="display: none;width: 100%">
+                                    {% if i.discount %}
+                                    <option value='{{ i.discount.id }}'>{{i.discount.name}}</option>
+                                    {% elif i.voucher %}
+                                    <option value='{{ i.voucher.id }}'>{{i.voucher.name}}</option>
+                                    {% elif i.coupon %}
+                                    <option value='{{ i.coupon.id }}'>{{i.coupon.name}}</option>
+                                    {% elif i.hourticket %}
+                                    <option value='{{ i.hourticket.id }}'>{{i.hourticket.name}}</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">数量</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="amount" value="{{i.amount}}" class="form-control required">
+                            </div>
+                            <label class="col-sm-1 control-label">购买时间</label>
+                            <div class="col-sm-4">
+                                <input placeholder="购买日期" class="laydate-icon form-control layer-date buy_time_update" name="buy_time" id='buy_time_{{forloop.counter}}' value='{{i.buy_time|date:"Y-m-d H:i:s"}}'>
+                            </div>
+                        </div>
+                       <!--  <div class="form-group">
+                            <label class="col-sm-2 control-label">起始日期</label>
+                            <div class="col-sm-4">
+                                <input placeholder="起始日期" class="laydate-icon form-control layer-date" name="start_date" id='start_date_add' value='{{i.start_date|date:"Y-m-d"}}'>
+                            </div>
+                            <label class="col-sm-1 control-label">截止日期</label>
+                            <div class="col-sm-4">
+                                <input placeholder="截止日期" class="laydate-icon form-control layer-date" name="end_date" id='end_date_add' value='{{i.end_date|date:"Y-m-d"}}'>
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">优惠时段1</label>
+                            <div class="col-sm-2">
+                                <select data-placeholder="选择出入口" class="form-control chosen-select" name="start_time1" >
+                                    <option value=''>选择</option>
+                                    <option value='0'>00: 00</option>
+                                    <option value='0.5'>00: 30</option>
+                                    <option value='1'>01: 00</option>
+                                    <option value='1.5'>00: 30</option>
+                                    <option value='2'>02: 00</option>
+                                    <option value='2.5'>00: 30</option>
+                                    <option value='3'>03: 00</option>
+                                    <option value='3.5'>00: 40</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-1 control-label">开始</label> 
+                            <div class="col-sm-2">
+                                <select data-placeholder="选择出入口" class="form-control chosen-select" name="end_time1" >
+                                    <option value=''>选择</option>
+                                    <option value='0'>00: 00</option>
+                                    <option value='0.5'>00: 30</option>
+                                    <option value='1'>01: 00</option>
+                                    <option value='1.5'>00: 30</option>
+                                    <option value='2'>02: 00</option>
+                                    <option value='2.5'>00: 30</option>
+                                    <option value='3'>03: 00</option>
+                                    <option value='3.5'>00: 40</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-1 control-label">结束</label>
+                        </div> -->
+
                         <div class="hr-line-dashed"></div>
                         
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <input type="hidden" name="action" class="form-control" value='update'>
-                                <input type="hidden" name="id" class="form-control" value='{{i.id}}'>
+                                <input type="hidden" name="action" class="form-control" value='add'>
+
                                 <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
                                 <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
                             </div>
@@ -230,7 +293,7 @@
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
 
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 新增摄像头</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 派发优惠券</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
 
@@ -240,7 +303,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='gate_add' name="parkinglot__id" style="display: none;width: 100%">
+                                <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='gate_add' name="parkinglot_id" style="display: none;width: 100%">
                                     <option value=''>选择停车场</option>
                                     {% for i in parkinglots %}
                                         <option value='{{i.id}}'>{{i.name}}</option>
@@ -249,8 +312,11 @@
                             </div>
                             <label class="col-sm-1 control-label">商家</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="选择商家" class="form-control chosen-select" name="company" style="display: none;width: 100%">
+                                <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" style="display: none;width: 100%">
                                     <option value=''>选择商家</option>
+                                    {% for i in companies %}
+                                        <option value="{{i.id}}">{{i.name}}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>
@@ -258,7 +324,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">优惠券类型</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="优惠券类型" class="form-control chosen-select" child-id='ticket_add' name="type" style="display: none;width: 100%">
+                                <select data-placeholder="优惠券类型" class="form-control chosen-select" child-id='ticket_add' name="ticket_type" style="display: none;width: 100%">
                                    <option value=''>优惠券类型</option>
                                    <option value="0">打折券</option>
                                    <option value="1">代金券</option>
@@ -282,49 +348,51 @@
                             </div>
                             <label class="col-sm-1 control-label">购买时间</label>
                             <div class="col-sm-4">
-                                <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="buy_time">
+                                <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="buy_time" id='buy_time_add'>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label class="col-sm-2 control-label">起始日期</label>
                             <div class="col-sm-4">
-                                <input placeholder="起始日期" class="laydate-icon form-control layer-date" name="start_date">
+                                <input placeholder="起始日期" class="laydate-icon form-control layer-date" name="start_date" id='start_date_add'>
                             </div>
                             <label class="col-sm-1 control-label">截止日期</label>
                             <div class="col-sm-4">
-                                <input placeholder="截止日期" class="laydate-icon form-control layer-date" name="end_date">
+                                <input placeholder="截止日期" class="laydate-icon form-control layer-date" name="end_date" id='end_date_add'>
                             </div>
                         </div>
                          <div class="form-group">
                             <label class="col-sm-2 control-label">优惠时段1</label>
                             <div class="col-sm-2">
                                 <select data-placeholder="选择出入口" class="form-control chosen-select" name="start_time1" >
-                                    <option value=''>00: 00</option>
-                                    <option value=''>00: 30</option>
-                                    <option value=''>01: 00</option>
-                                    <option value=''>00: 30</option>
-                                    <option value=''>02: 00</option>
-                                    <option value=''>00: 30</option>
-                                    <option value=''>03: 00</option>
-                                    <option value=''>00: 40</option>
+                                    <option value=''>选择</option>
+                                    <option value='0'>00: 00</option>
+                                    <option value='0.5'>00: 30</option>
+                                    <option value='1'>01: 00</option>
+                                    <option value='1.5'>00: 30</option>
+                                    <option value='2'>02: 00</option>
+                                    <option value='2.5'>00: 30</option>
+                                    <option value='3'>03: 00</option>
+                                    <option value='3.5'>00: 40</option>
                                 </select>
                             </div>
                             <label class="col-sm-1 control-label">开始</label> 
                             <div class="col-sm-2">
                                 <select data-placeholder="选择出入口" class="form-control chosen-select" name="end_time1" >
-                                    <option value=''>00: 00</option>
-                                    <option value=''>00: 30</option>
-                                    <option value=''>01: 00</option>
-                                    <option value=''>00: 30</option>
-                                    <option value=''>02: 00</option>
-                                    <option value=''>00: 30</option>
-                                    <option value=''>03: 00</option>
-                                    <option value=''>00: 40</option>
+                                    <option value=''>选择</option>
+                                    <option value='0'>00: 00</option>
+                                    <option value='0.5'>00: 30</option>
+                                    <option value='1'>01: 00</option>
+                                    <option value='1.5'>00: 30</option>
+                                    <option value='2'>02: 00</option>
+                                    <option value='2.5'>00: 30</option>
+                                    <option value='3'>03: 00</option>
+                                    <option value='3.5'>00: 40</option>
                                 </select>
                             </div>
                             <label class="col-sm-1 control-label">结束</label>
                         </div>
-
+ -->
                         <div class="hr-line-dashed"></div>
                         
                         <div class="form-group">
@@ -353,37 +421,51 @@
 
     $(function () { 
 
-    	var all_tickets = {{ all_tickets | safe }}
-
+        var all_tickets = {{ all_tickets | safe }};
+        var all_companies = {{ all_companies | safe}};
         $('.chosen-select').chosen({'width': '200px'});
 
-        var start = { elem: "#buy_time1", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
-        laydate(start)
-        $('#buy_time1').val('')
+        var buy_time_add = { elem: "#buy_time_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
+        laydate(buy_time_add)
+        // var start_date_add = { elem: "#start_date_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
+        // laydate(start_date_add)
+        // var end_date_add = { elem: "#end_date_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
+        // laydate(end_date_add)
 
-        // for(var i=1;i<=$('.buy_time_update').length;i++){
-        //     var buy_time = { elem: "#buy_time_"+i, format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
-        //     laydate(buy_time)  
-        // }
+        for(var i=1;i<=$('.buy_time_update').length;i++){
+            var buy_time = { elem: "#buy_time_"+i, format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: false };
+            laydate(buy_time)  
+        }
               
        
         
-        $('select[name=type]').on('change', function(){
-
-            var id = parseInt($(this).val())
-            var tickets = all_tickets[id]
+        $('select[name=ticket_type]').on('change', function(){
+            var tickets = all_tickets[$(this).val()]
             var child_id = $(this).attr('child-id')
-            console.info(child_id)
 
             $('#'+child_id).empty()
             $('#'+child_id).chosen("destroy")
-            $('#'+child_id).append('<option value="" selected="selected">选择券</option>')
+            $('#'+child_id).append('<option value="" >选择券</option>')
             if(tickets){
                 tickets.map((v,i)=>{
                     $('#'+child_id).append('<option value="'+v.id+'"> '+v.name+' </option>')
                 })
             }
             
+            $('#'+child_id).chosen({'width': '200px'});
+        })
+
+         $('select[name=parkinglot_id]').on('change', function(){
+            var companies = all_companies[$(this).val()]
+            var child_id = $(this).attr('child-id')
+            $('#'+child_id).empty()
+            $('#'+child_id).chosen("destroy")
+            $('#'+child_id).append('<option value="" >选择商家</option>')
+            if(companies){
+                companies.map((v,i)=>{
+                    $('#'+child_id).append('<option value="'+v.id+'"> '+v.name+' </option>')
+                })
+            }
             $('#'+child_id).chosen({'width': '200px'});
         })
 

@@ -1,11 +1,13 @@
 from django.shortcuts import render
+from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 
 
-from administrator.decorators import page, _save_attr_
 from .models import *
+from company.models import Company
 from parkinglot.models import ParkingLot
 from administrator.models import AdminUser 
+from administrator.decorators import page, _save_attr_
 
 
 '''计费规则管理'''
@@ -150,27 +152,35 @@ def coupon(request):
 
     ctx = {}
 
-    cameras = TicketRecord.objects.all()
+    objects = TicketRecord.objects.select_related('parkinglot', 'company', 'discount', 'voucher', 'coupon', 'hourticket').all()
 
     if request.method == 'POST':
         action = request.POST.get('action', '')
         if action == 'add':
-            r = Camera()            
+            r = TicketRecord()            
             _save_attr_(r, request)
 
+            company_id = request.POST.get('company_id', '')
             parkinglot_id = request.POST.get('parkinglot_id', '')
             if parkinglot_id:
-                p = ParkingLot.objects.filter(id=parkinglot_id).first()
-                if p: 
-                    r.parkinglot = p
-                    r.save()
+                r.parkinglot_id = int(parkinglot_id)
+            if company_id:
+                r.company_id = int(company_id)
 
-            gate_id = request.POST.get('gate_id', '')
-            if gate_id:
-                p = Gate.objects.filter(id=gate_id).first()
-                if p: 
-                    r.gate = p
-                    r.save()
+            ticket_type = request.POST.get('ticket_type', '')
+            ticket_id = request.POST.get('ticket_id', '')
+            if ticket_type and ticket_id:
+                r.type = int(ticket_type)
+                if ticket_type == '0':
+                    r.discount_id = int(ticket_id)
+                elif ticket_type == '1':
+                    r.voucher_id = int(ticket_id)
+                elif ticket_type == '2':
+                    r.coupon_id = int(ticket_id)
+                elif ticket_type == '3':
+                    r.hourticket = int(ticket_id)
+            
+            r.save()
 
         elif action == 'update':
             id = request.POST.get('id', '')
@@ -190,51 +200,65 @@ def coupon(request):
                     r.gate = p
                     r.save()
         elif action == 'search':
-            ctx['brand'] = brand = request.POST.get('brand', '')
-            ctx['manufacturer'] = manufacturer = request.POST.get('manufacturer', '')
-           
-            gate_id = request.POST.get('gate_id', '')
+            ticket_type = request.POST.get('ticket_type', '')
+            ticket_id = request.POST.get('ticket_id', '')
+
+            company_id = request.POST.get('company_id', '')
             parkinglot_id = request.POST.get('parkinglot_id', '')
 
             if parkinglot_id:
                 ctx['parkinglot_id'] = int(parkinglot_id)
-                cameras = cameras.filter(parkinglot_id=int(parkinglot_id))
-                ctx['gates'] = Gate.objects.filter(parkinglot_id=int(parkinglot_id))
-            if gate_id:
-                ctx['gate_id'] = int(gate_id)
-                cameras = cameras.filter(gate_id=int(gate_id))
-            if brand:
-                cameras = cameras.filter(brand=brand)
-            if manufacturer:
-                cameras = cameras.filter(manufacturer=manufacturer)
+                objects = objects.filter(parkinglot_id=int(parkinglot_id))
+                # ctx['gates'] = objects.filter(parkinglot_id=int(parkinglot_id))
+            if company_id:
+                ctx['company_id'] = int(company_id)
+                objects = objects.filter(company_id=int(company_id))
+            if ticket_type:
+                ctx['ticket_type'] = int(ticket_type)
+                objects = objects.filter(ticket_type=int(ticket_type))
+                if ticket_type == '0':
+                    ctx['tickets'] = Discount.objects.filter(is_delete=0)
+                elif ticket_type == '1':
+                    ctx['tickets'] = Voucher.objects.filter(is_delete=0)
+                elif ticket_type == '2':
+                    ctx['tickets'] = Coupon.objects.filter(is_delete=0)
+                elif ticket_type == '3':
+                    ctx['tickets'] = HourTicket.objects.filter(is_delete=0)
+            if ticket_id:
+                ctx['ticket_id'] = int(ticket_id)
+                objects = objects.filter(Q(discount_id=int(ticket_id)) | Q(voucher_id=int(ticket_id)) | Q(coupon_id=int(ticket_id)) | Q(hourticket_id=int(ticket_id)))
 
         elif action == 'delete':
             ids = request.POST.getlist('ids', '')
-            Camera.objects.filter(id__in=ids).delete()
+            TicketRecord.objects.filter(id__in=ids).delete()#update(is_delete=1)
 
-        elif action == 'validate':
-            number = request.POST.get('number', '')
-            id = request.POST.get('id', '')
+        # elif action == 'validate':
+        #     number = request.POST.get('number', '')
+        #     id = request.POST.get('id', '')
 
-            r = Camera.objects.filter(number=number.strip())
-            if r.exists():
-                if id:
-                    if r.first().id != int(id):
-                        return JsonResponse({'valid': False})
-                else:
-                    return JsonResponse({'valid': False})
+        #     r = Camera.objects.filter(number=number.strip())
+        #     if r.exists():
+        #         if id:
+        #             if r.first().id != int(id):
+        #                 return JsonResponse({'valid': False})
+        #         else:
+        #             return JsonResponse({'valid': False})
 
-            return JsonResponse({'valid': True})
+        #     return JsonResponse({'valid': True})
 
-        elif action == 'get_gate':
-            id = request.POST.get('id', '')
-            gates = Gate.objects.filter(parkinglot_id=id)
-            gates = [{'name': _.name, 'id':_.id} for _ in gates]
-            return JsonResponse({'success':True, 'result': gates})
 
-    ctx['objects'] = cameras.order_by('-buy_time')
+    ctx['objects'] = objects.order_by('-buy_time')
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
-        
+    c = Company.objects.select_related('parkinglot').filter(status=1)
+    companies = {}
+
+    for i in c:
+        if i.parkinglot.id in companies:
+            companies[i.id].append({'id': i.id, 'name': i.name})
+        else:
+            companies[i.id] = [{'id': i.id, 'name': i.name}]
+    ctx['all_companies'] = companies
+
     all_tickets = {}
     all_tickets['0'] = [{'id': _.id, 'name': _.name} for _ in Discount.objects.filter(is_delete=0).order_by('-update_time')]
     all_tickets['1'] = [{'id': _.id, 'name': _.name} for _ in Voucher.objects.filter(is_delete=0).order_by('-update_time')]
