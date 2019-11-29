@@ -249,7 +249,15 @@ def coupon(request):
 
     ctx['objects'] = objects.order_by('-buy_time')
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
-    ctx['companies'] = Company.objects.filter(status=0)
+    c = Company.objects.select_related('parkinglot').filter(status=1)
+    companies = {}
+
+    for i in c:
+        if i.parkinglot.id in companies:
+            companies[i.id].append({'id': i.id, 'name': i.name})
+        else:
+            companies[i.id] = [{'id': i.id, 'name': i.name}]
+    ctx['all_companies'] = companies
 
     all_tickets = {}
     all_tickets['0'] = [{'id': _.id, 'name': _.name} for _ in Discount.objects.filter(is_delete=0).order_by('-update_time')]

@@ -50,22 +50,22 @@
                                     </div>
                                     <div class="form-group">
                                         <select data-placeholder="优惠券类型" class="form-control chosen-select" child-id='ticket_search' name="ticket_type" style="display: none;width: 100%">
-		                                   <option value='' >优惠券类型</option>
-		                                   <option value="0"{% if ticket_type == 0 %} selected{% endif %}>打折券</option>
-		                                   <option value="1"{% if ticket_type == 1 %} selected{% endif %}>代金券</option>
-		                                   <option value="2"{% if ticket_type == 2 %} selected{% endif %}>抵扣券</option>
-		                                   <option value="3"{% if ticket_type == 3 %} selected{% endif %}>满时券</option>
-		                                </select>
+                                           <option value='' >优惠券类型</option>
+                                           <option value="0"{% if ticket_type == 0 %} selected{% endif %}>打折券</option>
+                                           <option value="1"{% if ticket_type == 1 %} selected{% endif %}>代金券</option>
+                                           <option value="2"{% if ticket_type == 2 %} selected{% endif %}>抵扣券</option>
+                                           <option value="3"{% if ticket_type == 3 %} selected{% endif %}>满时券</option>
+                                        </select>
                                     </div>
                                     <div class="form-group">
                                        <select data-placeholder="优惠券类型" class="form-control chosen-select" id='ticket_search' name="ticket_id" style="display: none;width: 100%">
-                                       	<option value="" >选择券</option>
-                                       	{% for i in tickets %}
-                                       		<option value='{{ i.id }}'
-                                       		{% if ticket_id == i.id %}selected {% endif %}
-                                       		>{{ i.name }}</option>
-                                       	{% endfor %}
-		                                </select>
+                                        <option value="" >选择券</option>
+                                        {% for i in tickets %}
+                                            <option value='{{ i.id }}'
+                                            {% if ticket_id == i.id %}selected {% endif %}
+                                            >{{ i.name }}</option>
+                                        {% endfor %}
+                                        </select>
                                     </div>
                                       
                                     <div class="form-group">
@@ -115,10 +115,10 @@
                                             <td>{{ i.parkinglot.name }}</td>
                                             <td>{{ i.company.name }}</td>
                                             <td>{% if i.ticket_type == 0 %}打折券
-                                            	{% elif i.ticket_type == 1 %}代金券
-                                            	{% elif i.ticket_type == 2 %}抵扣券
-                                            	{% elif i.ticket_type == 3 %}满时券
-                                            	{% endif %}
+                                                {% elif i.ticket_type == 1 %}代金券
+                                                {% elif i.ticket_type == 2 %}抵扣券
+                                                {% elif i.ticket_type == 3 %}满时券
+                                                {% endif %}
                                             </td>
                                             <td>{{ i.ticket_name }}</td>
                                             <td>{{ i.amount }}</td>
@@ -180,7 +180,7 @@
                                 <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" style="display: none;width: 100%">
                                     <option value=''>选择商家</option>
                                     {% for i in companies %}
-                                    	<option value="{{i.id}}">{{i.name}}</option>
+                                        <option value="{{i.id}}">{{i.name}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -201,7 +201,7 @@
                             <div class="col-sm-4">
                                 <select data-placeholder="选择优惠券" class="form-control chosen-select" name="ticket_id" id='ticket_add'
                                 style="display: none;width: 100%">
-                                	{% if i.discount %}
+                                    {% if i.discount %}
                                     <option value='{{ i.discount.id }}'>{{i.discount.name}}</option>
                                     {% elif i.voucher %}
                                     <option value='{{ i.voucher.id }}'>{{i.voucher.name}}</option>
@@ -221,7 +221,7 @@
                             </div>
                             <label class="col-sm-1 control-label">购买时间</label>
                             <div class="col-sm-4">
-                                <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="buy_time" id='buy_time_add' value='{{i.buy_time|date:"Y-m-d H:i:s"}}'>
+                                <input placeholder="购买日期" class="laydate-icon form-control layer-date buy_time_update" name="buy_time" id='buy_time_{{forloop.counter}}' value='{{i.buy_time|date:"Y-m-d H:i:s"}}'>
                             </div>
                         </div>
                        <!--  <div class="form-group">
@@ -315,7 +315,7 @@
                                 <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" style="display: none;width: 100%">
                                     <option value=''>选择商家</option>
                                     {% for i in companies %}
-                                    	<option value="{{i.id}}">{{i.name}}</option>
+                                        <option value="{{i.id}}">{{i.name}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -421,19 +421,19 @@
 
     $(function () { 
 
-    	var all_tickets = {{ all_tickets | safe }}
-
+        var all_tickets = {{ all_tickets | safe }};
+        var all_companies = {{ all_companies | safe}};
         $('.chosen-select').chosen({'width': '200px'});
 
         var buy_time_add = { elem: "#buy_time_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
         laydate(buy_time_add)
-        var start_date_add = { elem: "#start_date_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
-        laydate(start_date_add)
-        var end_date_add = { elem: "#end_date_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
-        laydate(end_date_add)
+        // var start_date_add = { elem: "#start_date_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
+        // laydate(start_date_add)
+        // var end_date_add = { elem: "#end_date_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
+        // laydate(end_date_add)
 
         for(var i=1;i<=$('.buy_time_update').length;i++){
-            var buy_time = { elem: "#buy_time_"+i, format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
+            var buy_time = { elem: "#buy_time_"+i, format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: false };
             laydate(buy_time)  
         }
               
@@ -452,6 +452,20 @@
                 })
             }
             
+            $('#'+child_id).chosen({'width': '200px'});
+        })
+
+         $('select[name=parkinglot_id]').on('change', function(){
+            var companies = all_companies[$(this).val()]
+            var child_id = $(this).attr('child-id')
+            $('#'+child_id).empty()
+            $('#'+child_id).chosen("destroy")
+            $('#'+child_id).append('<option value="" >选择商家</option>')
+            if(companies){
+                companies.map((v,i)=>{
+                    $('#'+child_id).append('<option value="'+v.id+'"> '+v.name+' </option>')
+                })
+            }
             $('#'+child_id).chosen({'width': '200px'});
         })
 
