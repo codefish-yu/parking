@@ -19,8 +19,8 @@ class Discount(models.Model):
     rule = models.CharField(max_length=200, verbose_name='细则')
 
     is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
+    create_time = models.DateTimeField(auto_now_add=True, null=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
 
 
 class Voucher(models.Model):
@@ -33,8 +33,8 @@ class Voucher(models.Model):
     rule = models.CharField(max_length=200, verbose_name='细则')
     
     is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
+    create_time = models.DateTimeField(auto_now_add=True, null=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
 
 
 class Coupon(models.Model):
@@ -49,8 +49,8 @@ class Coupon(models.Model):
     rule = models.CharField(max_length=200, verbose_name='细则')
     
     is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
+    create_time = models.DateTimeField(auto_now_add=True, null=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
 
 
 class HourTicket(models.Model):
@@ -70,8 +70,8 @@ class HourTicket(models.Model):
     rule = models.CharField(max_length=200, verbose_name='细则')
     
     is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
+    create_time = models.DateTimeField(auto_now_add=True, null=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
 
 
 class CardType(models.Model):
