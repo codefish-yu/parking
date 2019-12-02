@@ -263,7 +263,7 @@
         </div>
 
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 新增摄像头</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 修改优惠券</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{ i.id }}' action='' method="post">
@@ -277,8 +277,7 @@
                             </div>
                             <label class="col-sm-1 control-label">折扣率</label>
                             <div class="col-sm-4">
-                                <input type="text" name="rate" value='{{i.rate}}' class="form-control" 
-                                οnkeyup="this.value=this.value.replace(/[^\d]/g,'');" >
+                                <input type="text" name="rate" value='{{i.rate}}' class="form-control" >
                             </div>
                         </div>
                          <div class="form-group">
@@ -366,7 +365,7 @@
                          <div class="form-group">
                         	<label class="col-sm-2 control-label">前</label>
                         	<div class="col-sm-1" style="padding: 0">
-                        		<input type="number" name="hours3" value='{{i.money}}' class="form-control number">
+                        		<input type="number" name="hours3" value='{{i.money3}}' class="form-control number">
                         	</div>
                             <label class="col-sm-1 control-label">小时,</label>
                             <label class="col-sm-1 control-label">计</label>
@@ -383,7 +382,7 @@
                             <label class="col-sm-1 control-label">小时,</label>
                             <label class="col-sm-1 control-label">计</label>
                             <div class="col-sm-1" style="padding: 0">
-                        		<input type="number" name="money4" value='{{i.money3}}' class="form-control number">
+                        		<input type="number" name="money4" value='{{i.money4}}' class="form-control number">
                         	</div>
                         	<label class="control-label col-sm-1">元</label>
                         </div>
@@ -420,7 +419,7 @@
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                 	<div class='form-group'>
-	                    <label class="col-sm-2 control-label">抵扣券名称</label>
+	                    <label class="col-sm-2 control-label">优惠券类型</label>
 						<div class="col-sm-4">
 		                	<select data-placeholder="选择优惠券类型" class="form-control chosen-select"  name="type" style="display: none;" id='type_add'>
 		                        <option value=''>选择优惠券类型</option>
@@ -439,11 +438,11 @@
                             <div class="col-sm-4">
                                 <input type="text" name="name" class="form-control">
                             </div>
-                            <label class="col-sm-1 control-label">折扣率</label>
-                            <div class="col-sm-4">
-                                <input type="number" name="rate" class="form-control"
-                                οnkeyup="this.value=this.value.replace(/[^\d]/g,'');">
+                            <label class="col-sm-2 control-label">折扣率</label>
+                            <div class="col-sm-2">
+                                <input type="text" name="rate" class="form-control">
                             </div>
+                            <label class="col-sm-1 control-label">%</label>
                         </div>
                          <div class="form-group">
                             <label class="col-sm-2 control-label">说明</label>
@@ -508,11 +507,11 @@
                          <div class="form-group">
                          	<label class="col-sm-2 control-label">时长范围</label>
                             <div class="col-sm-4">
-                                <input type="number" name="hours" class="form-control">
+                                <input type="text" name="hours" class="form-control">
                             </div>
                             <label class="col-sm-1 control-label">金额</label>
                             <div class="col-sm-4">
-                                <input type="number" name="money" class="form-control">
+                                <input type="text" name="money" class="form-control">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -541,48 +540,48 @@
                         <div class="form-group">
                         	<label class="col-sm-2 control-label">前</label>
                         	<div class="col-sm-1" style="padding: 0">
-                        		<input type="number" name="hours1" class="form-control number">
+                        		<input type="text" name="hours1" class="form-control number">
                         	</div>
                             <label class="col-sm-1 control-label">小时,</label>
                             <label class="col-sm-1 control-label">计</label>
                             <div class="col-sm-1" style="padding: 0">
-                        		<input type="number" name="money1" class="form-control number">
+                        		<input type="text" name="money1" class="form-control number">
                         	</div>
                         	<label class="control-label col-sm-1">元</label>
                         </div>
                          <div class="form-group">
                         	<label class="col-sm-2 control-label">前</label>
                         	<div class="col-sm-1" style="padding: 0">
-                        		<input type="number" name="hours2" class="form-control number">
+                        		<input type="text" name="hours2" class="form-control number">
                         	</div>
                             <label class="col-sm-1 control-label">小时,</label>
                             <label class="col-sm-1 control-label">计</label>
                             <div class="col-sm-1" style="padding: 0">
-                        		<input type="number" name="money2" class="form-control number">
+                        		<input type="text" name="money2" class="form-control number">
                         	</div>
                         	<label class="control-label col-sm-1">元</label>
                         </div>
                          <div class="form-group">
                         	<label class="col-sm-2 control-label">前</label>
                         	<div class="col-sm-1" style="padding: 0">
-                        		<input type="number" name="hours3" class="form-control number">
+                        		<input type="text" name="hours3" class="form-control number">
                         	</div>
                             <label class="col-sm-1 control-label">小时,</label>
                             <label class="col-sm-1 control-label">计</label>
                             <div class="col-sm-1" style="padding: 0">
-                        		<input type="number" name="money3" class="form-control number">
+                        		<input type="text" name="money3" class="form-control number">
                         	</div>
                         	<label class="control-label col-sm-1">元</label>
                         </div>
                          <div class="form-group">
                         	<label class="col-sm-2 control-label">前</label>
                         	<div class="col-sm-1" style="padding: 0">
-                        		<input type="number" name="hours4" class="form-control number">
+                        		<input type="text" name="hours4" class="form-control number">
                         	</div>
                             <label class="col-sm-1 control-label">小时,</label>
                             <label class="col-sm-1 control-label">计</label>
                             <div class="col-sm-1" style="padding: 0">
-                        		<input type="number" name="money4" class="form-control number">
+                        		<input type="text" name="money4" class="form-control number">
                         	</div>
                         	<label class="control-label col-sm-1">元</label>
                         </div>
@@ -627,7 +626,10 @@
 
 
         // add form validate
-    	$('#add_form0').bootstrapValidator({
+    function init_type1(id){
+
+    	console.info('x')
+    	$('#'+id).bootstrapValidator({
 
 　　　　　　  message: 'This value is not valid',
         　  feedbackIcons: {
@@ -650,69 +652,243 @@
                         }
                     }
                 },
-                
+                rate: {
+                	message: '折扣率为数字',
+                	validators: {
+                		notEmpty: {
+                            message: '折扣率不能为空'
+                        },
+                		numeric:{
+                			message: '请输入数字'
+                		}
+                	}
+                }
             }
         });
+        console.info($('update_model_4').bootstrapValidator)
       
-        
+    }
 
+   	function init_type2(id){
 
+		$('#'+id).bootstrapValidator({
+
+　　　　　　  message: 'This value is not valid',
+        　  feedbackIcons: {
+            　　　　　　　　valid: 'glyphicon glyphicon-ok',
+            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+        　　　　　　　　   },
+
+            fields: {
+                name: {
+                    message: '优惠名称不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '优惠名称不能为空'
+                        },
+                        stringLength: {
+                                 min: 3,
+                                 max: 20,
+                                 message: '优惠名称长度必须在3到20之间'
+                        }
+                    }
+                },
+                money: {
+                	message: '请填写正确的金额',
+                	validators: {
+                		notEmpty: {
+                            message: '抵扣金额不能为空'
+                        },
+                		numeric:{
+                			message: '请填写数字'
+                		}
+                	}
+                }
+            }
+        });
+	}
+
+	function init_type3(id){
+
+		$('#'+id).bootstrapValidator({
+
+　　　　　　  message: 'This value is not valid',
+        　  feedbackIcons: {
+            　　　　　　　　valid: 'glyphicon glyphicon-ok',
+            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+        　　　　　　　　   },
+
+            fields: {
+                name: {
+                    message: '优惠名称不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '优惠名称不能为空'
+                        },
+                        stringLength: {
+                                 min: 3,
+                                 max: 20,
+                                 message: '优惠名称长度必须在3到20之间'
+                        }
+                    }
+                },
+                money: {
+                	message: '请填写正确的金额',
+                	validators: {
+                		notEmpty: {
+                            message: '抵扣金额不能为空'
+                        },
+                		numeric:{
+                			message: '请填写数字'
+                		}
+                	}
+                },
+                hours: {
+                	message: '请填写正确的时长',
+                	validators: {
+                		notEmpty: {
+                            message: '时长不能为空'
+                        },
+                		numeric:{
+                			message: '请填写数字'
+                		}
+                	}
+                }
+            }
+        });
+
+	}
+
+	function init_type4(id){
+
+		$('#'+id).bootstrapValidator({
+
+　　　　　　  message: 'This value is not valid',
+        　  feedbackIcons: {
+            　　　　　　　　valid: 'glyphicon glyphicon-ok',
+            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+        　　　　　　　　   },
+
+            fields: {
+                name: {
+                    message: '优惠名称不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '优惠名称不能为空'
+                        },
+                        stringLength: {
+                                 min: 3,
+                                 max: 20,
+                                 message: '优惠名称长度必须在3到20之间'
+                        }
+                    }
+                },
+                money1: {
+                	message: '请填写正确的金额',
+                	validators: {
+                		notEmpty: {
+                            message: '抵扣金额不能为空'
+                        },
+                		numeric:{
+                			message: '请填写数字'
+                		}
+                	}
+                },
+                hours1: {
+                	message: '请填写正确的时长',
+                	validators: {
+                		notEmpty: {
+                            message: '时长不能为空'
+                        },
+                		numeric:{
+                			message: '请填写数字'
+                		}
+                	}
+                },
+                money2: {
+                	message: '请填写正确的金额',
+                	validators: {
+                		numeric:{
+                			message: '请填写数字'
+                		}
+                	}
+                },
+                hours2: {
+                	message: '请填写正确的时长',
+                	validators: {
+                		numeric:{
+                			message: '请填写数字'
+                		}
+                	}
+                },
+                money3: {
+                	message: '请填写正确的金额',
+                	validators: {
+                		numeric:{
+                			message: '请填写数字'
+                		}
+                	}
+                },
+                hours3: {
+                	message: '请填写正确的时长',
+                	validators: {
+                		numeric:{
+                			message: '请填写数字'
+                		}
+                	}
+                },
+                money4: {
+                	message: '请填写正确的金额',
+                	validators: {
+                		numeric:{
+                			message: '请填写数字'
+                		}
+                	}
+                },
+                hours4: {
+                	message: '请填写正确的时长',
+                	validators: {
+                		numeric:{
+                			message: '请填写数字'
+                		}
+                	}
+                }
+            }
+        });
 // update form validate 
         
+    }
 
-        $('.update-btn').click(function(){
+    init_type1('add_form0')
+    init_type2('add_form1')
+    init_type3('add_form2')
+    init_type4('add_form3')
+
+
+    $('.update-btn').click(function(){
             var id = $(this).attr('_id')
             console.info(id)
-            initValidator(id)
-
+            var t = {{ type }}
+            if(t == '0'){
+            	init_type1(id)
+            }
+            if(t == '1'){
+            	init_type2(id)
+            }
+            if(t == '2'){
+            	init_type3(id)
+            }
+            if(t == '3'){
+            	init_type4(id)
+            }
             $('#update_model_'+id).show()
         });
  
-        function initValidator(id){
-            $('#update_form_'+id).bootstrapValidator({
-    　　　　　　  message: 'This value is not valid',
-            　  feedbackIcons: {
-                　　　　　　　　valid: 'glyphicon glyphicon-ok',
-                　　　　　　　　invalid: 'glyphicon glyphicon-remove',
-                　　　　　　　　validating: 'glyphicon glyphicon-refresh'
-            　　　　　　　　   },
-
-                fields: {
-
-                    number: {
-                        message: '设备编号不能为空',
-                        validators: {
-                            notEmpty: {
-                                message: '设备编号不能为空'
-                            },
-                            stringLength: {
-                                     min: 3,
-                                     max: 20,
-                                     message: '设备编号长度必须在3到20之间'
-                                 },
-                            remote:{
-                                url: '',
-                                data:function(validator) {
-                                    return {
-                                        id: $( '#update_form_'+id + ' input[name=id]').val(),
-                                        number: $('#update_form_'+id + ' input[name=number]').val(),
-                                        action: 'validate',
-                                    }
-                                },
-                                type:'post',
-                                message: '设备编号已存在'
-                            }
-                        }
-                    },
-
-                }
-            });
-        }
-
 
     });
-
-
 
     </script>
 
