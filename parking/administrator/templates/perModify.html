@@ -117,7 +117,8 @@
 {% block js %}
 
  <script>
-   
+    $('.chosen-select').chosen();
+    $('.chosen-select').next().css('width', '100%');
     initValidator('#modify_form','')
 
     
