@@ -89,9 +89,12 @@ def user(request):
     if request.method == 'POST':
         action = request.POST.get('action','')
         if action == 'add':
-
             r = AdminUser()
             _save_attr_(r, request)
+            role = request.POST.get('user_role','')
+            if role:
+                r.role_name = Role.objects.filter(id=role).first()
+                r.save()
         elif action == 'update':
             id = request.POST.get('id', '')
             r = AdminUser.objects.filter(id=id)
@@ -103,6 +106,13 @@ def user(request):
             for item in u:
                 item.status = -1
                 item.save()
+        elif action == 'validate':
+            user_name = request.POST.get('user_name', '')
+            r = AdminUser.objects.filter(user_name=user_name.strip())
+            if r.exists():
+                    return JsonResponse({'valid': False})
+
+            return JsonResponse({'valid': True})
 
 
 

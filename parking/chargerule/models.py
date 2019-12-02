@@ -204,6 +204,9 @@ class Card(models.Model):
 
         if diff > 0:
             results = nor_one_cal(self,start,get_time(23,start)) +(diff-1)*price1 + nor_one_cal(self,get_time(0,end),end)
+        else:
+            results = nor_one_cal(self,start,end)
+        return results
 
 
 

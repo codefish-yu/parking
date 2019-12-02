@@ -34,6 +34,9 @@
                                     <div class="form-group">
                                         <select data-placeholder="用户角色" class="form-control chosen-select" id="Parking_ID" name="Parking_ID" >
                                             <option value="">选择用户角色</option>
+                                            {% for j in roles %}
+                                            <option value="{{j.id}} ">{{j.role_name}} </option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                     
@@ -43,8 +46,8 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
-                                <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                <button onblur="sh()" type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                                <button type="button" id="update-btn" class="btn btn-primary " onblur="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
                                 <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button>
                             </div>
@@ -117,13 +120,13 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">用户密码</label>
                             <div class="col-sm-4">
-                                <input type="text" name="user_pass" class="form-control" value="{{ i.user_pass}} ">
+                                <input type="password" name="user_pass" class="form-control" value="{{ i.user_pass}} ">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">确认密码</label>
                             <div class="col-sm-4">
-                                <input type="text" name="conf_pass" class="form-control required" >
+                                <input type="password" name="conf_pass" class="form-control required" >
                             </div>
                         </div>
                         <div class="form-group">
@@ -205,13 +208,13 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">用户密码</label>
                             <div class="col-sm-4">
-                                <input type="text" id='user_pass' name="user_pass" class="form-control">
+                                <input type="password" id='user_pass' name="user_pass" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">确认密码</label>
                             <div class="col-sm-4">
-                                <input type="text" id='conf_pass' name="conf_pass" class="form-control required">
+                                <input type="password" id='conf_pass' name="conf_pass" class="form-control required">
                             </div>
                         </div>
                         <div class="form-group">
@@ -280,31 +283,7 @@
 {% block js %}
  <script>
 
-        var sstart = { elem: "#sstart", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false, choose: function (datas) { send.min = datas; send.start = datas } };
-
-        var send = { elem: "#send", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false, choose: function (datas) { sstart.max = datas } }; laydate(sstart); laydate(send);
-
-
-
-        var estart = { elem: "#estart", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false, choose: function (datas) { eend.min = datas; eend.start = datas } };
-
-        var eend = { elem: "#eend", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false, choose: function (datas) { estart.max = datas } }; laydate(estart); laydate(eend);
-
-
-        $("#estart").val("");
-
-        $("#eend").val("");
-
-
-
-        $("#sstart").val("");
-
-        $("#send").val("");
-
-        $('#Parking_ID').chosen();
-        $("#Parking_ID").trigger("chosen:updated");
-
-        var cnPicker = new CarnoPicker('#Car_CarNo'); cnPicker.init();
+      
 
 
 
@@ -903,66 +882,12 @@
 
 
 
-        $(function () { 
-            // pager.init(); 
-
-
-
-// add form validate
-            $('#add_form').bootstrapValidator({
-
-　　　　　　　　  message: 'This value is not valid',
-            　 feedbackIcons: {
-                　　　　　　　　valid: 'glyphicon glyphicon-ok',
-                　　　　　　　　invalid: 'glyphicon glyphicon-remove',
-                　　　　　　　　validating: 'glyphicon glyphicon-refresh'
-            　　　　　　　　   },
-
-                fields: {
-                    role_name: {
-                        message: '角色名不能为空',
-                        validators: {
-                            notEmpty: {
-                                message: '角色名不能为空'
-                            },
-                            stringLength: {
-                                     min: 3,
-                                     max: 20,
-                                     message: '角色名长度必须在3到20之间'
-                                 },
-                            remote:{
-                                url: '',
-                                data:function(validator) {
-                                    return {
-                                        role_name: $('#add_form input[name=role_name]').val(),
-                                        action: 'validate',
-                                        csrfmiddlewaretoken:'{{ csrf_token  }}'
-                                    }
-                                },
-                                type:'post',
-                                message: '角色名已存在'
-                            }
-                        }
-                    }
-                }
-            });
-
-
-// update form validate 
-            
-
-            $('#update-btn').click(function(){
-                var ids = $('input[name=ids]:checked')
-                if(ids.length == 1){
-                    initValidator(ids[0].value)
-
-                    $('#update_model_'+ids[0].value).show()
-                }
-            })
-
-        });
-    function initValidator(id){
-                $('#update_form_'+id).bootstrapValidator({
+    
+    function sh(){
+        initValidator('#add_form','')
+    }
+    function initValidator(name,id){
+                $(name).bootstrapValidator({
 
     　　　　　　　　  message: 'This value is not valid',
                 　 feedbackIcons: {
@@ -972,34 +897,62 @@
                 　　　　　　　　   },
 
                     fields: {
-                        role_name: {
-                            message: '角色名不能为空',
+                        user_name: {
+                            message: '用户名不能为空',
                             validators: {
                                 notEmpty: {
-                                    message: '角色名不能为空'
+                                    message: '用户名不能为空'
                                 },
                                 stringLength: {
                                      min: 3,
                                      max: 20,
-                                     message: '角色名长度必须在3到20之间'
+                                     message: '用户名长度必须在3到20之间'
                                  },
                                 remote:{
                                     url: '',
                                     data:function(validator) {
                                         return {
-                                            id: $('#update_form_'+id + ' input[name=id]').val(),
-                                            role_name: $('#update_form_'+id + ' input[name=role_name]').val(),
+                                            role_name: $(name + ' input[name=user_name]').val(),
                                             action: 'validate',
                                             csrfmiddlewaretoken:'{{ csrf_token  }}'
                                         }
                                     },
                                     type:'post',
-                                    message: '角色名已存在'
+                                    message: '用户名已存在'
                                 }
                             },
 
                             
-                        }
+                        },
+                        user_pass: {
+                            validators: {
+                                notEmpty: {
+                                    message: '密码不能为空'
+                                }
+                            }
+                        },
+                        conf_pass: {
+                            validators: {
+                                notEmpty: {
+                                    message: '密码不能为空'
+                                },
+                                identical: {
+                                    field: 'user_pass',
+                                    message: '密码输入不一致'
+                                }
+                            }
+                        },
+                        phone: {
+                            validators: {
+                                notEmpty: {},
+                                digits: {},
+                                phone: {
+                                    country: 'CN',
+                                    message: '请输入十一位手机号码'
+                                }
+                            }
+                        },
+
                     }
                 });
     }
@@ -1008,11 +961,13 @@
     function change(){
         var ids = $('input[name=ids]:checked')
                 if(ids.length == 1){
-                    initValidator(ids[0].value)
+                    initValidator('#update_form_'+ids[0].value,ids[0].value)
 
                     $('#update_model_'+ids[0].value).show()
                 }
     }
+    $('.chosen-select').chosen();
+    $('.chosen-select').next().css('width', '100%');
     </script>
 
 {% endblock %}
