@@ -29,7 +29,7 @@
                                 <form id='query_form' action='' method="post">
                                     {% csrf_token %}
                                     <div class="form-group">
-                                        <select name="busi_name" data-placeholder="商家名称" class="form-control chosen-select">
+                                        <select data-placeholder="商家名称" name="busi_name" class="form-control chosen-select">
                                             <option value="">选择商家名称</option>
                                             {% for i in company %}
                                             <option value="{{i.id}} ">{{i.name}} </option>
