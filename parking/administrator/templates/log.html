@@ -7,7 +7,7 @@
                     <div class="ibox-title">
                         <ol class="col-lg-5 breadcrumb">
                             <li>系统配置</li>
-                            <li>角色管理</li>
+                            <li>日志管理</li>
                         </ol>
                         <div class="ibox-tools">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -29,7 +29,7 @@
                                 {% csrf_token %}
                                 <div class="form-inline">
                                     <div class="form-group">
-                                        <input type="text" placeholder="角色名" class="form-control" id="role_name" name="role_name" value='{{role_name}}'>
+                                        <input type="text" placeholder="" class="form-control" id="role_name" name="role_name" value='{{role_name}}'>
                                     </div>
                                     <div class="form-group">
                                         <input type='hidden' name='action' value='search' />
@@ -57,8 +57,8 @@
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>角色名称</th>
-                                        <th>说明</th>
+                                        <th></th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody id="data-view">
@@ -164,112 +164,3 @@
     </div>
 {% endblock %}
 
-{% block js %}
- <script>
- 
-
-
-    $(function () { 
-            // pager.init(); 
-
-        // add form validate
-            $('#add_form').bootstrapValidator({
-
-　　　　　　　　  message: 'This value is not valid',
-            　 feedbackIcons: {
-                　　　　　　　　valid: 'glyphicon glyphicon-ok',
-                　　　　　　　　invalid: 'glyphicon glyphicon-remove',
-                　　　　　　　　validating: 'glyphicon glyphicon-refresh'
-            　　　　　　　　   },
-
-                fields: {
-                    role_name: {
-                        message: '角色名不能为空',
-                        validators: {
-                            notEmpty: {
-                                message: '角色名不能为空'
-                            },
-                            stringLength: {
-                                     min: 3,
-                                     max: 20,
-                                     message: '角色名长度必须在3到20之间'
-                                 },
-                            remote:{
-                                url: '',
-                                data:function(validator) {
-                                    return {
-                                        role_name: $('#add_form input[name=role_name]').val(),
-                                        action: 'validate',
-                                        csrfmiddlewaretoken:'{{ csrf_token  }}'
-                                    }
-                                },
-                                type:'post',
-                                message: '角色名已存在'
-                            }
-                        }
-                    }
-                }
-            });
-
-
-// update form validate 
-            
-
-            $('#update-btn').click(function(){
-                var ids = $('input[name=ids]:checked')
-                console.info(ids)
-                if(ids.length == 1){
-                    var id = $(ids[0]).val()
-                    $.ajax({
-                        url: '/administrator/role/'+id+'/',
-                        method: 'post',
-                        dataType: 'html',
-                        success: function(data){
-                            $('#update_model').html(data)
-                            $('#update_model').show()
-                        }
-                    })
-                }
-            });
-
-            $('.menu').click(function(){
-                var checked = $(this).prop('checked')
-                $(this).parent().find('input[type=checkbox]').prop('checked', checked)
-            })
-            $('.child_menu').click(function(){
-                var checked = $(this).prop('checked')
-                $(this).parent().find('.operation').prop('checked', checked)
-                
-                if($(this).parent().parent().find('.child_menu:checked').length >0){
-                    $(this).parent().parent().find('.menu').prop('checked', true)
-                }else{
-                    $(this).parent().parent().find('.menu').prop('checked', false)
-                }
-            })
-            $('.operation').click(function(){
-                var checked = $(this).prop('checked')
-
-                if($(this).parent().find('.operation:checked').length >0){
-                    $(this).parent().parent().find('.child_menu').prop('checked', true)
-                }else{
-                    $(this).parent().parent().find('.child_menu').prop('checked', false)
-                }
-
-                if($(this).parent().parent().find('.child_menu:checked').length >0){
-                    $(this).parent().parent().parent().find('.menu').prop('checked', true)
-                }else{
-                    $(this).parent().parent().parent().find('.menu').prop('checked', false)
-                }
-
-            })
-
-
-
-
-        });
-
-
-
-    </script>
-
-{% endblock %}
