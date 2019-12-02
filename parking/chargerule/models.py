@@ -1,9 +1,11 @@
 from django.db import models
-
-
 from administrator.models import AdminUser as User
 from parkinglot.models import ParkingLot 
 from company.models import Company
+import datetime
+
+# Create your models here.
+
 
 
 '''计费规则模块'''
@@ -111,6 +113,8 @@ class TicketRecord(models.Model):
             return self.coupon.name
         elif self.hourticket:
             return self.hourticket.name
+
+
 class CardType(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '月卡类型'
@@ -135,9 +139,17 @@ class Card(models.Model):
     workdays = models.TextField(null=True , blank=True, verbose_name='工作日')
     holidays = models.TextField(null=True , blank=True, verbose_name='节假日')
 
+    def get_time(datetime,end):
+        if datetime <10:
+            datetime = '0'+str(datetime)
+
+        st = str(end.year)+'-'+str(end.month)+'-'+str(end.day) +' '+datetime+':00:00'
+        return datetime.datetime.strptime(st,'%Y-%m-%d %H:%M:%S')
+
+
 
     def set_valid_date(self):
-        import datetime
+        
 
         self.valid_start =now
         now = datetime.datetime.now()
@@ -150,10 +162,58 @@ class Card(models.Model):
         else:
             while  diff < 2:
                 end += datetime.timedelta(days=1)
-        str = datetime.date.strftime(now,"%Y %m %H:%M:%S")
-        # end = end - datetime.timedelta(days=1)
-        st = str(end.year)+'-'+str(end.month)+'-'+str(end.day) +' '+'00:00:00'
-        self.valid_end = datetime.datetime.strptime(st,'%Y-%m-%d %H:%M:%S')
+
+        self.valid_end = get_time(0,end)
+        self.save()
+
+    # 普通月卡计费
+    def normal_card_cal(self,start,end):
+
+        # 参数：start,end 
+        # type:datetime
+
+        # 计算单日需计费小时数
+        def nor_one_cal(obj,start,end):
+            o_start = obj.valid_start
+            o_end = obj.valid_end
+            diff2 = start.hour - o_start.hour
+            diff3 = end.hour - o_end.hour
+            diff4 = end.hour - o_start.hour
+            diff5 = start.hour - o_end.hour
+            e_mi = end.minute/60
+            s_mi = start.minute/60  
+            if diff2 < 0 :
+                if diff3 >=0:
+                    result = - diff2 - diff3 +e_mi - s_mi   
+                else:
+                    if diff4 < 0:
+                        result = end + e_mi - start - s_mi
+                    else:
+                        result = o_start - start - s_mi
+            else:
+                if diff5 <0:
+                    result = end + e_mi -o_end.hour
+                else:
+                    result = end + e_mi - start - s_mi
+            return result
+
+
+        diff = end.day-start.day
+        diff1 = self.valid_end - self.valid_start 
+        price1 = 24-diff1
+
+        if diff > 0:
+            results = nor_one_cal(self,start,get_time(23,start)) +(diff-1)*price1 + nor_one_cal(self,get_time(0,end),end)
+
+
+
+
+
+
+
+
+
+
 
 
 
