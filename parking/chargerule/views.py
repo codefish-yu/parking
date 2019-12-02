@@ -70,7 +70,7 @@ def card_type(request):
 def coupon_type(request):
     ''' 优惠券类型设置 ''' 
     
-    ctx = {}
+    ctx = {'type': '0'}
 
     objects = []
 
@@ -96,7 +96,7 @@ def coupon_type(request):
  
         elif action == 'update':
             id = request.POST.get('id', '')
-
+            print(id)
             r = R.objects.filter(id=id).first()
             _save_attr_(r, request)
              
@@ -142,7 +142,7 @@ def coupon_type(request):
 
         #     return JsonResponse({'valid': True})
 
-    ctx['objects'] = objects
+    ctx['objects'] = objects.order_by('-update_time') if objects else objects
    
     return (ctx, 'coupon_type.html')
 
