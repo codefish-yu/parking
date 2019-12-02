@@ -72,7 +72,7 @@ class Place(models.Model):
 
 	status = models.IntegerField(default=0)
 	car_type = models.IntegerField(null=True, choices=[(0,'小型车'),(1,'中型车'),(2,'大型车')], verbose_name='车辆类型')
-	use_type = models.IntegerField(verbose_name='使用类型',choices=[(0,'临停车'),(1,'长租车')] ,default=0,null=True)
+	use_type = models.IntegerField(verbose_name='使用类型',choices=[(0,'临停车'),(1,'月租车')] ,default=0,null=True)
 	parkinglot = models.ForeignKey('ParkingLot',null=True,on_delete=models.CASCADE,verbose_name='所属车场')
 	zone = models.ForeignKey('Zone',null=True,on_delete=models.CASCADE,verbose_name='所属区域')
 
