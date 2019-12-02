@@ -37,6 +37,7 @@ urlpatterns = [
     path('login/',a.login),
     path('base/', a.base),   
     path('index/', a.index),
+    path('administrator/log/', a.log),
     path('administrator/role/', a.role),
     path('administrator/role/<int:id>/', a.get_role),
     path('administrator/user/',a.user),

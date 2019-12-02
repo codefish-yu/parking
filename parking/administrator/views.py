@@ -74,6 +74,11 @@ def index(request):
     return render(request, 'index.html')
 
 
+def log(request):
+    
+    return render(request, 'log.html')
+
+
 # @page
 def user(request):
     ctx = {}
