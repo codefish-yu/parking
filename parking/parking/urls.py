@@ -33,7 +33,6 @@ urlpatterns = [
 
 
     # administrator
-
     path('',a.base),
     path('login/',a.login),
     path('base/', a.base),   
@@ -49,12 +48,7 @@ urlpatterns = [
 
 
     # car 
-
-    path('car/inner_car/', car.inner_car),
-    
-
-
-    
+    path('car/inner_car/', car.inner_car),  
     # parkinglot
 
     path('parkinglot/parking_lot/',park.parking_lot),

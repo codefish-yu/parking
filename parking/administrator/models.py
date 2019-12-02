@@ -11,11 +11,11 @@ class AdminUser(models.Model):
         verbose_name = verbose_name_plural = '系统用户'
 
     user_name = models.CharField(max_length=30, unique=True, verbose_name='用户账号')
-    user_pass = models.CharField(max_length=30, unique=True, verbose_name='密码')
+    user_pass = models.CharField(max_length=30,  verbose_name='密码')
     role_name = models.ForeignKey('Role',null=True,on_delete=models.CASCADE)
-    phone = models.IntegerField(unique=True,verbose_name='电话号码',default=0)
+    phone = models.IntegerField(verbose_name='电话号码',default=0)
     sex = models.IntegerField(null=True,choices=[(0,'男'),(1,'女')],verbose_name='性别' ,default=0)
-    real_name = models.CharField(max_length=30, unique=True, verbose_name='姓名')
+    real_name = models.CharField(max_length=30,verbose_name='姓名')
     remark = models.CharField(max_length=100,verbose_name='备注')
 
     def display_sex(self):

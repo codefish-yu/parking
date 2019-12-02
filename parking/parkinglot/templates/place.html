@@ -29,7 +29,7 @@
                                 <form id='query_form' action='' method="post">
                                     {% csrf_token %}
                                     <div class="form-group">
-                                        <select data-placeholder="车辆类型" class="form-control chosen-select" id="Parking_ID" name="car_type">
+                                        <select data-placeholder="车辆类型" class="form-control chosen-select" id="car_type" name="car_type">
                                             <option value="" {% if not c %}selected{% endif %} >选择车辆类型</option>
                                             <option value="0" {% if c == '0' %}selected{% endif %}>小型车</option>
                                             <option value="1" {% if c == '1' %}selected{% endif %}>中型车</option>
@@ -37,14 +37,14 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <select data-placeholder="使用类型" class="form-control chosen-select" id="Parking_ID" name="use_type">
+                                        <select data-placeholder="使用类型" class="form-control chosen-select" id="use_type" name="use_type">
                                             <option value="" {% if not u %}selected{% endif %}>选择使用类型</option>
                                             <option value="0" {% if u == '0' %}selected{% endif %}>临停车</option>
                                             <option value="1" {% if u == '1' %}selected{% endif %}>长停车</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <select data-placeholder="所属车场" class="form-control chosen-select" id="Parking_ID" name="parkinglot" onchange="getZ(this,0)">
+                                        <select data-placeholder="所属车场" class="form-control chosen-select" id="parkinglot" name="parkinglot" onchange="getZ(this,0)">
                                             <option value="" {% if not p %}selected{% endif %}>选择停车场 </option>
                                             {% for m in parkinglots %}
                                             <option value="{{m.id}} " {% if p == m.id %}selected{% endif %}>{{m.name}} </option>

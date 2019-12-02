@@ -42,6 +42,15 @@ def company(request):
 			r = Refund()
 			_save_attr_(r, request)
 
+		elif action == 'validate':
+			account = request.POST.get('account','')
+			r = Company.objects.filter(account=account.strip())
+			if r.exists():
+				return JsonResponse({'valid': False})
+
+			return JsonResponse({'valid': True})
+
+
 	ctx['objects'] = ctx['company'] = Company.objects.exclude(status=-1).all()
 
 	return (ctx,'company.html')

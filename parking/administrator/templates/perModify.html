@@ -37,7 +37,7 @@
             <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改信息</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
-                    <form id='modify_form action='' method="post">
+                    <form id='modify_form' action='' method="post">
                         {% csrf_token %}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">用户账号</label>
@@ -48,13 +48,13 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">用户密码</label>
                             <div class="col-sm-4">
-                                <input type="text" name="user_pass" class="form-control" value="{{ me.user_pass}} ">
+                                <input type="password" name="user_pass" class="form-control" value="{{ me.user_pass}} ">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">确认密码</label>
                             <div class="col-sm-4">
-                                <input type="text" name="conf_pass" class="form-control required" >
+                                <input type="password" name="conf_pass" class="form-control required" >
                             </div>
                         </div>
                         <div class="form-group">
@@ -115,9 +115,83 @@
 {% endblock %}
 
 {% block js %}
- <script>
 
-       
+ <script>
+   
+    initValidator('#modify_form','')
+
+    
+       function initValidator(name,id){
+                $(name).bootstrapValidator({
+
+    　　　　　　　　  message: 'This value is not valid',
+                　 feedbackIcons: {
+                    　　　　　　　　valid: 'glyphicon glyphicon-ok',
+                    　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+                    　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+                　　　　　　　　   },
+
+                    fields: {
+                        user_name: {
+                            message: '用户名不能为空',
+                            validators: {
+                                notEmpty: {
+                                    message: '用户名不能为空'
+                                },
+                                stringLength: {
+                                     min: 3,
+                                     max: 20,
+                                     message: '用户名长度必须在3到20之间'
+                                 },
+                                remote:{
+                                    url: '',
+                                    data:function(validator) {
+                                        return {
+                                            id: $(name + ' input[name=id]').val(),
+                                            role_name: $(name + ' input[name=user_name]').val(),
+                                            action: 'validate',
+                                            csrfmiddlewaretoken:'{{ csrf_token  }}'
+                                        }
+                                    },
+                                    type:'post',
+                                    message: '用户名已存在'
+                                }
+                            },
+
+                            
+                        },
+                        user_pass: {
+                            validators: {
+                                notEmpty: {
+                                    message: '密码不能为空'
+                                }
+                            }
+                        },
+                        conf_pass: {
+                            validators: {
+                                notEmpty: {
+                                    message: '密码不能为空'
+                                },
+                                identical: {
+                                    field: 'user_pass',
+                                    message: '密码输入不一致'
+                                }
+                            }
+                        },
+                        phone: {
+                            validators: {
+                                notEmpty: {},
+                                digits: {},
+                                phone: {
+                                    country: 'CN',
+                                    message: '请输入十一位手机号码'
+                                }
+                            }
+                        },
+
+                    }
+                });
+    }
     </script>
 
 {% endblock %}

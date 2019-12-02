@@ -258,24 +258,22 @@ def place(request):
 			park = request.POST.get('parkinglot')
 			zon = request.POST.get('zone')
 
-			if use_type:
+			if use_type != '':
 				place = place.filter(use_type=use_type)
-			if car_type:
+			if car_type != '':
 				place = place.filter(car_type=car_type)
-			if park:
+			if park != '':
 				place = place.filter(parkinglot__id=park)
-			if zon:
+			if zon != '':
 				place = place.filter(zone__id=zon)
 
 			ctx['u'] = use_type
 			ctx['c'] = car_type
-			ctx['p'] = int(park)
+			ctx['p'] = park
 
 		elif action == 'getZone':
 			
 			id = request.POST.get('id')
-			print(11111)
-			print(id)
 			zones = zone.filter(parkinglot__id=id).all()
 			tmp =[]
 
