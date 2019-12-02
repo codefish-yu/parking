@@ -14,7 +14,7 @@ def user_required(view_func):
 
     def wrapper(request, *args, **kwargs):
         if 'uid' not in request.session:
-            return redirect('login/')
+            return redirect('/login/')
 
         user = AdminUser.objects.filter(id=request.session['uid']).first()
         return view_func(request, me=user, *args, **kwargs)
