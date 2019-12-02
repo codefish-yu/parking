@@ -116,7 +116,7 @@ def user(request):
 
 
 
-    ctx['users'] = users
+    ctx['users'] = users.exclude(status=-1).all()
     ctx['roles'] = roles
 
     return render(request,'user.html',ctx)

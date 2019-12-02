@@ -121,8 +121,10 @@ class CardType(models.Model):
 
     status = models.IntegerField(default=0)
     name = models.CharField(max_length=30, verbose_name='名称')
-    rule = models.CharField(max_length=100,verbose_name='描述',null=True)
-    suit = models.duoshipin = models.ManyToManyField(ParkingLot, verbose_name='可用停车场')
+    work_start = models.CharField(max_length=30,null=True,verbose_name='工作开始')
+    work_end = models.CharField(max_length=30,null=True,verbose_name='工作结束')
+    relax_start = models.CharField(max_length=30,null=True,verbose_name='休息开始')
+    relax_end = models.CharField(max_length=30,null=True,verbose_name='休息结束')
  
 
 class Card(models.Model):
@@ -134,8 +136,6 @@ class Card(models.Model):
     my_card = models.ForeignKey('CardType',null=True,blank=True, on_delete=models.CASCADE,verbose_name='卡片类型')
     valid_start = models.DateTimeField(null=True , blank=True, verbose_name='有效开始')
     valid_end = models.DateTimeField(null=True , blank=True, verbose_name='有效结束')
-    work_start = models.CharField(max_length=30,null=True,verbose_name='工作开始')
-    work_start = models.CharField(max_length=30,null=True,verbose_name='工作结束')
     workdays = models.TextField(null=True , blank=True, verbose_name='工作日')
     holidays = models.TextField(null=True , blank=True, verbose_name='节假日')
 

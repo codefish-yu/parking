@@ -25,35 +25,37 @@ def card_type(request):
     ctx = {}
 
 
-    def correct_card_type(request,obj):
-        name = request.POST.get('name')
-        rule = request.POST.get('rule')
-        suit = request.POST.getlist('suit',[])
+    # def correct_card_type(request,obj):
+    #     name = request.POST.get('name')
+    #     rule = request.POST.get('rule')
+    #     # suit = request.POST.getlist('suit',[])
 
-        obj.name = name if name else ''
-        obj.rule = rule if rule else ''
-        obj.save()
-        obj.suit.clear()
+    #     obj.name = name if name else ''
+    #     obj.rule = rule if rule else ''
+    #     obj.save()
+    #     # obj.suit.clear()
 
-        for i in suit:
-            obj.suit.add(ParkingLot.objects.filter(id=int(i)).first())
+    #     for i in suit:
+    #         obj.suit.add(ParkingLot.objects.filter(id=int(i)).first())
 
-        obj.save()
+    #     obj.save()
 
     if request.method == 'POST':
         action = request.POST.get('action','')
         if action == 'add':
             r = CardType()
-            correct_card_type(request,r)
+            # correct_card_type(request,r)
+            _save_attr_(r,request)
 
         if action == 'update':
             id = request.POST.get('id','')
             r = CardType.objects.filter(id=id).first()
-            correct_card_type(request,r)
+            _save_attr_(r,request)
 
         if action == 'delete':
             ids = request.POST.getlist('ids', '')
             u = CardType.objects.filter(id__in=ids).all()
+
             for item in u:
                 item.status = -1
                 item.save()
