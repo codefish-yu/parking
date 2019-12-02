@@ -1,5 +1,5 @@
 from django.urls import path
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -20,7 +20,6 @@ def user_required(view_func):
         return view_func(request, me=user, *args, **kwargs)
 
     return wrapper
-    pass
 
 
 '''分页查询'''
