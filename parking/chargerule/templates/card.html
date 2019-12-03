@@ -27,8 +27,8 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
-                                <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;开卡</button>
+                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;续卡</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
                                 <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
                                 <!-- <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button> -->
@@ -122,6 +122,16 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="col-sm-2 control-label">所属停车场</label>
+                            <div class="col-sm-4">
+                                <select name='suit' class="form-control required" multiple>
+                                    {% for n in parkinglot %}
+                                    <option value="{{ n.id}}" {% if n in i.suit.all %}selected{% endif %}>{{ n.name}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <input type="hidden" name="id" class="form-control" value='{{i.id}}'>
                                 <input type="hidden" name="action" class="form-control" value='update'>
@@ -181,10 +191,17 @@
                                 <input placeholder="截止日期" class="laydate-icon form-control layer-date" name="valid_end" id='valid_timea_2'>
                             </div>
                         </div>
-                       <!--  <div class="form-group">
-                            <label class="col-sm-2 control-label">工作日</label>
-                           
-                        </div> -->
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">所属停车场</label>
+                            <div class="col-sm-4">
+                                <select name='suit' class="form-control required" multiple>
+                                    {% for n in parkinglot %}
+                                    <option value="{{ n.id}}" >{{ n.name}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                      
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <input type="hidden" name="action" class="form-control" value='add'>

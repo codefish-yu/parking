@@ -8,6 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import re
 import json
+import xlwt
 
 
 def user_required(view_func):
@@ -70,5 +71,16 @@ def _save_attr_(obj,request):
             if value:
                 obj.__setattr__(field_name, value)
     
-    obj.save()
+def export_excel(obj,name):
+    e = xlwt.Workbook(encoding='utf-8')
+    w = e.add_sheet(name)
+    tip =0
+    for i in obj._meta.fields:
+        w.write(0,tip,i.verbose_name)
+        tip += 1
+
+    return w
+
+
+
   

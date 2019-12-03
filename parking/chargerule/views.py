@@ -7,7 +7,7 @@ from .models import *
 from company.models import Company
 from parkinglot.models import ParkingLot
 from administrator.models import AdminUser 
-from administrator.decorators import page, _save_attr_
+from administrator.decorators import page, _save_attr_,export_excel
 
 
 '''计费规则管理'''
@@ -277,9 +277,11 @@ def card(request):
     '''卡片管理'''
 
     ctx ={}
+    cards = Card.objects.filter(status=0).all()
     def correct_obj(request,r):
         owner_id = request.POST.get('owner', '')
         card_id = request.POST.get('my_card', '')
+        suit = request.POST.getlist('suit',[])
         if owner_id:
             p = AdminUser.objects.filter(id=owner_id).first()
             if p: 
@@ -290,6 +292,11 @@ def card(request):
             if p: 
                 r.my_card = p
         r.save()
+        if suit:
+            for i in suit:
+                if i not in r.suit.all():
+                    r.suit.add(ParkingLot.objects.filter(id=int(i)).first())
+            r.save()
 
     if request.method == 'POST':
         action = request.POST.get('action','')
@@ -314,10 +321,25 @@ def card(request):
                 item.status = -1
                 item.save()
 
+        # if action == 'export':
+        #     w = export_excel(cards,u'开卡管理')
+        #     row = 1
+        #     for i  in cards:
+        #         w.write(row, 0, i.owner)
+        #         w.write(row, 1, i.my_card)
+        #         w.write(row, 2, i.valid_start)
+        #         w.write(row, 3, i.valid_end)
+        #         for j in i.suit.all():
+                    
+
+
+
+
 
     ctx['users'] = AdminUser.objects.all()
     ctx['cardtypes'] = CardType.objects.filter(status=0).all()
-    ctx['cards'] = ctx['objects'] = Card.objects.filter(status=0).all()
+    ctx['cards'] = ctx['objects'] = cards
+    ctx['parkinglot'] = ParkingLot.objects.all()
     return (ctx, 'card.html')
 
 

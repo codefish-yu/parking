@@ -125,6 +125,22 @@ class CardType(models.Model):
     work_end = models.CharField(max_length=30,null=True,verbose_name='工作结束')
     relax_start = models.CharField(max_length=30,null=True,verbose_name='休息开始')
     relax_end = models.CharField(max_length=30,null=True,verbose_name='休息结束')
+    diff_type = models.IntegerField(null=True,verbose_name='减免指标',choices=[(0,'工作日'),(1,'单日')],default=0)
+    free_start = models.CharField(max_length=30,null=True,verbose_name='周一优惠开始') 
+    free_end = models.CharField(max_length=30,null=True,verbose_name='周一优惠结束')
+    free_start_tu = models.CharField(max_length=30,null=True,verbose_name='周二优惠开始') 
+    free_end_tu = models.CharField(max_length=30,null=True,verbose_name='周二优惠结束')
+    free_start_we = models.CharField(max_length=30,null=True,verbose_name='周三优惠开始') 
+    free_end_we = models.CharField(max_length=30,null=True,verbose_name='周三优惠结束')
+    free_start_th = models.CharField(max_length=30,null=True,verbose_name='周四优惠开始') 
+    free_end_th = models.CharField(max_length=30,null=True,verbose_name='周四优惠结束')
+    free_start_fr = models.CharField(max_length=30,null=True,verbose_name='周五优惠开始') 
+    free_end_fr = models.CharField(max_length=30,null=True,verbose_name='周五优惠结束')
+    free_start_sa = models.CharField(max_length=30,null=True,verbose_name='周六优惠开始') 
+    free_end_sa = models.CharField(max_length=30,null=True,verbose_name='周六优惠结束')
+    free_start_su = models.CharField(max_length=30,null=True,verbose_name='周日优惠开始') 
+    free_end_su = models.CharField(max_length=30,null=True,verbose_name='周日优惠结束')
+
  
 
 class Card(models.Model):
@@ -136,8 +152,7 @@ class Card(models.Model):
     my_card = models.ForeignKey('CardType',null=True,blank=True, on_delete=models.CASCADE,verbose_name='卡片类型')
     valid_start = models.DateTimeField(null=True , blank=True, verbose_name='有效开始')
     valid_end = models.DateTimeField(null=True , blank=True, verbose_name='有效结束')
-    workdays = models.TextField(null=True , blank=True, verbose_name='工作日')
-    holidays = models.TextField(null=True , blank=True, verbose_name='节假日')
+    suit = models.ManyToManyField(ParkingLot,verbose_name='所属停车场',related_name='parkinglot_card')
 
     def get_time(datetime,end):
         if datetime <10:
@@ -207,6 +222,7 @@ class Card(models.Model):
         else:
             results = nor_one_cal(self,start,end)
         return results
+
 
 
 

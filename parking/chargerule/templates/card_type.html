@@ -44,6 +44,13 @@
                                         <th>卡片名称</th>
                                         <th>工作时间段</th>
                                         <th>非工作时间段</th>
+                                        <th>周一</th>
+                                        <th>周二</th>
+                                        <th>周三</th>
+                                        <th>周四</th>
+                                        <th>周五</th>
+                                        <th>周六</th>
+                                        <th>周日</th>
                                     </tr>
                                 </thead>
                                 <tbody id="data-view">
@@ -55,14 +62,31 @@
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{i.id}} </td>
                                             <td>{{ i.name }}</td>
-                                            <td>{{i.work_start}}- {{i.work_end}}</td>
-                                            <td>
-                                                {{i.relax_start}}- {{i.relax_end}}
-                                            </td>
+                                            {% if i.diff_type == 0 %}
+                                            <td>{{i.work_start}} - {{i.work_end}}</td>
+                                            <td>{{i.relax_start}} - {{i.relax_end}}</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            {% else%}
+                                            <td></td>
+                                            <td></td>
+                                            <td>{{i.free_start }} - {{i.free_end }} </td>
+                                            <td>{{i.free_start_tu }} - {{i.free_end_tu }} </td>
+                                            <td>{{i.free_start_we }} - {{i.free_end_we }} </td>
+                                            <td>{{i.free_start_th }} - {{i.free_end_th }} </td>
+                                            <td>{{i.free_start_fr }} - {{i.free_end_fr }} </td>
+                                            <td>{{i.free_start_sa }} - {{i.free_end_sa }} </td>
+                                            <td>{{i.free_start_su }} - {{i.free_end_su }} </td>
+                                            {% endif%}
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
-                                        <td colspan="11">没有找到匹配的记录</td>
+                                        <td colspan="12">没有找到匹配的记录</td>
                                     </tr>
                                     {% endfor %}
                                     </form>
@@ -83,7 +107,7 @@
 
 <!-- update model -->
     {% for i in cardtype %}
-        <div id='update_model_{{ i.id }}' class='model'>
+    <div id='update_model_{{ i.id }}' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
             <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改卡类</div>
@@ -91,30 +115,97 @@
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{i.id}}' action='' method="post" class="ups">
                         {% csrf_token %}
+    
                         <div class="form-group">
                             <label class="col-sm-2 control-label">卡片名称</label>
                             <div class="col-sm-4">
-                                <input type="text" id='name' name="name" class="form-control required" value="{{i.name}} ">
+                                <input type="text" name="name" class="name_{{forloop.counter}} form-control required" value="{{i.name}} ">
                             </div>
                         </div>
+                        {% if i.diff_type == 0 %}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">工作时间段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="work_start" id='work_start_{{forloop.counter}}' class="laydate-icon form-control layer-date" value="{{i.work_start}} ">
+                                <input type="text" name="work_start" class="work_start_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.work_start}}">
                             </div>
                             <div class="col-sm-4">
-                                <input type="text" name="work_end" id='work_end_{{forloop.counter}}' class="laydate-icon form-control layer-date" value="{{i.work_end}} ">
+                                <input type="text" name="work_end" class="work_end_{{forloop.counter}} laydate-icon form-control layer-date " value="{{i.work_end}} ">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">非工作时间段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="relax_start" id='relax_start_{{forloop.counter}}' class="laydate-icon form-control layer-date" value="{{i.relax_start}} ">
+                                <input type="text" name="relax_start" class="laydate-icon form-control layer-date relax_start_{{forloop.counter}}" value="{{i.relax_start}} ">
                             </div>
                             <div class="col-sm-4">
-                                <input type="text" name="relax_end" id='relax_end_{{forloop.counter}}' class="laydate-icon form-control layer-date" value="{{i.relax_end}} ">
+                                <input type="text" name="relax_end" class="relax_end_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.relax_end}} ">
                             </div>
                         </div>
+                        {% elif i.diff_type == 1 %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">周一优惠时段</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_start"  class="free_start_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start}} ">
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_end" class="free_end_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end}} ">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">周二优惠时段</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_start_tu" class="free_start_tu{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_tu}} ">
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_end_tu" class="free_end_tu{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_tu}} ">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">周三优惠时段</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_start_we" class="free_start_we{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_we}} ">
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_end_we" class="free_end_we{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_we}} ">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">周四优惠时段</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_start_th" class="free_start_th{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_th}} ">
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_end_th" class="free_end_th{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_th}} ">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">周五优惠时段</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_start_fr" class="free_start_fr{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_fr}} ">
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_end_fr" class="free_end_fr{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_fr}} ">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">周六优惠时段</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_start_sa"  class="free_start_sa{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_sa}} ">
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_end_sa"  class="free_end_sa{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_sa}} ">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">周日优惠时段</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_start_su" class="free_start_su{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_su}} ">
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" name="free_end_su" class="free_end_su{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_su}}">
+                            </div>
+                        </div>
+                        {% endif %}
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
@@ -144,51 +235,134 @@
             <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 新增卡类</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
-                    <form id='add_form' action='' method="post">
+                    <select data-placeholder="选择减免类别" class="form-control chosen-select" onchange="sel(this)">
+                        <option value="">选择减免类别</option>
+                        <option value="0">工作日</option>
+                        <option value="1">单日</option>
+                    </select>
+                    <form id='add_form' action='' method="post" style="display: none">
                         {% csrf_token %}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">卡片名称</label>
-                            <div class="col-sm-4">
-                                <input type="text" id='name' name="name" class="form-control required">
+                        <div id='type1' style="margin-top: 15px;">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">卡片名称</label>
+                                <div class="col-sm-4">
+                                    <input type="text" id='name' name="name" class="form-control required">
+                                </div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">工作时间段</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="work_start" id='work_start' class="laydate-icon form-control layer-date">
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="work_end" id='work_end' class="laydate-icon form-control layer-date">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">非工作时间段</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="relax_start" id='relax_start' class="laydate-icon form-control layer-date">
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="relax_end" id='relax_end' class="laydate-icon form-control layer-date">
+                                </div>
+                            </div>
+                            <input type="hidden" name="diff_type" id='diff_type' value="">
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">工作时间段</label>
-                            <div class="col-sm-4">
-                                <input type="text" name="work_start" id='work_start' class="laydate-icon form-control layer-date">
-                            </div>
-                            <div class="col-sm-4">
-                                <input type="text" name="work_end" id='work_end' class="laydate-icon form-control layer-date">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">非工作时间段</label>
-                            <div class="col-sm-4">
-                                <input type="text" name="relax_start" id='relax_start' class="laydate-icon form-control layer-date">
-                            </div>
-                            <div class="col-sm-4">
-                                <input type="text" name="relax_end" id='relax_end' class="laydate-icon form-control layer-date">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='add'>
+
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;" onclick="can()"><i class="fa fa-times"></i> 取消</button>
                             </div>
                         </div>
-                       <!-- <div class="form-group">
-                            <label class="col-sm-2 control-label">适用停车场</label>
-                            <div class="col-sm-4">
-                                <select name='suit' multiple="true" class="form-control required">
-                                    {% for j in parkinglots %}
-                                    <option value="{{j.id}}">{{ j.name}} </option>
-                                    {% endfor %}
-                                </select>
+                    </form>
+                    <form id='add_form1' action='' method="post" style="display: none">
+                        {% csrf_token %}
+                        <div id='type2' style="margin-top: 15px;">
+                            <input type="hidden" name="diff_type" id='diff_type1' value="">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">卡片名称</label>
+                                <div class="col-sm-4">
+                                    <input type="text" id='name' name="name" class="form-control required">
+                                </div>
                             </div>
-                        </div> -->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">周一优惠时段</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_start" id='free_start' class="laydate-icon form-control layer-date" value="{{i.free_start}} ">
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_end" id='free_end' class="laydate-icon form-control layer-date" value="{{i.free_end}} ">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">周二优惠时段</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_start_tu" id='free_start_tu' class="laydate-icon form-control layer-date" value="{{i.free_start_tu}} ">
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_end_tu" id='free_end_tu' class="laydate-icon form-control layer-date" value="{{i.free_end_tu}} ">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">周三优惠时段</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_start_we" id='free_start_we' class="laydate-icon form-control layer-date" value="{{i.free_start_we}} ">
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_end_we" id='free_end_we' class="laydate-icon form-control layer-date" value="{{i.free_end_we}} ">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">周四优惠时段</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_start_th" id='free_start_th' class="laydate-icon form-control layer-date" value="{{i.free_start_th}} ">
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_end_th" id='free_end_th' class="laydate-icon form-control layer-date" value="{{i.free_end_th}} ">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">周五优惠时段</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_start_fr" id='free_start_fr' class="laydate-icon form-control layer-date" value="{{i.free_start_fr}} ">
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_end_fr" id='free_end_fr' class="laydate-icon form-control layer-date" value="{{i.free_end_fr}} ">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">周六优惠时段</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_start_sa" id='free_start_sa' class="laydate-icon form-control layer-date" value="{{i.free_start_sa}} ">
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_end_sa" id='free_end_sa' class="laydate-icon form-control layer-date" value="{{i.free_end_sa}} ">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">周日优惠时段</label>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_start_su" id='free_start_su' class="laydate-icon form-control layer-date" value="{{i.free_start_su}} ">
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="text" name="free_end_su" id='free_end_su' class="laydate-icon form-control layer-date" value="{{i.free_end_su}} ">
+                                </div>
+                            </div>
+                        </div>
+
                         
-                        <div class="hr-line-dashed"></div>
+                        
+                        <!-- <div class="hr-line-dashed"></div> -->
                         
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <input type="hidden" name="action" class="form-control" value='add'>
 
                                 <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
-                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;" onclick="can()"><i class="fa fa-times" ></i> 取消</button>
                             </div>
                         </div>
                     </form>
@@ -208,86 +382,56 @@
 <script src="/static/js/laydate.js"></script>
 <link href="/static/css/laydate.css" rel="stylesheet">
  <script>
+    $('.chosen-select').chosen();
+    $('.chosen-select').next().css('width', '200px');
+    function ren(id ,t=0){
         laydate.render({
-          elem: "#work_start"
+          elem: id
           ,type: 'time'
-          // ,range: true
         });
-         laydate.render({
-          elem: "#relax_start"
-          ,type: 'time'
-          // ,range: true
-        });
-         laydate.render({
-          elem: "#work_end"
-          ,type: 'time'
-          // ,range: true
-        });
-         laydate.render({
-          elem: "#relax_end"
-          ,type: 'time'
-          // ,range: true
-        });
-        $('#work_start').val('');
-        $('#work_end').val('');
-        $('#relax_start').val('');
-        $('#relax_end').val('');
-        for(var i=1;i<=$('.ups').length;i++){
-            laydate.render({
-              elem: "#work_start_"+i+''
-              ,type: 'time'
-              // ,range: true
-            });
-            laydate.render({
-              elem: "#relax_start_"+i+''
-              ,type: 'time'
-              // ,range: true
-            });
-             laydate.render({
-              elem: "#work_end_"+i+''
-              ,type: 'time'
-              // ,range: true
-            });
-             laydate.render({
-              elem: "#relax_end_"+i+''
-              ,type: 'time'
-              // ,range: true
-            });
-           
+        if(t == 0){
+            $(id).val('');
         }
-
-        // var sstart = { elem: "#work_start", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false, choose: function (datas) { send.min = datas; send.start = datas } };
-
-        // var send = { elem: "#send", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false, choose: function (datas) { sstart.max = datas } }; laydate(sstart); laydate(send);
-
-
-
-        // var estart = { elem: "#estart", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false, choose: function (datas) { eend.min = datas; eend.start = datas } };
-
-        // var eend = { elem: "#eend", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false, choose: function (datas) { estart.max = datas } }; laydate(estart); laydate(eend);
-
-
-        // $("#estart").val("");
-
-        // $("#eend").val("");
-
-
-
-        // $("#sstart").val("");
-
-        // $("#send").val("");
-
-        // $('#Parking_ID').chosen();
-        // $("#Parking_ID").trigger("chosen:updated");
-
-        // var cnPicker = new CarnoPicker('#Car_CarNo'); cnPicker.init();
-
-
-
-      
-
-
-
+        
+    };
+    ren("#work_start");
+    ren("#relax_start");
+    ren("#work_end");
+    ren("#relax_end");
+    ren('#free_start');
+    ren('#free_end');
+    ren('#free_start_tu');
+    ren('#free_end_tu');
+    ren('#free_start_we');
+    ren('#free_end_we');
+    ren('#free_start_th');
+    ren('#free_end_th');
+    ren('#free_start_fr');
+    ren('#free_end_fr');
+    ren('#free_start_sa');
+    ren('#free_end_sa')
+    ren('#free_start_su');
+    ren('#free_end_su');
+    for(var i=1;i<=$('.ups').length;i++){
+        ren(".work_start_"+i,1);
+        ren(".relax_start_"+i,1);
+        ren(".work_end_"+i,1);
+        ren(".relax_end_"+i,1);
+        ren('.free_start_'+i,1);
+        ren('.free_end_'+i,1);
+        ren('.free_start_tu'+i,1);
+        ren('.free_end_tu'+i),1;
+        ren('.free_start_we'+i,1);
+        ren('.free_end_we'+i,1);
+        ren('.free_start_th'+i,1);
+        ren('.free_end_th'+i,1);
+        ren('.free_start_fr'+i,1);
+        ren('.free_end_fr'+i,1);
+        ren('.free_start_sa'+i,1);
+        ren('.free_end_sa'+i,1);
+        ren('.free_start_su'+i,1);
+        ren('.free_end_su'+i,1);
+    }
         $(function () { 
             // pager.init(); 
 
@@ -401,6 +545,25 @@
     function rel(){
 
     	window.location.reload()
+    }
+    function sel(obj){
+        if($(obj).val() == '0'){
+            $('#add_form1').hide();
+            $('#add_form').show()
+            $('#diff_type').val(0);
+            console.log($('#diff_type').val())
+
+        }else if($(obj).val() == '1'){
+            $('#add_form').hide();
+            $('#add_form1').show();
+            $('#diff_type1').val(1)
+            console.log($('#diff_type1').val())
+        }
+    }
+    function can(){
+        $('#add_role_model').hide();
+        $('#add_form').hide();
+        $('#add_form1').hide();
     }
    
     </script>

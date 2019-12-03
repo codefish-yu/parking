@@ -29,7 +29,7 @@
                                 <form id='query_form' action='' method="post">
                                     {% csrf_token %}
                                     <div class="form-group">
-                                        <select data-placeholder="商家名称" name="busi_name" class="form-control chosen-select">
+                                        <select data-placeholder="商家" name="busi_name" class="form-control chosen-select">
                                             <option value="">选择商家名称</option>
                                             {% for i in company %}
                                             <option value="{{i.id}} ">{{i.name}} </option>
@@ -250,6 +250,14 @@
                             <div class="col-sm-4">
                                <input type="text" name="name" class="form-control chosen-select" value="{{ i.name}}">
                             </div>
+                            <label class="col-sm-2 control-label">所属停车场</label>
+                            <div class="col-sm-4">
+                                <select name='suit' class="form-control chosen-select">
+                                    {% for n in parkinglot %}
+                                    <option value="{{ n.id}}" {% if n.id == i.parkinglot.id %}selected{% endif %}>{{ n.name}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">商家地址</label>
@@ -280,10 +288,10 @@
                             <div class="col-sm-4">
                                <select data-placeholder="限制类型" class="form-control chosen-select" name="type" value="{{ i.type}}">
                                				<option value="" >选择限制类型</option>
-                                            <option value="0">无限制</option>
-                                            <option value="1">限制天</option>
-                                            <option value="2">限制周</option>
-                                            <option value="3">限制月</option>
+                                            <option value="0" {% if i.type == 0%}selected{% endif %} >无限制</option>
+                                            <option value="1" {% if i.type == 1%}selected{% endif %}>限制天</option>
+                                            <option value="2" {% if i.type == 2%}selected{% endif %}>限制周</option>
+                                            <option value="3" {% if i.type == 3%}selected{% endif %}>限制月</option>
                                 </select>
                             </div>
                         </div>
@@ -343,6 +351,14 @@
                             <label class="col-sm-2 control-label">商家名称</label>
                             <div class="col-sm-4">
                                <input type="text" name="name" class="form-control chosen-select" >
+                            </div>
+                            <label class="col-sm-2 control-label">所属停车场</label>
+                            <div class="col-sm-4">
+                                <select name='suit' class="form-control chosen-select" >
+                                    {% for n in parkinglot %}
+                                    <option value="{{ n.id}}" >{{ n.name}} </option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -455,6 +471,7 @@
                             url: '',
                             data:function(validator) {
                                 return {
+                                    id:id,
                                     account: $(name + ' input[name=account]').val(),
                                     action: 'validate',
                                     csrfmiddlewaretoken:'{{ csrf_token  }}'
