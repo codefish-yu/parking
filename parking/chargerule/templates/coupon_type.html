@@ -436,18 +436,18 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">折扣名称</label>
                             <div class="col-sm-4">
-                                <input type="text" name="name" class="form-control">
+                                <input type="text" name="name" class="form-control" placeholder="填写打折券名称 * ">
                             </div>
-                            <label class="col-sm-2 control-label">折扣率</label>
+                            <label class="col-sm-2 control-label" placeholder="填写折扣率 * ">折扣率</label>
                             <div class="col-sm-2">
-                                <input type="text" name="rate" class="form-control">
+                                <input type="text" name="rate" class="form-control" placeholder="填写折扣率 * ">
                             </div>
                             <label class="col-sm-1 control-label">%</label>
                         </div>
                          <div class="form-group">
                             <label class="col-sm-2 control-label">说明</label>
                             <div class="col-sm-4">
-                                <input type="text" name="detail" class="form-control">
+                                <input type="text" name="detail" class="form-control"  placeholder="填写说明">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -467,17 +467,18 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">代金券名称</label>
                             <div class="col-sm-4">
-                                <input type="text" name="name" class="form-control">
+                                <input type="text" name="name" class="form-control" placeholder="填写代金券名称 * ">
                             </div>
                             <label class="col-sm-1 control-label">抵扣金额</label>
-                            <div class="col-sm-4">
-                                <input type="text" name="money" class="form-control">
+                            <div class="col-sm-2">
+                                <input type="text" name="money" class="form-control" placeholder="填写金额 * ">
                             </div>
+                            <label class="col-sm-1 control-label">元</label>
                         </div>
                          <div class="form-group">
                             <label class="col-sm-2 control-label">说明</label>
                             <div class="col-sm-4">
-                                <input type="text" name="detail" class="form-control">
+                                <input type="text" name="detail" class="form-control" placeholder="填写说明">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -495,24 +496,26 @@
                         {% csrf_token %}
                 		
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">抵扣券名称</label>
+                            <label class="col-sm-2 control-label">抵扣券名称 : </label>
                             <div class="col-sm-4">
-                                <input type="text" name="name" class="form-control">
+                                <input type="text" name="name" class="form-control" placeholder="填写抵扣券名称 *">
                             </div>
-                            <label class="col-sm-1 control-label">说明</label>
+                            <label class="col-sm-1 control-label">说明 : </label>
                             <div class="col-sm-4">
-                                <input type="text" name="detail" class="form-control">
+                                <input type="text" name="detail" class="form-control" placeholder="填写说明">
                             </div>
                         </div>
                          <div class="form-group">
-                         	<label class="col-sm-2 control-label">时长范围</label>
-                            <div class="col-sm-4">
-                                <input type="text" name="hours" class="form-control">
+                         	<label class="col-sm-2 control-label">计费规则 : </label>
+                            <div class="col-sm-2">
+                                <input type="text" name="hours" class="form-control" placeholder="小时数 *">
                             </div>
-                            <label class="col-sm-1 control-label">金额</label>
-                            <div class="col-sm-4">
-                                <input type="text" name="money" class="form-control">
+                            <label class="col-sm-2 control-label" style="text-align: left;">个小时内 ,  计费为</label>
+                            <div class="col-sm-2">
+                                <input type="text" name="money" class="form-control" placeholder="金额 *">
                             </div>
+                            <label class="col-sm-1 control-label">元</label>
+
                         </div>
                         <div class="hr-line-dashed"></div>
                         
@@ -530,22 +533,22 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">满时券名称</label>
                             <div class="col-sm-4">
-                                <input type="text" name="name" class="form-control">
+                                <input type="text" name="name" class="form-control" placeholder="填写名称 *">
                             </div>
                             <label class="col-sm-1 control-label">说明</label>
                             <div class="col-sm-4">
-                                <input type="text" name="detail" class="form-control">
+                                <input type="text" name="detail" class="form-control" placeholder='填写说明'>
                             </div>
                         </div>
                         <div class="form-group">
                         	<label class="col-sm-2 control-label">前</label>
                         	<div class="col-sm-1" style="padding: 0">
-                        		<input type="text" name="hours1" class="form-control number">
+                        		<input type="text" name="hours1" class="form-control number" placeholder=" * ">
                         	</div>
                             <label class="col-sm-1 control-label">小时,</label>
                             <label class="col-sm-1 control-label">计</label>
                             <div class="col-sm-1" style="padding: 0">
-                        		<input type="text" name="money1" class="form-control number">
+                        		<input type="text" name="money1" class="form-control number" placeholder=" * ">
                         	</div>
                         	<label class="control-label col-sm-1">元</label>
                         </div>

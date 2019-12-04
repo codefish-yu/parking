@@ -189,7 +189,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">优惠券类型</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="优惠券类型" class="form-control chosen-select" child-id='ticket_add' name="ticket_type" style="display: none;width: 100%">
+                                <select data-placeholder="优惠券类型" class="form-control chosen-select" child-id='ticket_update_{{i.id}}' name="ticket_type" style="display: none;width: 100%">
                                    <option value=''>优惠券类型</option>
                                    <option value="0" {% if i.ticket_type == 0 %}selected{% endif %}>打折券</option>
                                    <option value="1" {% if i.ticket_type == 1 %}selected{% endif %}>代金券</option>
@@ -199,7 +199,7 @@
                             </div>
                             <label class="col-sm-1 control-label">选择券</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="选择优惠券" class="form-control chosen-select" name="ticket_id" id='ticket_add'
+                                <select data-placeholder="选择优惠券" class="form-control chosen-select" name="ticket_id" id='ticket_update_{{i.id}}'
                                 style="display: none;width: 100%">
                                     {% if i.discount %}
                                     <option value='{{ i.discount.id }}'>{{i.discount.name}}</option>
@@ -422,6 +422,7 @@
     $(function () { 
 
         var all_tickets = {{ all_tickets | safe }};
+        console.info(all_tickets)
         var all_companies = {{ all_companies | safe}};
         $('.chosen-select').chosen({'width': '200px'});
 
@@ -440,8 +441,11 @@
        
         
         $('select[name=ticket_type]').on('change', function(){
-            var tickets = all_tickets[$(this).val()]
+            console.info(typeof($(this).val()))
+            var tickets = all_tickets[parseInt($(this).val())]
             var child_id = $(this).attr('child-id')
+            console.info(child_id)
+            console.info($('#'+child_id))
 
             $('#'+child_id).empty()
             $('#'+child_id).chosen("destroy")

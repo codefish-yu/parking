@@ -1,0 +1,486 @@
+{% extends 'iframe.html' %}
+{% block content %}
+<style type="text/css">
+	.add_form{
+		display: none;
+	}
+	.number{
+		width:100%;
+		float: left;
+	}
+    img{
+        width: 100px;
+    }
+</style>
+<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <ol class="col-lg-5 breadcrumb">
+                            <li>实时管理</li>
+                            <li>出入场管理</li>
+                        </ol>
+                        <div class="ibox-tools">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#" onclick="location.reload()"><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
+                                </li>
+                            </ul>
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" id="searchForm">
+                        <div class="form-inline ">
+                            <div class="form-inline">
+                                <form id='query_form' action='' method="post">
+                                    {% csrf_token %}
+                               
+                                    <div class="form-group">
+                                        <input type="text" placeholder="车牌号" class="form-control" name="number" value='{{number}}'>
+                                    </div>
+                                      
+                                    <div class="form-group">
+                                        <input type='hidden' name='action' value='search' />
+                                        <input type='hidden' name='page' value='{{page}}' id='page' />
+                                        <input type='hidden' name='pagesize' value='{{pagesize}}' id='pagesize' />
+                                        <button id='search-btn' class="btn btn-primary search-btn " type="button" style="display: inline-block;">
+                                            <i class="fa fa-search"></i> 查 询
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                    <!--     <div class="row">
+                            <div class="col-sm-6 m-b-xs">
+                                <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                                <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
+                            </div>
+                            <div class="col-sm-3 m-b-xs"></div>
+                        </div> -->
+                        <div class="table-responsive">
+                            <table class="table table-striped  table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>序号</th>
+                                        <th>车场</th>
+                                        <th>摄像头</th>
+                                        <th>分类</th>
+                                        <th>车牌号</th>
+                                        <th>品牌</th>
+                                        <th>全景图</th>
+                                        <th>车牌图</th>
+                                        <th>车辆颜色</th>
+                                        <th>识别时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-view">
+                                    <form id='delete-form' action="" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value='delete'>
+                                        <input type="hidden" name="type" value='{{type}}'>
+                                    {% for i in objects %}
+                                        <tr>
+                                         <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>
+                                                {% if i.parkinglot %} {{ i.parkinglot.name }}
+                                                {% else %} 错误的停车场 "{{ i.park_id }}"
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if i.camera %} {{ i.camera.name }}
+                                                {% else %} 未添加摄像头 "{{ i.cam_id }}"
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ i.camera.get_in_or_out_display }}</td>
+                                            <td>{{ i.number }}</td>
+                                            <td>{{ i.logo }}</td>
+                                            <td><img src='{{ i.car_pic }}'></img></td>
+                                            <td><img src='{{ i.plate_pic }}'></img></td>
+                                            <td>{{ i.color }}</td>
+                                            <td>{{ i.start_time|date:'Y-m-d H:i' }}</td>
+                                            <td>
+                                                <button type="button" _id='{{i.id}}' class="btn btn-primary update-btn" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                                
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                    <tr class="text-center">
+                                        <td colspan="11">没有找到匹配的记录</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </form>
+                                </tbody>
+                            </table>
+                        </div>
+                        {% include 'common/page.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- update model -->
+{% for i in objects %}
+    <div id='update_model_{{ i.id }}' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;">
+        </div>
+
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 修改优惠券</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+                <div class="form-horizontal" id="verifyCheck">
+                    <form id='update_form_{{ i.id }}' action='' method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="type" value='{{type}}'>
+                    {% if type == '0' %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">折扣名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" value='{{i.name}}' class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">折扣率</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="rate" value='{{i.rate}}' class="form-control" >
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" value='{{i.detail}}' class="form-control">
+                            </div>
+                        </div>
+                       
+                    {% elif type == '1' %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">代金券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" value='{{i.name}}' class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">抵扣金额</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="money" value='{{i.money}}' class="form-control">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" value='{{i.detail}}' class="form-control">
+                            </div>
+                        </div>
+                  
+                    {% elif type == '2' %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">抵扣券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" value='{{i.name}}' class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" value='{{i.detail}}' class="form-control">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                         	<label class="col-sm-2 control-label">时长范围</label>
+                            <div class="col-sm-4">
+                                <input type="number" name="hours" value='{{i.hours}}' class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">金额</label>
+                            <div class="col-sm-4">
+                                <input type="number" name="money" value='{{i.money}}'  class="form-control">
+                            </div>
+                        </div>
+                        
+                    {% elif type == '3' %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">满时券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" value='{{i.name}}' class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" value='{{i.detail}}' class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours1" value='{{i.hours1}}' class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours1" value='{{i.hours1}}' class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours2" value='{{i.hours2}}' class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="money2" value='{{i.money2}}' class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours3" value='{{i.money3}}' class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="money3" value='{{i.money3}}' class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="hours4" value='{{i.hours4}}'  class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="number" name="money4" value='{{i.money4}}' class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                        {% endif %}
+
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='update'>
+                                <input type="hidden" name="id" class="form-control" value='{{i.id}}'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+            <span class="layui-layer-setwin"> 
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span>
+        </div>
+    </div>
+{% endfor %}
+
+<!-- add model -->
+    <div id='add_model' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
+
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 新增优惠券</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+                <div class="form-horizontal" id="verifyCheck">
+                	<div class='form-group'>
+	                    <label class="col-sm-2 control-label">优惠券类型</label>
+						<div class="col-sm-4">
+		                	<select data-placeholder="选择优惠券类型" class="form-control chosen-select"  name="type" style="display: none;" id='type_add'>
+		                        <option value=''>选择优惠券类型</option>
+		                        <option value="0">打折券</option>
+		                        <option value="1">代金券</option>
+		                        <option value="2">抵扣券</option>
+		                        <option value="3">满时券</option>
+		                    </select>
+		                </div>
+		                <div class="hr-line-dashed"></div>
+	                </div>	
+                    <form id='add_form0' action='' method="post" class='add_form'>
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">折扣名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" class="form-control">
+                            </div>
+                            <label class="col-sm-2 control-label">折扣率</label>
+                            <div class="col-sm-2">
+                                <input type="text" name="rate" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">%</label>
+                        </div>
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='add'>
+                                <input type="hidden" name="type" class="form-control" value='0'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                    <form id='add_form1' action='' method="post" class='add_form'>
+                        {% csrf_token %}
+                		
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">代金券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">抵扣金额</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="money" class="form-control">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='add'>
+                                <input type="hidden" name="type" class="form-control" value='1'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                    <form id='add_form2' action='' method="post" class='add_form'>
+                        {% csrf_token %}
+                		
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">抵扣券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" class="form-control">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                         	<label class="col-sm-2 control-label">时长范围</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="hours" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">金额</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="money" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='add'>
+                                <input type="hidden" name="type" class="form-control" value='2'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                    <form id='add_form3' action='' method="post" class='add_form'>
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">满时券名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">说明</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="detail" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="text" name="hours1" class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="text" name="money1" class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="text" name="hours2" class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="text" name="money2" class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="text" name="hours3" class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="text" name="money3" class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                         <div class="form-group">
+                        	<label class="col-sm-2 control-label">前</label>
+                        	<div class="col-sm-1" style="padding: 0">
+                        		<input type="text" name="hours4" class="form-control number">
+                        	</div>
+                            <label class="col-sm-1 control-label">小时,</label>
+                            <label class="col-sm-1 control-label">计</label>
+                            <div class="col-sm-1" style="padding: 0">
+                        		<input type="text" name="money4" class="form-control number">
+                        	</div>
+                        	<label class="control-label col-sm-1">元</label>
+                        </div>
+                         
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='add'>
+                                <input type="hidden" name="type" class="form-control" value='3'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div></div>
+            <span class="layui-layer-setwin"> 
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span></div>
+       </div>
+
+
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

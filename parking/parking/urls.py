@@ -25,6 +25,7 @@ from device import views as device
 from parkinglot import views as park
 from company import views as com
 from chargerule import views as charge
+from realtime import views as realtime
 
 
 urlpatterns = [
@@ -83,8 +84,13 @@ urlpatterns = [
     path('chargerule/coupontype/',charge.coupon_type),
 
 
+    # realtime
 
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('realtime/parkin/',realtime.parkin),
+    path('realtime/in_out/',realtime.in_out),
+
+
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 

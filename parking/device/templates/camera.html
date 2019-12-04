@@ -85,6 +85,7 @@
                                         <th>序号</th>
                                         <th>摄像头编号</th>
                                         <th>摄像头名称</th>
+                                        <th>Mac地址</th>
                                         <th>类型</th>
                                         <th>厂商</th>
                                         <th>品牌</th>
@@ -102,12 +103,13 @@
                                         <tr>
                                          <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{ forloop.counter }}</td>
-                                            <td>{{ i.number }}</td>
-                                            <td>{{ i.name }}</td>
-                                            <td>{{ i.type }}</td>
-                                            <td>{{ i.manufacturer }}</td>
+                                            <td>{{ i.number |default:''}}</td>
+                                            <td>{{ i.name |default:'' }}</td>
+                                            <td>{{ i.mac_address |default:'' }}</td>
+                                            <td>{{ i.type |default:'' }}</td>
+                                            <td>{{ i.manufacturer |default:'' }}</td>
                                             <!-- <td>{{ i.birth|date:'%Y/%m/%d' }}</td> -->
-                                            <td>{{ i.brand }}</td>
+                                            <td>{{ i.brand |default:'' }}</td>
                                             <td>{{ i.parkinglot.name }}</td>
                                             <td>{{ i.gate.monitor }}</td>
                                             <td>{{ i.buy_time|date:'Y-m-d' }}</td>
@@ -157,6 +159,19 @@
                             <label class="col-sm-1 control-label">类型</label>
                             <div class="col-sm-4">
                                 <input type="text" value='{{i.type}}' name="type" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Mac地址</label>
+                            <div class="col-sm-4">
+                                <input type="text" value='{{i.mac_address}}' name="mac_address" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">出 / 入</label>
+                            <div class="col-sm-4">
+                                <select name="in_or_out" data-placeholder="选择出入类型" class="form-control chosen-select" style="display: none;width: 100%">
+                                    <option {% if i.in_or_out == 0 %}selected{% endif %} value='0'>入</option>
+                                    <option {% if i.in_or_out == 1 %}selected{% endif %} value='1'>出</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -239,11 +254,24 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">设备编号</label>
                             <div class="col-sm-4">
-                                <input type="text" name="number" class="form-control required">
+                                <input type="text" name="number" placeholder='输入设备编号 *' class="form-control required">
                             </div>
                             <label class="col-sm-1 control-label">类型</label>
                             <div class="col-sm-4">
                                 <input type="text" name="type" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Mac地址</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="mac_address" class="form-control">
+                            </div>
+                            <label class="col-sm-1 control-label">出 / 入</label>
+                            <div class="col-sm-4">
+                                <select name="in_or_out" data-placeholder="选择出入类型" class="form-control chosen-select"  style="display: none;width: 100%">
+                                    <option value='0'>入</option>
+                                    <option value='1'>出</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
