@@ -33,7 +33,7 @@
                                         <select name='type' class="form-control chosen-select" data-placeholder='划分类别' onchange="que()">
                                             <option value="2"{% if type == 2%}selected{% endif%} >选择查询类别</option>
                                             <option value="0" {% if type == 0%}selected{% endif%}>工作日</option>
-                                            <option value="1" {% if type == 1%}selected{% endif%}>单日</option>    
+                                            <option value="1" {% if type == 1%}selected{% endif%}>自定义</option>    
                                         </select>
                                         <input type="hidden" name="action" class="form-control" value='select'>
                                     </form>
@@ -139,16 +139,16 @@
                                 <input type="text" name="name" class="name_{{forloop.counter}} form-control required" value="{{i.name}} ">
                             </div>
                         </div>
+                        {% if i.diff_type == 0 %}
                         <div class="form-group">
                            <label class="col-sm-2 control-label">是否错峰</label>
                             <div class="col-sm-4">
-                                <input name='is_diff' onchange="setDiff(this)" type='radio' value='0'{% if i.is_diff == 0 %}checked{% endif %} />
+                                <input name='is_diff' onchange="setDiff(this,{{forloop.counter}})" type='radio' value='0'{% if i.is_diff == 0 %}checked{% endif %} />
                                 <span>否</span>
-                                <input name='is_diff' onchange="setDiff(this)" type='radio' value='1' {% if i.is_diff == 1 %}checked{% endif %}/>
+                                <input name='is_diff' onchange="setDiff(this,{{forloop.counter}})" type='radio' value='1' {% if i.is_diff == 1 %}checked{% endif %}/>
                                 <span>是</span>
                             </div>  
                         </div>
-                        {% if i.diff_type == 0 %}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">工作日优惠时段</label>
                             <div class="col-sm-4">
@@ -161,20 +161,20 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">非工作日优惠时间段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="relax_start" class="laydate-icon form-control layer-date relax_start_{{forloop.counter}}" value="{{i.relax_start}} ">
+                                <input type="text" name="relax_start" class="laydate-icon form-control layer-date relax_start_{{forloop.counter}}" value="{{i.relax_start}} " >
                             </div>
                             <div class="col-sm-4">
-                                <input type="text" name="relax_end" class="relax_end_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.relax_end}} ">
+                                <input type="text" name="relax_end" class="relax_end_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.relax_end}} " >
                             </div>
                         </div>
                         {% elif i.diff_type == 1 %}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周一优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_start"  class="free_start_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start}} ">
+                                <input type="text" name="free_start"  class="free_start_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start}} " >
                             </div>
                             <div class="col-sm-4">
-                                <input type="text" name="free_end" class="free_end_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end}} ">
+                                <input type="text" name="free_end" class="free_end_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end}} " >
                             </div>
                         </div>
                         <div class="form-group">
@@ -264,7 +264,7 @@
                     <select data-placeholder="选择减免类别" class="form-control chosen-select" onchange="sel(this)">
                         <option value="">选择减免类别</option>
                         <option value="0">工作日</option>
-                        <option value="1">单日</option>
+                        <option value="1">自定义</option>
                     </select>
                     <form id='add_form' action='' method="post" style="display: none">
                         {% csrf_token %}
@@ -278,7 +278,7 @@
                             <div class="form-group">
                                <label class="col-sm-2 control-label">是否错峰</label>
                                 <div class="col-sm-4">
-                                    <input name='is_diff' onchange="setDiff(this)" type='radio' value='0' />
+                                    <input name='is_diff' onchange="setDiff(this)" id='is_diff' type='radio' value='0' />
                                     <span>&nbsp;&nbsp;否&nbsp;&nbsp;</span>
                                     <input name='is_diff' onchange="setDiff(this)" type='radio' value='1' />
                                     <span>&nbsp;&nbsp;是</span>
@@ -287,19 +287,19 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">工作日优惠时间段</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="work_start" id='work_start' class="laydate-icon form-control layer-date">
+                                    <input type="text" name="work_start" id='work_start' class="laydate-icon form-control layer-date" placeholder="起">
                                 </div>
                                 <div class="col-sm-4">
-                                    <input type="text" name="work_end" id='work_end' class="laydate-icon form-control layer-date">
+                                    <input type="text" name="work_end" id='work_end' class="laydate-icon form-control layer-date" placeholder="止">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">非工作日优惠时间段</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="relax_start" id='relax_start' class="laydate-icon form-control layer-date">
+                                    <input type="text" name="relax_start" id='relax_start' class="laydate-icon form-control layer-date" placeholder="起" disabled="true">
                                 </div>
                                 <div class="col-sm-4">
-                                    <input type="text" name="relax_end" id='relax_end' class="laydate-icon form-control layer-date">
+                                    <input type="text" name="relax_end" id='relax_end' class="laydate-icon form-control layer-date" placeholder="止" disabled="true">
                                 </div>
                             </div>
                             <input type="hidden" name="diff_type" id='diff_type' value="">
@@ -604,7 +604,27 @@
     function que(){
         $('#sel_form').submit()
     }
-    function setDiff(obj){
+    function setDiff(obj,t=''){
+        function set(obj,name,name1){
+            if($(obj).val() == 0){
+                $(name).val('');
+                $(name1).val('')
+                $(name).attr('disabled','disabled');
+                $(name).attr('disabled','disabled')
+
+            }else if($(obj).val() == 1){
+                document.getElementById(name).disabled="";
+                document.getElementById(name1).disabled=""
+           
+            }
+
+        }
+        if(t == ''){
+            set(obj,'#relax_start','#relax_end')
+        }else{
+            set(obj,'#relax_start_'+t,'#relax_end'+t)
+        }
+        
 
     }
    
