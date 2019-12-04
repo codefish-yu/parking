@@ -17,9 +17,12 @@ class Camera(models.Model):
     brand = models.CharField(max_length=200, null=True, blank=True, verbose_name='厂商')
     manufacturer = models.CharField(max_length=200, null=True, blank=True, verbose_name='厂商')
     buy_time = models.DateTimeField(null=True, verbose_name='采购时间')
+    in_or_out = models.IntegerField(default=0, null=True, choices=[(0, '入'),(1, '出')], verbose_name='出或入')
 
     parkinglot = models.ForeignKey(ParkingLot, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='所属车场')
     gate = models.ForeignKey(Gate, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='所属出入口')
+    
+    mac_address = models.CharField(max_length=200, blank=True, verbose_name='设备mac地址')
 
     def __str__(self):
         return self.name
@@ -39,6 +42,8 @@ class Brake(models.Model):
     parkinglot = models.ForeignKey(ParkingLot, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='所属车场')
     gate = models.ForeignKey(Gate, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='所属出入口')
  
+    mac_address = models.CharField(max_length=200, blank=True, verbose_name='设备mac地址')
+ 
     def __str__(self):
         return self.name
 
@@ -57,6 +62,8 @@ class GroundSensor(models.Model):
     parkinglot = models.ForeignKey(ParkingLot, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='所属车场')
     gate = models.ForeignKey(Gate, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='所属出入口')
  
+    mac_address = models.CharField(max_length=200, blank=True, verbose_name='设备mac地址')
+
     def __str__(self):
         return self.name
 
