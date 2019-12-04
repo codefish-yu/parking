@@ -299,19 +299,31 @@ def card(request):
             
 
 
-        if action == 'update':
+        elif action == 'update':
             id = request.POST.get('id','')
             r = Card.objects.filter(id=id).first()
             correct_obj(request,r)
             _save_attr_(r, request)
            
 
-        if action == 'delete':
+        elif action == 'delete':
             ids = request.POST.getlist('ids', '')
             u = Card.objects.filter(id__in=ids).all()
             for item in u:
                 item.status = -1
                 item.save()
+
+        elif action == 'validate':
+            owner = request.POST.get('owner', '')
+            id = request.POST.get('id','')
+            if id:
+                r = Card.objects.filter(owner=owner.strip()).exclude(id=int(id))
+            else:   
+                r = Card.objects.filter(owner=owner.strip())
+            if r.exists():
+                    return JsonResponse({'valid': False})
+
+            return JsonResponse({'valid': True})
 
         # if action == 'export':
         #     w = export_excel(cards,u'开卡管理')

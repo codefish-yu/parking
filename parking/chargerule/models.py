@@ -140,6 +140,7 @@ class CardType(models.Model):
     free_end_sa = models.CharField(max_length=30,null=True,verbose_name='周六优惠结束')
     free_start_su = models.CharField(max_length=30,null=True,verbose_name='周日优惠开始') 
     free_end_su = models.CharField(max_length=30,null=True,verbose_name='周日优惠结束')
+    is_diff = models.IntegerField(choices=[(0,'否'),(1,'是')],default=0)
 
  
 
@@ -148,7 +149,9 @@ class Card(models.Model):
         verbose_name = verbose_name = '月卡'
 
     status = models.IntegerField(default=0)
-    owner = models.ForeignKey(User,null=True,on_delete=models.CASCADE,verbose_name='持卡人')
+    owner = models.CharField(max_length=30,null=True,verbose_name='持卡人')
+    car_number = models.CharField(max_length=30,null=True,verbose_name='车牌号')
+    phone = models.IntegerField(default=0,verbose_name='联系人电话')
     my_card = models.ForeignKey('CardType',null=True,blank=True, on_delete=models.CASCADE,verbose_name='卡片类型')
     valid_start = models.DateTimeField(null=True , blank=True, verbose_name='有效开始')
     valid_end = models.DateTimeField(null=True , blank=True, verbose_name='有效结束')

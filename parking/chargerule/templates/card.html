@@ -27,7 +27,7 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
-                                <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;开卡</button>
+                                <button type="button" id="Add" onclick="sh()" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;开卡</button>
                                 <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;续卡</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
                                 <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
@@ -91,15 +91,10 @@
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{i.id}}' action='' method="post" class="ups">
                         {% csrf_token %}
-                         <div class="form-group">
+                        <div class="form-group">
                             <label class="col-sm-2 control-label">持卡人</label>
                             <div class="col-sm-4">
-                                <select name='owner' class="form-control required">
-                                    <option value="">选择用户</option>
-                                    {% for m in users%}
-                                    <option value="{{ m.id}}" {% if i.owner.id == m.id%}selected{% endif %}>{{ m.real_name}} </option>
-                                    {% endfor %}
-                                </select>
+                                <input type="text" name="owner" value="{{i.owner}} " class="form-control">
                             </div>
                             <label class="col-sm-2 control-label">卡片类型</label>
                             <div class="col-sm-4">
@@ -109,6 +104,16 @@
                                     <option value="{{ n.id}}" {% if i.my_card.id == n.id%}selected{% endif %}>{{ n.name}} </option>
                                     {% endfor %}
                                 </select>
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">车牌号</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="car_number" value="{{i.car_number}} " class="form-control">
+                            </div>
+                            <label class="col-sm-2 control-label">联系人电话</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="phone" value="{{i.phone}} " class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
@@ -164,21 +169,26 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">持卡人</label>
                             <div class="col-sm-4">
-                                <select name='owner' class="form-control required">
-                                    <option value="">选择用户</option>
-                                    {% for m in users%}
-                                    <option value="{{ m.id}}">{{ m.real_name}} </option>
-                                    {% endfor %}
-                                </select>
+                                <input type="text" name="owner" class="form-control">
                             </div>
                             <label class="col-sm-2 control-label">卡片类型</label>
                             <div class="col-sm-4">
                                 <select name='my_card' class="form-control required">
                                     <option value="">选择卡片类型</option>
                                     {% for n in cardtypes%}
-                                    <option value="{{ n.id}}">{{ n.name}} </option>
+                                    <option value="{{ n.id}}" >{{ n.name}} </option>
                                     {% endfor %}
                                 </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">车牌号</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="car_number" class="form-control">
+                            </div>
+                            <label class="col-sm-2 control-label">联系人电话</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="phone" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
@@ -251,87 +261,11 @@
 
 
         }
-       
-
-
-
-        $(function () { 
-            // pager.init(); 
-            // $('.chosen-select').chosen({'width': '200px'});
-
-            // var start = { elem: "#valid_timea_1", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
-            // laydate(start)
-            // $('#valid_timea_1').val('')
-            // $('.chosen-select').chosen({'width': '200px'});
-
-            // var end = { elem: "#valid_timea_2", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
-            // laydate(end)
-            // $('#valid_timea_2').val('')
-
-            // for(var i=1;i<=$('.update_model').length;i++){
-            //     var valid_times = { elem: "#valid_times_"+i, format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
-            //     laydate(valid_times)
-            //     var valid_timee = { elem: "#valid_timee_"+i, format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
-            //     laydate(valid_timee)    
-            // }
-
-
-
-// add form validate
-            $('#add_form').bootstrapValidator({
-
-　　　　　　　　  message: 'This value is not valid',
-            　 feedbackIcons: {
-                　　　　　　　　valid: 'glyphicon glyphicon-ok',
-                　　　　　　　　invalid: 'glyphicon glyphicon-remove',
-                　　　　　　　　validating: 'glyphicon glyphicon-refresh'
-            　　　　　　　　   },
-
-                fields: {
-                    role_name: {
-                        message: '角色名不能为空',
-                        validators: {
-                            notEmpty: {
-                                message: '角色名不能为空'
-                            },
-                            stringLength: {
-                                     min: 3,
-                                     max: 20,
-                                     message: '角色名长度必须在3到20之间'
-                                 },
-                            remote:{
-                                url: '',
-                                data:function(validator) {
-                                    return {
-                                        role_name: $('#add_form input[name=role_name]').val(),
-                                        action: 'validate',
-                                        csrfmiddlewaretoken:'{{ csrf_token  }}'
-                                    }
-                                },
-                                type:'post',
-                                message: '角色名已存在'
-                            }
-                        }
-                    }
-                }
-            });
-
-
-// update form validate 
-            
-
-            $('#update-btn').click(function(){
-                var ids = $('input[name=ids]:checked')
-                if(ids.length == 1){
-                    initValidator(ids[0].value)
-
-                    $('#update_model_'+ids[0].value).show()
-                }
-            })
-
-        });
-    function initValidator(id){
-                $('#update_form_'+id).bootstrapValidator({
+    function sh(){
+        initValidator('#add_form','')
+    }
+    function initValidator(name,id){
+                $(name).bootstrapValidator({
 
     　　　　　　　　  message: 'This value is not valid',
                 　 feedbackIcons: {
@@ -341,43 +275,65 @@
                 　　　　　　　　   },
 
                     fields: {
-                        role_name: {
-                            message: '角色名不能为空',
+                        owner: {
+                            message: '持卡人不能为空',
                             validators: {
                                 notEmpty: {
-                                    message: '角色名不能为空'
+                                    message: '持卡人不能为空'
                                 },
                                 stringLength: {
                                      min: 3,
                                      max: 20,
-                                     message: '角色名长度必须在3到20之间'
+                                     message: '持卡人长度必须在3到20之间'
                                  },
                                 remote:{
                                     url: '',
                                     data:function(validator) {
                                         return {
-                                            id: $('#update_form_'+id + ' input[name=id]').val(),
-                                            role_name: $('#update_form_'+id + ' input[name=role_name]').val(),
+                                            id:id,
+                                            owner: $(name + ' input[name=owner]').val(),
                                             action: 'validate',
                                             csrfmiddlewaretoken:'{{ csrf_token  }}'
                                         }
                                     },
                                     type:'post',
-                                    message: '角色名已存在'
+                                    message: '持卡人已存在'
                                 }
                             },
 
                             
-                        }
+                        },
+                        car_number: {
+                            validators: {
+                                notEmpty: {
+                                    message: '车牌号不能为空'
+                                }
+                            }
+                        },
+                        phone: {
+                            validators: {
+                                notEmpty: {},
+                                digits: {},
+                                phone: {
+                                    country: 'CN',
+                                    message: '请输入十一位手机号码'
+                                }
+                            }
+                        },
+
                     }
                 });
     }
 
 
+
+       
+
+
     function change(){
         var ids = $('input[name=ids]:checked')
                 if(ids.length == 1){
-                    initValidator(ids[0].value)
+                    initValidator('#update_form_'+ids[0].value,ids[0].value)
 
                     $('#update_model_'+ids[0].value).show()
                 }

@@ -33,7 +33,7 @@
                                         <select name='type' class="form-control chosen-select" data-placeholder='划分类别' onchange="que()">
                                             <option value="2"{% if type == 2%}selected{% endif%} >选择查询类别</option>
                                             <option value="0" {% if type == 0%}selected{% endif%}>工作日</option>
-                                            <option value="1" {% if type == 2%}selected{% endif%}>单日</option>    
+                                            <option value="1" {% if type == 1%}selected{% endif%}>单日</option>    
                                         </select>
                                         <input type="hidden" name="action" class="form-control" value='select'>
                                     </form>
@@ -139,9 +139,18 @@
                                 <input type="text" name="name" class="name_{{forloop.counter}} form-control required" value="{{i.name}} ">
                             </div>
                         </div>
+                        <div class="form-group">
+                           <label class="col-sm-2 control-label">是否错峰</label>
+                            <div class="col-sm-4">
+                                <input name='is_diff' onchange="setDiff(this)" type='radio' value='0'{% if i.is_diff == 0 %}checked{% endif %} />
+                                <span>否</span>
+                                <input name='is_diff' onchange="setDiff(this)" type='radio' value='1' {% if i.is_diff == 1 %}checked{% endif %}/>
+                                <span>是</span>
+                            </div>  
+                        </div>
                         {% if i.diff_type == 0 %}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">工作时间段</label>
+                            <label class="col-sm-2 control-label">工作日优惠时段</label>
                             <div class="col-sm-4">
                                 <input type="text" name="work_start" class="work_start_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.work_start}}">
                             </div>
@@ -150,7 +159,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">非工作时间段</label>
+                            <label class="col-sm-2 control-label">非工作日优惠时间段</label>
                             <div class="col-sm-4">
                                 <input type="text" name="relax_start" class="laydate-icon form-control layer-date relax_start_{{forloop.counter}}" value="{{i.relax_start}} ">
                             </div>
@@ -265,9 +274,18 @@
                                 <div class="col-sm-4">
                                     <input type="text" id='name' name="name" class="form-control required">
                                 </div>
+                            </div>  
+                            <div class="form-group">
+                               <label class="col-sm-2 control-label">是否错峰</label>
+                                <div class="col-sm-4">
+                                    <input name='is_diff' onchange="setDiff(this)" type='radio' value='0' />
+                                    <span>&nbsp;&nbsp;否&nbsp;&nbsp;</span>
+                                    <input name='is_diff' onchange="setDiff(this)" type='radio' value='1' />
+                                    <span>&nbsp;&nbsp;是</span>
+                                </div>  
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">工作时间段</label>
+                                <label class="col-sm-2 control-label">工作日优惠时间段</label>
                                 <div class="col-sm-4">
                                     <input type="text" name="work_start" id='work_start' class="laydate-icon form-control layer-date">
                                 </div>
@@ -276,7 +294,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">非工作时间段</label>
+                                <label class="col-sm-2 control-label">非工作日优惠时间段</label>
                                 <div class="col-sm-4">
                                     <input type="text" name="relax_start" id='relax_start' class="laydate-icon form-control layer-date">
                                 </div>
@@ -585,6 +603,9 @@
     }
     function que(){
         $('#sel_form').submit()
+    }
+    function setDiff(obj){
+
     }
    
     </script>
