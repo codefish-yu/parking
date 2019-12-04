@@ -140,7 +140,7 @@ class CardType(models.Model):
     free_end_sa = models.CharField(max_length=30,null=True,verbose_name='周六优惠结束')
     free_start_su = models.CharField(max_length=30,null=True,verbose_name='周日优惠开始') 
     free_end_su = models.CharField(max_length=30,null=True,verbose_name='周日优惠结束')
-    is_diff = models.IntegerField(choices=[(0,'否'),(1,'是')],default=0)
+    # is_diff = models.IntegerField(choices=[(0,'否'),(1,'是')],default=0)
 
  
 
@@ -225,6 +225,8 @@ class Card(models.Model):
         else:
             results = nor_one_cal(self,start,end)
         return results
+
+            
 
 
 

@@ -140,7 +140,7 @@
                             </div>
                         </div>
                         {% if i.diff_type == 0 %}
-                        <div class="form-group">
+                       <!--  <div class="form-group">
                            <label class="col-sm-2 control-label">是否错峰</label>
                             <div class="col-sm-4">
                                 <input name='is_diff' onchange="setDiff(this,{{forloop.counter}})" type='radio' value='0'{% if i.is_diff == 0 %}checked{% endif %} />
@@ -148,7 +148,7 @@
                                 <input name='is_diff' onchange="setDiff(this,{{forloop.counter}})" type='radio' value='1' {% if i.is_diff == 1 %}checked{% endif %}/>
                                 <span>是</span>
                             </div>  
-                        </div>
+                        </div> -->
                         <div class="form-group">
                             <label class="col-sm-2 control-label">工作日优惠时段</label>
                             <div class="col-sm-4">
@@ -275,7 +275,7 @@
                                     <input type="text" id='name' name="name" class="form-control required">
                                 </div>
                             </div>  
-                            <div class="form-group">
+                           <!--  <div class="form-group">
                                <label class="col-sm-2 control-label">是否错峰</label>
                                 <div class="col-sm-4">
                                     <input name='is_diff' onchange="setDiff(this)" id='is_diff' type='radio' value='0' />
@@ -283,7 +283,7 @@
                                     <input name='is_diff' onchange="setDiff(this)" type='radio' value='1' />
                                     <span>&nbsp;&nbsp;是</span>
                                 </div>  
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">工作日优惠时间段</label>
                                 <div class="col-sm-4">
@@ -604,29 +604,29 @@
     function que(){
         $('#sel_form').submit()
     }
-    function setDiff(obj,t=''){
-        function set(obj,name,name1){
-            if($(obj).val() == 0){
-                $(name).val('');
-                $(name1).val('')
-                $(name).attr('disabled','disabled');
-                $(name).attr('disabled','disabled')
+    // function setDiff(obj,t=''){
+    //     function set(obj,name,name1){
+    //         if($(obj).val() == 0){
+    //             $(name).val('');
+    //             $(name1).val('')
+    //             $(name).attr('disabled','disabled');
+    //             $(name).attr('disabled','disabled')
 
-            }else if($(obj).val() == 1){
-                document.getElementById(name).disabled="";
-                document.getElementById(name1).disabled=""
+    //         }else if($(obj).val() == 1){
+    //             document.getElementById(name).disabled="";
+    //             document.getElementById(name1).disabled=""
            
-            }
+    //         }
 
-        }
-        if(t == ''){
-            set(obj,'#relax_start','#relax_end')
-        }else{
-            set(obj,'#relax_start_'+t,'#relax_end'+t)
-        }
+    //     }
+    //     if(t == ''){
+    //         set(obj,'#relax_start','#relax_end')
+    //     }else{
+    //         set(obj,'#relax_start_'+t,'#relax_end'+t)
+    //     }
         
 
-    }
+    // }
    
     </script>
 
