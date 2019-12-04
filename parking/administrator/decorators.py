@@ -70,6 +70,7 @@ def _save_attr_(obj,request):
             value = request.FILES.get(field_name, '')
             if value:
                 obj.__setattr__(field_name, value)
+    obj.save()
     
 def export_excel(obj,name):
     e = xlwt.Workbook(encoding='utf-8')

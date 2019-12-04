@@ -23,45 +23,37 @@ def card_type(request):
     '''卡片类型设置'''
 
     ctx = {}
-
-
-    # def correct_card_type(request,obj):
-    #     name = request.POST.get('name')
-    #     rule = request.POST.get('rule')
-    #     # suit = request.POST.getlist('suit',[])
-
-    #     obj.name = name if name else ''
-    #     obj.rule = rule if rule else ''
-    #     obj.save()
-    #     # obj.suit.clear()
-
-    #     for i in suit:
-    #         obj.suit.add(ParkingLot.objects.filter(id=int(i)).first())
-
-    #     obj.save()
-
+    cardtype = CardType.objects.filter(status=0).all()
+    t=2
     if request.method == 'POST':
         action = request.POST.get('action','')
         if action == 'add':
             r = CardType()
-            # correct_card_type(request,r)
             _save_attr_(r,request)
+            t = int(request.POST.get('diff_type'))
 
-        if action == 'update':
+        elif action == 'update':
             id = request.POST.get('id','')
             r = CardType.objects.filter(id=id).first()
             _save_attr_(r,request)
+            t = int(request.POST.get('diff_type'))
 
-        if action == 'delete':
+        elif action == 'delete':
             ids = request.POST.getlist('ids', '')
+            t = request.POST.get('type')
             u = CardType.objects.filter(id__in=ids).all()
 
             for item in u:
                 item.status = -1
                 item.save()
-
+        elif action == 'select':
+            t = request.POST.get('type')
+              
+    if t != 2:
+        cardtype = cardtype.filter(diff_type=int(t))
+        ctx['type'] = int(t)
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
-    ctx['cardtype'] = ctx['objects'] = CardType.objects.filter(status=0).all()
+    ctx['cardtype'] = ctx['objects'] = cardtype
     return (ctx,'card_type.html')
 
 
@@ -330,7 +322,7 @@ def card(request):
         #         w.write(row, 2, i.valid_start)
         #         w.write(row, 3, i.valid_end)
         #         for j in i.suit.all():
-                    
+
 
 
 
