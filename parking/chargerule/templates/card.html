@@ -27,8 +27,8 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
-                                <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                <button type="button" id="Add" onclick="sh()" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;开卡</button>
+                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;续卡</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
                                 <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
                                 <!-- <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button> -->
@@ -44,7 +44,7 @@
                                         <th>持卡人</th>
                                         <th>卡片类型</th>
                                         <th>有效期</th>
-                                        <th>优惠时段</th>
+                                       
                                     </tr>
                                 </thead>
                                 <tbody id="data-view">
@@ -54,11 +54,11 @@
                                     {% for i in cards %}
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
-                                            <td>{{i.id}} </td>
+                                            <td>{{forloop.counter}} </td>
                                             <td>{{ i.owner.real_name }}</td>
                                             <td>{{i.my_card.name}} </td>
                                             <td>{{i.valid_start | date:'Y-m-d H:m'}}--{{ i.valid_end |date:'Y-m-d H:m'}}</td>
-                                            <td>{{i.work_start}}--{{ i.work_end }}</td>
+                                            
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
@@ -89,17 +89,12 @@
             <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改卡片信息</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
-                    <form id='update_form_{{i.id}}' action='' method="post">
+                    <form id='update_form_{{i.id}}' action='' method="post" class="ups">
                         {% csrf_token %}
-                         <div class="form-group">
+                        <div class="form-group">
                             <label class="col-sm-2 control-label">持卡人</label>
                             <div class="col-sm-4">
-                                <select name='owner' class="form-control required">
-                                    <option value="">选择用户</option>
-                                    {% for m in users%}
-                                    <option value="{{ m.id}}" {% if i.owner.id == m.id%}selected{% endif %}>{{ m.real_name}} </option>
-                                    {% endfor %}
-                                </select>
+                                <input type="text" name="owner" value="{{i.owner}} " class="form-control">
                             </div>
                             <label class="col-sm-2 control-label">卡片类型</label>
                             <div class="col-sm-4">
@@ -109,6 +104,16 @@
                                     <option value="{{ n.id}}" {% if i.my_card.id == n.id%}selected{% endif %}>{{ n.name}} </option>
                                     {% endfor %}
                                 </select>
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label class="col-sm-2 control-label">车牌号</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="car_number" value="{{i.car_number}} " class="form-control">
+                            </div>
+                            <label class="col-sm-2 control-label">联系人电话</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="phone" value="{{i.phone}} " class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
@@ -121,14 +126,14 @@
                                 <input placeholder="有效开始" class="laydate-icon form-control layer-date" value="{{i.valid_end }}" name="valid_end" id='valid_timee_{{forloop.counter}}'>
                             </div>
                         </div>
-                         <div class="form-group">
-                            <label class="col-sm-2 control-label">优惠开始</label>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">所属停车场</label>
                             <div class="col-sm-4">
-                                <input placeholder="优惠开始" class="laydate-icon form-control layer-date" value="{{i.work_start }}" name="work_start" id='work_timea_{{forloop.counter}}'>
-                            </div>
-                            <label class="col-sm-2 control-label">优惠结束</label>
-                            <div class="col-sm-4">
-                                <input placeholder="优惠结束" class="laydate-icon form-control layer-date" name="work_end" value="{{i.work_end }}" id='work_timea_{{forloop.counter}}'>
+                                <select name='suit' class="form-control required" multiple>
+                                    {% for n in parkinglot %}
+                                    <option value="{{ n.id}}" {% if n in i.suit.all %}selected{% endif %}>{{ n.name}} </option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -164,21 +169,26 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">持卡人</label>
                             <div class="col-sm-4">
-                                <select name='owner' class="form-control required">
-                                    <option value="">选择用户</option>
-                                    {% for m in users%}
-                                    <option value="{{ m.id}}">{{ m.real_name}} </option>
-                                    {% endfor %}
-                                </select>
+                                <input type="text" name="owner" class="form-control">
                             </div>
                             <label class="col-sm-2 control-label">卡片类型</label>
                             <div class="col-sm-4">
                                 <select name='my_card' class="form-control required">
                                     <option value="">选择卡片类型</option>
                                     {% for n in cardtypes%}
-                                    <option value="{{ n.id}}">{{ n.name}} </option>
+                                    <option value="{{ n.id}}" >{{ n.name}} </option>
                                     {% endfor %}
                                 </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">车牌号</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="car_number" class="form-control">
+                            </div>
+                            <label class="col-sm-2 control-label">联系人电话</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="phone" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
@@ -191,20 +201,17 @@
                                 <input placeholder="截止日期" class="laydate-icon form-control layer-date" name="valid_end" id='valid_timea_2'>
                             </div>
                         </div>
-                         <div class="form-group">
-                            <label class="col-sm-2 control-label">优惠开始</label>
-                            <div class="col-sm-4">
-                                <input placeholder="优惠开始" class="laydate-icon form-control layer-date " name="work_start" id='work_start'>
-                            </div>
-                            <label class="col-sm-2 control-label">优惠结束</label>
-                            <div class="col-sm-4">
-                                <input placeholder="优惠结束" class="laydate-icon form-control layer-date" name="work_end" id='work_end'>
-                            </div>
-                        </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">工作日</label>
-                           
+                            <label class="col-sm-2 control-label">所属停车场</label>
+                            <div class="col-sm-4">
+                                <select name='suit' class="form-control required" multiple>
+                                    {% for n in parkinglot %}
+                                    <option value="{{ n.id}}" >{{ n.name}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
+                      
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <input type="hidden" name="action" class="form-control" value='add'>
@@ -227,732 +234,38 @@
 {% endblock %}
 
 {% block js %}
-<script src="/static/js/plugins/layer/laydate/laydate.js"></script>
+<script src="/static/js/laydate.js"></script>
+<link href="/static/css/laydate.css" rel="stylesheet">
  <script>
+        $('.chosen-select').chosen();
         $('.chosen-select').chosen({'width': '200px'});
-         $('#work_start').val('');
-        // var work_start = { elem: "#work_start", type:'time',format: 'HH:mm',range:true};
-        // laydate(work_start)
-        laydate({
-          elem: '#work_start',
-          type: 'time',
-          range: true
+        laydate.render({
+          elem: "#valid_timea_1"
+          
+          // ,range: true
         });
-        laydate({
-          elem: '#work_end',
-          type: 'time',
-          range: true
+        laydate.render({
+          elem: "#valid_timea_2"
         });
-       
-
-        // valid_date
-        var start = { elem: "#valid_timea_1", format: "YYYY-MM-DD hh:mm", min: "1900-01-01 00:00", max: "2099-06-16 00:00", istime: true, istoday: false};
-        laydate(start)
-        $('#valid_timea_1').val('')
-        $('.chosen-select').chosen({'width': '200px'});
-
-        var end = { elem: "#valid_timea_2", format: "YYYY-MM-DD hh:mm", min: "1900-01-01 00:00", max: "2099-06-16 00:00", istime: true, istoday: false };
-        laydate(end)
-        $('#valid_timea_2').val('')
-
-        for(var i=1;i<=$('.update_model').length;i++){
-            var valid_times = { elem: "#valid_times_"+i, format: "YYYY-MM-DD hh:mm", min: "1900-01-01 00:00", max: "2099-06-16 00:00", istime: false, istoday: false };
-            laydate(valid_times)
-            var valid_timee = { elem: "#valid_timee_"+i, format: "YYYY-MM-DD hh:mm", min: "1900-01-01 00:00", max: "2099-06-16 00:00", istime: false, istoday: false };
-            laydate(valid_timee)    
-        }
-
-        // //work_date
-        // var work_start = {
-        //     elem:'#work_timea_1',
-        //     type:'time',
-        //     range:true
-        // }
-        // laydate(work_start)
-
-
-
-
-
-        $('#Parking_ID').chosen();
-        $("#Parking_ID").trigger("chosen:updated");
-
-        var cnPicker = new CarnoPicker('#Car_CarNo'); cnPicker.init();
-
-
-
-        // function GetDate(strDate) { return strDate == null ? "" : strDate.substr(0, 10); }
-
- 
-
-
-
-        // var pager = {
-
-        //     pageIndexCurrent: 1,
-
-        //     init: function () {
-
-        //         $.ajaxSettings.async = false;
-
-        //         this.bindSelect();
-
-        //         $.ajaxSettings.async = true;
-
-        //         this.bindPower();
-
-        //         this.bindEvent();
-
-        //     },
-
-        //     bindSelect: function () {
-
-
-
-        //         $.getJSON("/Car/GetAllCarType", {},
-
-        //             function (json) {
-
-        //                 if (json.Success) {
-
-        //                     for (var d in json.Data) {
-
-        //                         $("#CarType_No").append("<option value='" + json.Data[d].CarType_No + "'>" + json.Data[d].CarType_Name + "</option>");
-
-        //                     }
-
-        //                 }
-
-        //             });
-
-
-
-        //         $.getJSON("/Car/GetAllParking", {}, //Parking
-
-        //             function (json) {
-
-        //                 if (json.Success) {
-
-        //                     for (var d in json.Data) {
-
-        //                         $("#Parking_ID").append("<option value='" + json.Data[d].Parking_ID + "'>" + json.Data[d].Parking_Name + "</option>");
-
-        //                     }
-
-        //                     $('#Parking_ID').chosen();
-
-
-
-        //                 }
-
-        //             });
-
-        //         //-----设置默认值---
-
-        //         $("#Parking_ID").find("option").eq(1).attr("selected", true);
-
-        //         $("#Parking_ID").trigger("chosen:updated");
-
-        //         //-----------------
-
-        //     },
-
-        //     //数据绑定
-
-        //     bindData: function (pageIndex) {
-
+        $('#valid_timea_1').val('');
+        $('#valid_timea_2').val('');
+        for(var i=1;i<=$('.ups').length;i++){
+            laydate.render({
+              elem: "#valid_timee_"+i
+              
+            });
+             laydate.render({
+              elem: "#valid_times_"+i
              
-
-        //         //检测非法日期
-
-        //         if (!laydate.checkDate('layer-date')) return;
-
-
-
-        //         layer.msg('加载中...', { icon: 16, time: 0 });
-
-
-
-        //         var conditionParam = $("#searchForm").formToJSON(true, function (data) {
-
-        //             return data;
-
-        //         });
-
-
-
-        //         var pageSize = $("#page-size").val();
-
-        //         $.ajax({
-
-        //             type: 'post',
-
-        //             url: '/Car/GetCarList',
-
-        //             dataType: 'json',
-
-        //             data: { pageIndex: pageIndex, pageSize: pageSize, conditionParam: JSON.stringify(conditionParam) },
-
-        //             success: function (json) {
-
-        //                 if (json.Success) {
-
-        //                     //填充表格
-
-        //                     if (json.Data.ResultList.length > 0) {
-
-        //                         $("#data-view").html($('#data-tmpl').tmpl(json.Data.ResultList));
-
-
-
-        //                         //加载表中checkbox的i-checks样式
-
-        //                         $(".i-checks").iCheck({ checkboxClass: "icheckbox_square-green", radioClass: "iradio_square-green" });
-
-        //                         //单选
-
-        //                         $('.i-checks').on('ifChecked', function () { $('.i-checks').not(this).iCheck('uncheck'); });
-
-        //                     }
-
-        //                     else {
-
-        //                         $("#data-view").html("<tr class='text-center'><td colspan='11'>没有找到匹配的记录</td></tr>");
-
-        //                     }
-
-
-
-        //                     //翻页组件
-
-        //                     laypage({
-
-        //                         cont: 'page-btm', //容器。值支持id名、原生dom对象，jquery对象,
-
-        //                         pages: json.Data.TotalPage, //总页数
-
-        //                         curr: json.Data.PageIndex, //当前页
-
-        //                         skin: 'molv', //皮肤
-
-        //                         skip: true, //是否开启跳页
-
-        //                         first: 1, //将首页显示为数字1,。若不显示，设置false即可
-
-        //                         last: json.Data.TotalPage, //将尾页显示为总页数。若不显示，设置false即可
-
-        //                         prev: '<', //若不显示，设置false即可
-
-        //                         next: '>', //若不显示，设置false即可
-
-
-
-        //                         jump: function (e, first) { //触发分页后的回调
-
-        //                             if (!first) { //一定要加此判断，否则初始时会无限刷新
-
-        //                                 pager.pageIndexCurrent = e.curr;
-
-        //                                 pager.bindData(e.curr);
-
-        //                             }
-
-        //                         }
-
-        //                     });
-
-
-
-        //                     //设置统计项显示
-
-        //                     $("#item-begin").html(json.Data.PageIndex == 1 ? 1 : (json.Data.PageIndex - 1) * json.Data.PageSize);
-
-        //                     $("#item-end").html(json.Data.TotalRecord < json.Data.PageIndex * json.Data.PageSize ? json.Data.TotalRecord : json.Data.PageIndex * json.Data.PageSize);
-
-        //                     $("#item-sum").html(json.Data.TotalRecord);
-
-
-
-        //                     layer.closeAll();
-
-        //                 } else {
-
-        //                     layer.msg('加载失败 ' + json.Message, { icon: 0 });
-
-        //                 }
-
-        //             },
-
-        //             error: function () {
-
-        //                 layer.msg('系统错误', { icon: 2 });
-
-        //             }
-
-        //         });
-
-        //     },
-
-
-
-        //     //导出数据到Excel
-
-        //     bindExport: function () {
-
-        //         //检测非法日期
-
-        //         if (!laydate.checkDate('layer-date')) return;
-
-
-
-        //         if ($("#Parking_ID").val() == "") {
-
-        //             layer.msg("请选择停车场");
-
-        //             return;
-
-        //         }
-
-
-
-        //         var conditionParam = $("#searchForm").formToJSON(true, function (data) {
-
-        //             return data;
-
-        //         });
-
-
-
-        //         //window.location.href = '/Car/ExportExcel?' + "conditionParam=" + JSON.stringify(conditionParam);
-
-        //         //实现Ajax下载文件
-
-        //         $.fileDownload('/Car/ExportExcel?' + "conditionParam=" + JSON.stringify(conditionParam), {
-
-        //             httpMethod: 'GET',
-
-        //             data: null,
-
-        //             prepareCallback: function (url) {
-
-        //                 $("#Export").attr("disabled", true);
-
-        //                 layer.msg('正在导出，请稍候...', { icon: 16, time: 0 });
-
-        //             },
-
-        //             successCallback: function (url) {
-
-        //                 $("#Export").attr("disabled", false);
-
-        //                 layer.msg('导出成功');
-
-        //             },
-
-        //             failCallback: function (html, url) {
-
-        //                 $("#Export").attr("disabled", false);
-
-        //                 layer.msg('导出失败', { icon: 0, time: 0, btn: ['确定'] });
-
-        //             }
-
-        //         });
-
-        //     },
-
-
-
-        //     bindEvent: function () {
-
-        //         //查询
-
-        //         $("#Search").click(function () {
-
-        //             pager.pageIndexCurrent = 1;
-
-        //             pager.bindData(pager.pageIndexCurrent);
-
-        //         });
-
-
-        //         //编辑
-
-        //         $("#Update").click(function () {
-
-        //             //获取要编辑的权限ID
-
-        //             var checkes = $("#data-view input[type='checkbox']:checked");
-
-        //             if (checkes.length > 0) {
-
-        //                 var carId = $(checkes[0]).val();
-
-
-
-        //                 //var updatelayer =
-
-        //                     layer.open({
-
-        //                         title: "<i class='fa fa-car'></i> 编辑车辆信息",
-
-        //                         type: 2,
-
-        //                         area: ['820px', '580px'],
-
-        //                         fix: false, //不固定
-
-        //                         maxmin: true, //可缩放
-
-        //                         content: 'Edit?Edit=Update&Car_ID=' + carId
-
-        //                     });
-
-        //                 //layer.full(updatelayer);
-
-        //             } else {
-
-        //                 layer.msg("请选择！");
-
-        //             }
-
-        //         });
-
-                 
-
-        //         //禁用
-
-        //         $("#UnBind").click(function () {
-
-        //             var checkes = $("#data-view input[type='checkbox']:checked");
-
-        //             if (checkes.length > 0) {
-
-        //                 var CarSpace_ID = $(checkes[0]).attr("data-sid");
-
-        //                 var Car_CarNo = $(checkes[0]).attr("data-car");
-
-        //                 if (CarSpace_ID == null || CarSpace_ID == "") {
-
-        //                     layer.msg("未绑定车位，无法操作");
-
-        //                     return;
-
-        //                 }
-
-        //                 if (Car_CarNo == null || Car_CarNo == "") {
-
-        //                     layer.msg("无车牌号，无法操作");
-
-        //                     return;
-
-        //                 }
-
-
-
-        //                 layer.confirm('是否解除此车辆车位绑定？', {
-
-        //                     btn: ['确定', '取消'], icon: 3
-
-        //                 }, function () {
-
-        //                     layer.msg('处理中...', { icon: 16, time: 0 });
-
-
-
-        //                     $.getJSON("/Car/DisableCar", { CarSpace_ID: CarSpace_ID, Car_CarNo: Car_CarNo },
-
-        //                         function (json) {
-
-        //                             if (json.Success) {
-
-        //                                 layer.msg('已解除', { icon: 1, time: 2000 }, function () {
-
-        //                                     pager.bindData(pager.pageIndexCurrent);
-
-        //                                 });
-
-        //                             } else {
-
-        //                                 layer.msg('解除失败：' + json.Message, { icon: 5 });
-
-        //                             }
-
-        //                         });
-
-
-
-        //                 }, function () { });
-
-        //             } else {
-
-        //                 layer.msg("请选择！");
-
-        //             }
-
-        //         });
-
-
-
-        //         //删除
-
-        //         $("#Delete").click(function () {
-
-        //             var checkes = $("#data-view input[type='checkbox']:checked");
-
-        //             if (checkes.length > 0) {
-
-        //                 var Car_CarNo = $(checkes[0]).attr("data-car");
-
-        //                 if (Car_CarNo == null || Car_CarNo == "") {
-
-        //                     layer.msg("无车牌号，无法操作");
-
-        //                     return;
-
-        //                 }
-
-        //                 layer.confirm('是否删除此车辆？', {
-
-        //                     btn: ['确定', '取消'], icon: 3
-
-        //                 }, function () {
-
-        //                     layer.msg('处理中...', { icon: 16, time: 0 });
-
-
-
-        //                     $.getJSON("/Car/Delete", { Car_CarNo: Car_CarNo },
-
-        //                         function (json) {
-
-        //                             if (json.Success) {
-
-        //                                 layer.msg('已删除', { icon: 1, time: 2000 }, function () {
-
-        //                                     pager.bindData(pager.pageIndexCurrent);
-
-        //                                 });
-
-        //                             } else {
-
-        //                                 layer.msg('删除失败：' + json.Message, { icon: 5, time: 3000 });
-
-        //                             }
-
-        //                         });
-
-
-
-        //                 }, function () { });
-
-        //             } else {
-
-        //                 layer.msg("请选择！");
-
-        //             }
-
-        //         });
-
-
-
-        //         //推送到线下
-
-        //         $("#Pulldown").click(function () {
-
-        //             var checkes = $("#data-view input[type='checkbox']:checked");
-
-        //             if (checkes.length > 0) {
-
-        //                 var CarType_No = $(checkes[0]).attr("data-cty");
-
-        //                 if (",3652,3653,3654,3655,3661,3662,3663,3664,".indexOf(',' + CarType_No + ',') < 0) {
-
-        //                     layer.msg("请选择月租车！");
-
-        //                     return;
-
-        //                 }
-
-
-
-        //                 layer.confirm('是否推送选中的月租车？', {
-
-        //                     btn: ['确定', '取消'], icon: 3
-
-        //                 }, function () {
-
-        //                     layer.msg('处理中...', { icon: 16, time: 0 });
-
-
-
-        //                     //循环选中的月租车
-
-        //                     var Car_IDarrays = new Array();
-
-        //                     for (var i = 0; i < checkes.length; i++) {
-
-        //                         var Car_ID = $(checkes[i]).val();
-
-
-
-        //                         Car_IDarrays.push(Car_ID);
-
-        //                     }
-
-
-
-        //                     $.getJSON("/Car/PulledCar", { Car_IDarrays: Car_IDarrays.join(",") },
-
-        //                      function (json) {
-
-        //                          if (json.Success) {
-
-        //                              layer.msg('已经推送成功!', { icon: 1, time: 2000 }, function () { });
-
-        //                          } else {
-
-        //                              layer.msg('推送失败：' + json.Message, { icon: 5 });
-
-        //                          }
-
-        //                      });
-
-
-
-
-
-        //                 }, function () { });
-
-        //             } else {
-
-        //                 layer.msg("请选择！");
-
-        //             }
-
-        //         });
-
-
-
-        //         //导出
-
-        //         $("#Export").click(function () {
-
-        //             pager.bindExport();
-
-        //         });
-
-
-
-        //         window.parent.pager.timeminmax($("#sstart"), $("#send"), sstart, send, window);
-
-        //         window.parent.pager.timeminmax($("#estart"), $("#eend"), estart, eend, window);
-
-
-
-
-
-        //         $("button").click(function () { $(this).blur(); });
-
-        //         $("input[type='buttton']").click(function () { $(this).blur(); });
-
-        //     },
-
-        //     bindPower: function () {
-
-        //         //加载表单权限控制
-
-        //         // var fpower = window.parent.global.formPowerFill(window.location.pathname, null);
-
-        //         // if (fpower["Search"]) {
-
-        //         //     this.bindData(pager.pageIndexCurrent);
-
-        //         // }
-
-        //     }
-
-        // };
-
-
-
-        $(function () { 
-            // pager.init(); 
-            // $('.chosen-select').chosen({'width': '200px'});
-
-            // var start = { elem: "#valid_timea_1", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
-            // laydate(start)
-            // $('#valid_timea_1').val('')
-            // $('.chosen-select').chosen({'width': '200px'});
-
-            // var end = { elem: "#valid_timea_2", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
-            // laydate(end)
-            // $('#valid_timea_2').val('')
-
-            // for(var i=1;i<=$('.update_model').length;i++){
-            //     var valid_times = { elem: "#valid_times_"+i, format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
-            //     laydate(valid_times)
-            //     var valid_timee = { elem: "#valid_timee_"+i, format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: false, istoday: false };
-            //     laydate(valid_timee)    
-            // }
-
-
-
-// add form validate
-            $('#add_form').bootstrapValidator({
-
-　　　　　　　　  message: 'This value is not valid',
-            　 feedbackIcons: {
-                　　　　　　　　valid: 'glyphicon glyphicon-ok',
-                　　　　　　　　invalid: 'glyphicon glyphicon-remove',
-                　　　　　　　　validating: 'glyphicon glyphicon-refresh'
-            　　　　　　　　   },
-
-                fields: {
-                    role_name: {
-                        message: '角色名不能为空',
-                        validators: {
-                            notEmpty: {
-                                message: '角色名不能为空'
-                            },
-                            stringLength: {
-                                     min: 3,
-                                     max: 20,
-                                     message: '角色名长度必须在3到20之间'
-                                 },
-                            remote:{
-                                url: '',
-                                data:function(validator) {
-                                    return {
-                                        role_name: $('#add_form input[name=role_name]').val(),
-                                        action: 'validate',
-                                        csrfmiddlewaretoken:'{{ csrf_token  }}'
-                                    }
-                                },
-                                type:'post',
-                                message: '角色名已存在'
-                            }
-                        }
-                    }
-                }
             });
 
 
-// update form validate 
-            
-
-            $('#update-btn').click(function(){
-                var ids = $('input[name=ids]:checked')
-                if(ids.length == 1){
-                    initValidator(ids[0].value)
-
-                    $('#update_model_'+ids[0].value).show()
-                }
-            })
-
-        });
-    function initValidator(id){
-                $('#update_form_'+id).bootstrapValidator({
+        }
+    function sh(){
+        initValidator('#add_form','')
+    }
+    function initValidator(name,id){
+                $(name).bootstrapValidator({
 
     　　　　　　　　  message: 'This value is not valid',
                 　 feedbackIcons: {
@@ -962,43 +275,65 @@
                 　　　　　　　　   },
 
                     fields: {
-                        role_name: {
-                            message: '角色名不能为空',
+                        owner: {
+                            message: '持卡人不能为空',
                             validators: {
                                 notEmpty: {
-                                    message: '角色名不能为空'
+                                    message: '持卡人不能为空'
                                 },
                                 stringLength: {
                                      min: 3,
                                      max: 20,
-                                     message: '角色名长度必须在3到20之间'
+                                     message: '持卡人长度必须在3到20之间'
                                  },
                                 remote:{
                                     url: '',
                                     data:function(validator) {
                                         return {
-                                            id: $('#update_form_'+id + ' input[name=id]').val(),
-                                            role_name: $('#update_form_'+id + ' input[name=role_name]').val(),
+                                            id:id,
+                                            owner: $(name + ' input[name=owner]').val(),
                                             action: 'validate',
                                             csrfmiddlewaretoken:'{{ csrf_token  }}'
                                         }
                                     },
                                     type:'post',
-                                    message: '角色名已存在'
+                                    message: '持卡人已存在'
                                 }
                             },
 
                             
-                        }
+                        },
+                        car_number: {
+                            validators: {
+                                notEmpty: {
+                                    message: '车牌号不能为空'
+                                }
+                            }
+                        },
+                        phone: {
+                            validators: {
+                                notEmpty: {},
+                                digits: {},
+                                phone: {
+                                    country: 'CN',
+                                    message: '请输入十一位手机号码'
+                                }
+                            }
+                        },
+
                     }
                 });
     }
 
 
+
+       
+
+
     function change(){
         var ids = $('input[name=ids]:checked')
                 if(ids.length == 1){
-                    initValidator(ids[0].value)
+                    initValidator('#update_form_'+ids[0].value,ids[0].value)
 
                     $('#update_model_'+ids[0].value).show()
                 }

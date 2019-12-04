@@ -72,7 +72,7 @@
                                     {% for i in gates %}
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
-                                            <td>{{ i.id }} </td>
+                                            <td>{{forloop.counter}} </td>
                                             <td>{{ i.get_use_type_display }}</td>
                                             <td>{{ i.get_ctrl_type_display }} </td>
                                             <td>{{ i.parkinglot.name}} </td>

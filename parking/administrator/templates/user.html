@@ -912,6 +912,7 @@
                                     url: '',
                                     data:function(validator) {
                                         return {
+                                            id:id,
                                             role_name: $(name + ' input[name=user_name]').val(),
                                             action: 'validate',
                                             csrfmiddlewaretoken:'{{ csrf_token  }}'

@@ -10,6 +10,7 @@ class AdminUser(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '系统用户'
 
+    status = models.IntegerField(default=0)
     user_name = models.CharField(max_length=30, unique=True, verbose_name='用户账号')
     user_pass = models.CharField(max_length=30,  verbose_name='密码')
     role_name = models.ForeignKey('Role',null=True,on_delete=models.CASCADE)

@@ -108,7 +108,11 @@ def user(request):
                 item.save()
         elif action == 'validate':
             user_name = request.POST.get('user_name', '')
-            r = AdminUser.objects.filter(user_name=user_name.strip())
+            id = request.POST.get('id','')
+            if id:
+                r = AdminUser.objects.filter(user_name=user_name.strip()).exclude(id=int(id))
+            else:   
+                r = AdminUser.objects.filter(user_name=user_name.strip())
             if r.exists():
                     return JsonResponse({'valid': False})
 
@@ -116,7 +120,7 @@ def user(request):
 
 
 
-    ctx['users'] = users
+    ctx['users'] = users.exclude(status=-1).all()
     ctx['roles'] = roles
 
     return render(request,'user.html',ctx)

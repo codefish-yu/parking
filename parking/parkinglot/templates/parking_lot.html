@@ -53,7 +53,7 @@
                                     {% for i in parkinglot %}
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
-                                            <td>{{i.id}} </td>
+                                            <td>{{forloop.counter}} </td>
                                             <td>{{ i.name }}</td>
                                             <td>{{i.zone_num}} </td>
                                             <td>{{i.place_num}} </td>

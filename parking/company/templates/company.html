@@ -29,7 +29,7 @@
                                 <form id='query_form' action='' method="post">
                                     {% csrf_token %}
                                     <div class="form-group">
-                                        <select data-placeholder="商家名称" name="busi_name" class="form-control chosen-select">
+                                        <select data-placeholder="商家" name="busi_name" class="form-control chosen-select">
                                             <option value="">选择商家名称</option>
                                             {% for i in company %}
                                             <option value="{{i.id}} ">{{i.name}} </option>
@@ -85,7 +85,7 @@
                                     {% for i in company %}
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
-                                            <td>{{i.id}} </td>
+                                            <td>{{forloop.counter}} </td>
                                             <td>{{ i.name}}</td>
                                             <td>{{ i.address}}</td>
                                             <td>{{ i.account}}</td>
@@ -133,25 +133,25 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">退款金额</label>
                             <div class="col-sm-4">
-                               <input type="text" name="money" class="form-control chosen-select" >
+                               <input type="text" name="money" class="form-control " >
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">退款时长</label>
                             <div class="col-sm-4">
-                               <input type="text" name="duration" class="form-control chosen-select" >
+                               <input type="text" name="duration" class="form-control " >
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">退还费用</label>
                             <div class="col-sm-4">
-                               <input type="text" name="cost" class="form-control chosen-select" >
+                               <input type="text" name="cost" class="form-control " >
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">退款原因</label>
                             <div class="col-sm-4">
-                               <textarea name="reason" class="form-control chosen-select"></textarea>
+                               <textarea name="reason" class="form-control"></textarea>
                             </div>
                         </div>
 
@@ -190,25 +190,25 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">退款金额</label>
                             <div class="col-sm-4">
-                               <input type="text" name="money" class="form-control chosen-select" >
+                               <input type="text" name="money" class="form-control " >
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">退款时长</label>
                             <div class="col-sm-4">
-                               <input type="text" name="duration" class="form-control chosen-select" >
+                               <input type="text" name="duration" class="form-control " >
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">退还费用</label>
                             <div class="col-sm-4">
-                               <input type="text" name="cost" class="form-control chosen-select" >
+                               <input type="text" name="cost" class="form-control" >
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">退款原因</label>
                             <div class="col-sm-4">
-                               <textarea name="reason" class="form-control chosen-select"></textarea>
+                               <textarea name="reason" class="form-control "></textarea>
                             </div>
                         </div>
 
@@ -248,31 +248,39 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">商家名称</label>
                             <div class="col-sm-4">
-                               <input type="text" name="name" class="form-control chosen-select" value="{{ i.name}}">
+                               <input type="text" name="name" class="form-control " value="{{ i.name}}">
+                            </div>
+                            <label class="col-sm-2 control-label">所属停车场</label>
+                            <div class="col-sm-4">
+                                <select name='suit' class="form-control chosen-select">
+                                    {% for n in parkinglot %}
+                                    <option value="{{ n.id}}" {% if n.id == i.parkinglot.id %}selected{% endif %}>{{ n.name}} </option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">商家地址</label>
                             <div class="col-sm-4">
-                               <input type="text" name="address" class="form-control chosen-select" value="{{ i.address}}">
+                               <input type="text" name="address" class="form-control" value="{{ i.address}}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">登录账号</label>
                             <div class="col-sm-4">
-                               <input type="text" name="account" class="form-control chosen-select" value="{{ i.account}}">
+                               <input type="text" name="account" class="form-control" value="{{ i.account}}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">联系人姓名</label>
                             <div class="col-sm-4">
-                               <input type="text" name="owner" class="form-control chosen-select" value="{{ i.owner}}">
+                               <input type="text" name="owner" class="form-control " value="{{ i.owner}}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">联系人电话</label>
                             <div class="col-sm-4">
-                               <input type="number" name="phone" class="form-control chosen-select" value="{{ i.phone}}">
+                               <input type="number" name="phone" class="form-control " value="{{ i.phone}}">
                             </div>
                         </div>
                         <div class="form-group">
@@ -280,29 +288,29 @@
                             <div class="col-sm-4">
                                <select data-placeholder="限制类型" class="form-control chosen-select" name="type" value="{{ i.type}}">
                                				<option value="" >选择限制类型</option>
-                                            <option value="0">无限制</option>
-                                            <option value="1">限制天</option>
-                                            <option value="2">限制周</option>
-                                            <option value="3">限制月</option>
+                                            <option value="0" {% if i.type == 0%}selected{% endif %} >无限制</option>
+                                            <option value="1" {% if i.type == 1%}selected{% endif %}>限制天</option>
+                                            <option value="2" {% if i.type == 2%}selected{% endif %}>限制周</option>
+                                            <option value="3" {% if i.type == 3%}selected{% endif %}>限制月</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">限制规则</label>
                             <div class="col-sm-4">
-                               <input type="text" name="rule" class="form-control chosen-select" value="{{ i.rule}}">
+                               <input type="text" name="rule" class="form-control " value="{{ i.rule}}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">限制张数</label>
                             <div class="col-sm-4">
-                               <input type="number" name="amount" class="form-control chosen-select" value="{{ i.amount}}">
+                               <input type="number" name="amount" class="form-control " value="{{ i.amount}}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">商家描述</label>
                             <div class="col-sm-4">
-                               <input type="text" name="descript" class="form-control chosen-select" value="{{ i.desctipt}}">
+                               <input type="text" name="descript" class="form-control " value="{{ i.desctipt}}">
                             </div>
                         </div>
 
@@ -342,31 +350,39 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">商家名称</label>
                             <div class="col-sm-4">
-                               <input type="text" name="name" class="form-control chosen-select" >
+                               <input type="text" name="name" class="form-control " >
+                            </div>
+                            <label class="col-sm-2 control-label">所属停车场</label>
+                            <div class="col-sm-4">
+                                <select name='suit' class="form-control chosen-select" >
+                                    {% for n in parkinglot %}
+                                    <option value="{{ n.id}}" >{{ n.name}} </option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">商家地址</label>
                             <div class="col-sm-4">
-                               <input type="text" name="address" class="form-control chosen-select" >
+                               <input type="text" name="address" class="form-control " >
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">登录账号</label>
                             <div class="col-sm-4">
-                               <input type="text" name="account" class="form-control chosen-select">
+                               <input type="text" name="account" class="form-control ">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">联系人姓名</label>
                             <div class="col-sm-4">
-                               <input type="text" name="owner" class="form-control chosen-select">
+                               <input type="text" name="owner" class="form-control ">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">联系人电话</label>
                             <div class="col-sm-4">
-                               <input type="number" name="phone" class="form-control chosen-select" >
+                               <input type="number" name="phone" class="form-control " >
                             </div>
                         </div>
                         <div class="form-group">
@@ -384,19 +400,19 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">限制规则</label>
                             <div class="col-sm-4">
-                               <input type="text" name="rule" class="form-control chosen-select" >
+                               <input type="text" name="rule" class="form-control " >
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">限制张数</label>
                             <div class="col-sm-4">
-                               <input type="number" name="amount" class="form-control chosen-select" >
+                               <input type="number" name="amount" class="form-control " >
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">商家描述</label>
                             <div class="col-sm-4">
-                               <input type="text" name="descript" class="form-control chosen-select" >
+                               <input type="text" name="descript" class="form-control" >
                             </div>
                         </div>
 
@@ -455,6 +471,7 @@
                             url: '',
                             data:function(validator) {
                                 return {
+                                    id:id,
                                     account: $(name + ' input[name=account]').val(),
                                     action: 'validate',
                                     csrfmiddlewaretoken:'{{ csrf_token  }}'

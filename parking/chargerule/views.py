@@ -7,7 +7,7 @@ from .models import *
 from company.models import Company
 from parkinglot.models import ParkingLot
 from administrator.models import AdminUser 
-from administrator.decorators import page, _save_attr_
+from administrator.decorators import page, _save_attr_,export_excel
 
 
 '''计费规则管理'''
@@ -23,43 +23,37 @@ def card_type(request):
     '''卡片类型设置'''
 
     ctx = {}
-
-
-    def correct_card_type(request,obj):
-        name = request.POST.get('name')
-        rule = request.POST.get('rule')
-        suit = request.POST.getlist('suit',[])
-
-        obj.name = name if name else ''
-        obj.rule = rule if rule else ''
-        obj.save()
-        obj.suit.clear()
-
-        for i in suit:
-            obj.suit.add(ParkingLot.objects.filter(id=int(i)).first())
-
-        obj.save()
-
+    cardtype = CardType.objects.filter(status=0).all()
+    t=2
     if request.method == 'POST':
         action = request.POST.get('action','')
         if action == 'add':
             r = CardType()
-            correct_card_type(request,r)
+            _save_attr_(r,request)
+            t = int(request.POST.get('diff_type'))
 
-        if action == 'update':
+        elif action == 'update':
             id = request.POST.get('id','')
             r = CardType.objects.filter(id=id).first()
-            correct_card_type(request,r)
+            _save_attr_(r,request)
+            t = int(request.POST.get('diff_type'))
 
-        if action == 'delete':
+        elif action == 'delete':
             ids = request.POST.getlist('ids', '')
+            t = request.POST.get('type')
             u = CardType.objects.filter(id__in=ids).all()
+
             for item in u:
                 item.status = -1
                 item.save()
-
+        elif action == 'select':
+            t = request.POST.get('type')
+              
+    if t != 2:
+        cardtype = cardtype.filter(diff_type=int(t))
+        ctx['type'] = int(t)
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
-    ctx['cardtype'] = ctx['objects'] = CardType.objects.filter(status=0).all()
+    ctx['cardtype'] = ctx['objects'] = cardtype
     return (ctx,'card_type.html')
 
 
@@ -275,9 +269,11 @@ def card(request):
     '''卡片管理'''
 
     ctx ={}
+    cards = Card.objects.filter(status=0).all()
     def correct_obj(request,r):
         owner_id = request.POST.get('owner', '')
         card_id = request.POST.get('my_card', '')
+        suit = request.POST.getlist('suit',[])
         if owner_id:
             p = AdminUser.objects.filter(id=owner_id).first()
             if p: 
@@ -288,6 +284,11 @@ def card(request):
             if p: 
                 r.my_card = p
         r.save()
+        if suit:
+            for i in suit:
+                if i not in r.suit.all():
+                    r.suit.add(ParkingLot.objects.filter(id=int(i)).first())
+            r.save()
 
     if request.method == 'POST':
         action = request.POST.get('action','')
@@ -298,24 +299,51 @@ def card(request):
             
 
 
-        if action == 'update':
+        elif action == 'update':
             id = request.POST.get('id','')
             r = Card.objects.filter(id=id).first()
             correct_obj(request,r)
             _save_attr_(r, request)
            
 
-        if action == 'delete':
+        elif action == 'delete':
             ids = request.POST.getlist('ids', '')
             u = Card.objects.filter(id__in=ids).all()
             for item in u:
                 item.status = -1
                 item.save()
 
+        elif action == 'validate':
+            owner = request.POST.get('owner', '')
+            id = request.POST.get('id','')
+            if id:
+                r = Card.objects.filter(owner=owner.strip()).exclude(id=int(id))
+            else:   
+                r = Card.objects.filter(owner=owner.strip())
+            if r.exists():
+                    return JsonResponse({'valid': False})
+
+            return JsonResponse({'valid': True})
+
+        # if action == 'export':
+        #     w = export_excel(cards,u'开卡管理')
+        #     row = 1
+        #     for i  in cards:
+        #         w.write(row, 0, i.owner)
+        #         w.write(row, 1, i.my_card)
+        #         w.write(row, 2, i.valid_start)
+        #         w.write(row, 3, i.valid_end)
+        #         for j in i.suit.all():
+
+
+
+
+
 
     ctx['users'] = AdminUser.objects.all()
     ctx['cardtypes'] = CardType.objects.filter(status=0).all()
-    ctx['cards'] = ctx['objects'] = Card.objects.filter(status=0).all()
+    ctx['cards'] = ctx['objects'] = cards
+    ctx['parkinglot'] = ParkingLot.objects.all()
     return (ctx, 'card.html')
 
 
