@@ -52,6 +52,8 @@ def card_type(request):
     if t != 2:
         cardtype = cardtype.filter(diff_type=int(t))
         ctx['type'] = int(t)
+
+    ctx['num'],ctx['num1'] = tim()
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
     ctx['cardtype'] = ctx['objects'] = cardtype
     return (ctx,'card_type.html')
@@ -345,6 +347,27 @@ def card(request):
     ctx['cards'] = ctx['objects'] = cards
     ctx['parkinglot'] = ParkingLot.objects.all()
     return (ctx, 'card.html')
+
+
+def tim():
+    def rm_invalid(t):
+        if t%1 == 0:
+            return int(t)
+        return t
+    list = []
+    list1 = []
+    for i in range(24):
+        list.append(rm_invalid((i)/2))
+        list1.append(rm_invalid((i+24)/2))
+
+    return list,list1
+
+def test(request):
+    ctx = {}
+
+    ctx['num'],ctx['num1'] = tim()
+
+    return render(request,'test.html',ctx)
 
 
 

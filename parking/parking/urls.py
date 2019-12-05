@@ -30,6 +30,7 @@ from realtime import views as realtime
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('test/',charge.test),
 
 
 
