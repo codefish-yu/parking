@@ -105,7 +105,7 @@
                             </div>
                             <label class="col-sm-2 control-label">卡片类型</label>
                             <div class="col-sm-4">
-                                <select name='my_card' class="form-control required">
+                                <select name='my_card' class="form-control required chosen-select">
                                     <option value="">选择卡片类型</option>
                                     {% for n in cardtypes%}
                                     <option value="{{ n.id}}" {% if i.my_card.id == n.id%}selected{% endif %}>{{ n.name}} </option>
@@ -178,9 +178,9 @@
                             <div class="col-sm-4">
                                 <input type="text" name="owner" class="form-control">
                             </div>
-                            <label class="col-sm-2 control-label">卡片类型</label>
+                            <label class="col-sm-2 control-label ">卡片类型</label>
                             <div class="col-sm-4">
-                                <select name='my_card' class="form-control required">
+                                <select name='my_card' class="form-control required chosen-select">
                                     <option value="">选择卡片类型</option>
                                     {% for n in cardtypes%}
                                     <option value="{{ n.id}}" >{{ n.name}} </option>
@@ -245,7 +245,7 @@
 <link href="/static/css/laydate.css" rel="stylesheet">
  <script>
         $('.chosen-select').chosen();
-        $('.chosen-select').chosen({'width': '200px'});
+        $('.chosen-select').next().css({'width': '100%'});
         laydate.render({
           elem: "#valid_timea_1"
           
