@@ -52,7 +52,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <select data-placeholder="所属区域" class="form-control chosen-select" id="zone0" name="zone" >
+                                        <select data-placeholder="所属区域" class="form-control " id="zone_0" name="zone" >
                                             <option value="" selected>选择区域</option>
                                             <!-- {% for n in zones %}
                                             <option value="{{n.id}} ">{{n.zone_name}} </option>
@@ -152,7 +152,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" onchange="getZ(this,1)">
+                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" onchange="getZ(this,1,{{forloop.counter}})">
                                             {% for m in parkinglots %}
                                             <option value="{{m.id}}" {% if m.id == i.parkinglot.id %}selected {% endif %} >{{ m.name }} </option>
                                             {% endfor %}
@@ -162,7 +162,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属区域</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" id='zone1' name="zone" value="{{ i.zone }} ">
+                                <select data-placeholder="所属区域" class="form-control " id='zone_1{{forloop.counter}}' name="zone" value="{{ i.zone }} ">
                                             <!-- {% for n in zoness %}
                                             <option value="{{n.id}}" {% if n.id == i.zone.id %}selected {% endif %}>{{n.zone_name}} </option>
                                             {% endfor %} -->
@@ -236,7 +236,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属区域</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" id="zone2" class="form-control chosen-select" name="zone" >
+                                <select data-placeholder="所属区域" id="zone_2" class="form-control " name="zone" >
                                             <option value="">选择区域</option>
                                             <!-- {% for n in zonesss %}
                                             <option value="{{n.id}} ">{{n.zone_name}} </option>
@@ -322,7 +322,7 @@
     function que(){
         $('#query_form').submit()
     }
-    function getZ(obj,tip){
+    function getZ(obj,tip,t=''){
         var id = $(obj).val();
         if(id == ''){
             return false
@@ -330,10 +330,19 @@
         myajax('/parkinglot/place/', {id: id, action:'getZone',csrfmiddlewaretoken:'{{ csrf_token }}'}, (data)=>{
             if(data.data){
                 var list = data.data;
-                $('#zone'+tip).empty();
-                $('#zone'+tip).append('<option value="">'+'选择区域'+'</option>');
+                $('#zone_'+tip+''+t).empty();
+                $('#zone_'+tip+''+t).append('<option value="">'+'选择区域'+'</option>');
+                console.log($('#zone_'+tip+''+t));
+                console.log(list);
                 for(var i=0;i<list.length;i++){
-                    $('#zone'+tip).append('<option value='+list[i].id+'>'+list[i].name+'</option>')
+                    // $('#zone_'+tip+''+t).append('<option value="'+list[i].id+'">'+'2222'+'</option>')
+                    try{
+                        $('#zone_'+tip+''+t).append('<option id="hanhan'+i+'" value="'+list[i].id+'">'+list[i].name+'</option>');
+                    }
+                    catch(e){
+                        console.log(e)
+                    }
+                    
                 }
                 
             }

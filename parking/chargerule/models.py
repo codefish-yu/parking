@@ -120,10 +120,10 @@ class CardType(models.Model):
         verbose_name = verbose_name_plural = '月卡类型'
 
     status = models.IntegerField(default=0)
-    name = models.TextField(max_length=30, verbose_name='名称')
+    name = models.CharField(max_length=30, verbose_name='名称')
     work = models.TextField(max_length=30,null=True,verbose_name='工作开始') 
     relax = models.TextField(max_length=30,null=True,verbose_name='休息开始')
-    diff_type = models.IntegerField(null=True,verbose_name='减免指标',choices=[(0,'工作日'),(1,'单日')],default=0)
+    diff_type = models.IntegerField(null=True,verbose_name='减免指标',choices=[(0,'工作日'),(1,'自定义')],default=0)
     free = models.TextField(max_length=30,null=True,verbose_name='周一优惠开始') 
     free_tu = models.TextField(max_length=30,null=True,verbose_name='周二优惠开始') 
     free_we = models.TextField(max_length=30,null=True,verbose_name='周三优惠开始') 

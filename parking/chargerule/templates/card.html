@@ -30,6 +30,12 @@
                                 <button type="button" id="Add" onclick="sh()" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;开卡</button>
                                 <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;续卡</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
+                                <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;" onclick="exp()"><i class="fa fa-trash"></i>&nbsp;导出</button>
+                                <form action="" method="post" id='export_form'>
+                                     {% csrf_token%}
+                                    <input type="hidden" name="action" value="export">
+                                    
+                                </form>
                                 
                                 <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
                                 <!-- <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button> -->
@@ -342,6 +348,9 @@
     function rel(){
 
     	window.location.reload()
+    }
+    function exp(){
+        $('#export_form').submit()
     }
    
     </script>

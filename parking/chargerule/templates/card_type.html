@@ -46,6 +46,12 @@
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
                                 <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
+                                <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;" onclick="exp()"><i class="fa fa-trash"></i>&nbsp;导出</button>
+                                <form action="" method="post" id='export_form'>
+                                    {% csrf_token%}
+                                    <input type="hidden" name="action" value="export">
+                                    
+                                </form>
                                 <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
                                 <!-- <button type="button" id="Enable" onclick="que()" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button> -->
                             </div>
@@ -86,19 +92,54 @@
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{forloop.counter}} </td>
                                             <td>{{ i.name }}</td>
-                                            <td>{{i.work_start}} - {{i.work_end}}</td>
-                                            <td>{{i.relax_start}} - {{i.relax_end}}</td>
+                                            <td>
+                                                {% for j in i.work%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.relax%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
                                             {% elif type == 1%}
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{forloop.counter}} </td>
-                                            <td>{{ i.name }}</td>
-                                            <td>{{i.free_start }} - {{i.free_end }} </td>
-                                            <td>{{i.free_start_tu }} - {{i.free_end_tu }} </td>
-                                            <td>{{i.free_start_we }} - {{i.free_end_we }} </td>
-                                            <td>{{i.free_start_th }} - {{i.free_end_th }} </td>
-                                            <td>{{i.free_start_fr }} - {{i.free_end_fr }} </td>
-                                            <td>{{i.free_start_sa }} - {{i.free_end_sa }} </td>
-                                            <td>{{i.free_start_su }} - {{i.free_end_su }} </td>
+                                            <td>
+                                                {% for j in i.free%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_tu%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_we%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_th%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_fr%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_sa%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_su%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
                                             {% endif%}
                                         </tr>
                                     {% empty %}
@@ -152,7 +193,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">工作日优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="work" class="work_start_{{forloop.counter}} form-control" value="{{i.work_start}}" onclick="set_tim(this)">
+                                <input type="" name="work" class="work_start_{{forloop.counter}} form-control" value="{% for j in i.work%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
                           <!--   <div class="col-sm-4">
                                 <input type="text" name="work_end" class="work_end_{{forloop.counter}} form-control " value="{{i.work_end}} " onclick="set_tim(this)">
@@ -161,7 +202,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">非工作日优惠时间段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="relax" class="form-control relax_start_{{forloop.counter}}" value="{{i.relax_start}} " onclick="set_tim(this)">
+                                <input type="" name="relax" class="form-control relax_start_{{forloop.counter}}" value="{% for j in i.relax%} {{j.start}}-{{j.end}} {% endfor%} " onclick="set_tim(this)">
                             </div>
                            <!--  <div class="col-sm-4">
                                 <input type="text" name="relax_end" class="relax_end_{{forloop.counter}} form-control" value="{{i.relax_end}} " onclick="set_tim(this)">
@@ -171,7 +212,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周一优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free"  class="free_start_{{forloop.counter}} form-control" value="{{i.free_start}} " onclick="set_tim(this)">
+                                <input type="text" name="free"  class="free_start_{{forloop.counter}} form-control" value="{% for j in i.free%} {{j.start}}-{{j.end}}{% endfor%} " onclick="set_tim(this)">
                             </div>
                            <!--  <div class="col-sm-4">
                                 <input type="text" name="free_end" class="free_end_{{forloop.counter}} form-control" value="{{i.free_end}} " >
@@ -180,7 +221,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周二优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_tu" class="free_start_tu{{forloop.counter}} form-control" value="{{i.free_start_tu}} " onclick="set_tim(this)">
+                                <input type="text" name="free_tu" class="free_start_tu{{forloop.counter}} form-control"value="{% for j in i.free_tu%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
                             <!-- <div class="col-sm-4">
                                 <input type="text" name="free_end_tu" class="free_end_tu{{forloop.counter}} form-control" value="{{i.free_end_tu}} ">
@@ -189,7 +230,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周三优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_we" class="free_start_we{{forloop.counter}} form-control" value="{{i.free_start_we}} " onclick="set_tim(this)">
+                                <input type="text" name="free_we" class="free_start_we{{forloop.counter}} form-control"value="{% for j in i.free_we%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
                             <!-- <div class="col-sm-4">
                                 <input type="text" name="free_end_we" class="free_end_we{{forloop.counter}} form-control" value="{{i.free_end_we}} ">
@@ -198,7 +239,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周四优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_th" class="free_start_th{{forloop.counter}} form-control" value="{{i.free_start_th}} " onclick="set_tim(this)">
+                                <input type="text" name="free_th" class="free_start_th{{forloop.counter}} form-control" value="{% for j in i.free_tu%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
                            <!--  <div class="col-sm-4">
                                 <input type="text" name="free_end_th" class="free_end_th{{forloop.counter}} form-control" value="{{i.free_end_th}} ">
@@ -207,7 +248,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周五优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_fr" class="free_start_fr{{forloop.counter}} form-control" value="{{i.free_start_fr}} " onclick="set_tim(this)">
+                                <input type="text" name="free_fr" class="free_start_fr{{forloop.counter}} form-control" value="{% for j in i.free_fr%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
                            <!--  <div class="col-sm-4">
                                 <input type="text" name="free_end_fr" class="free_end_fr{{forloop.counter}} form-control" value="{{i.free_end_fr}} ">
@@ -216,7 +257,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周六优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_start_sa"  class="free_start_sa{{forloop.counter}} form-control" value="{{i.free_start_sa}} " onclick="set_tim(this)">
+                                <input type="text" name="free_start_sa"  class="free_start_sa{{forloop.counter}} form-control" value="{% for j in i.free_sa%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
                             <!-- <div class="col-sm-4">
                                 <input type="text" name="free_end_sa"  class="free_end_sa{{forloop.counter}} form-control" value="{{i.free_end_sa}} ">
@@ -225,7 +266,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周日优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_su" class="free_start_su{{forloop.counter}} form-control" value="{{i.free_start_su}} " onclick="set_tim(this)">
+                                <input type="text" name="free_su" class="free_start_su{{forloop.counter}} form-control" value="{% for j in i.free_su%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
                            <!--  <div class="col-sm-4">
                                 <input type="text" name="free_end_su" class="free_end_su{{forloop.counter}} form-control" value="{{i.free_end_su}}">
@@ -596,6 +637,8 @@
 
     	window.location.reload()
     }
+
+
     function sel(obj){
         if($(obj).val() == '0'){
             $('#add_form1').hide();
@@ -610,13 +653,22 @@
             console.log($('#diff_type1').val())
         }
     }
+
+
     function can(){
         $('#add_role_model').hide();
         $('#add_form').hide();
         $('#add_form1').hide();
     }
+
+
     function que(){
         $('#sel_form').submit()
+    }
+
+
+    function exp(){
+        $('#export_form').submit()
     }
     // function setDiff(obj,t=''){
     //     function set(obj,name,name1){
