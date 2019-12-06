@@ -321,10 +321,10 @@
                             validators: {
                                 notEmpty: {},
                                 digits: {},
-                                phone: {
-                                    country: 'CN',
-                                    message: '请输入十一位手机号码'
-                                }
+                                regexp: {
+                                    regexp: /^1[3456789]\d{9}$/,
+                                    message: '手机号码无效'
+                                },
                             }
                         },
 

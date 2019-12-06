@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Q
+from django.http import HttpResponse,JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -8,6 +9,7 @@ from company.models import Company
 from parkinglot.models import ParkingLot
 from administrator.models import AdminUser 
 from administrator.decorators import page, _save_attr_,export_excel
+import io
 
 
 '''计费规则管理'''
@@ -106,6 +108,8 @@ def card_type(request):
             for i,j in enumerate(time):
                 if j == '-':
                     return time[0:i],time[i+2:]
+
+
         tmp = []
         for m in list:
             start,end = get(m)
@@ -128,19 +132,24 @@ def card_type(request):
                     obj.__setattr__(field_name, cut_time(value))
         obj.save()
 
+    def to_dobule(str):
+        t = json.loads(str.replace("'",'"')) if str else ''
+
+        return t
+
     def decode_str(obj):
         tmp = []
         for i in obj:
             c = {
-            'work':json.loads(i.work.replace("'",'"')) if i.work else '',
-            'relax':json.loads(i.relax.replace("'",'"')) if i.relax else '',
-            'free':json.loads(i.free.replace("'",'"')) if i.free else '',
-            'free_tu':json.loads(i.free_tu.replace("'",'"')) if i.free_tu else '',
-            'free_we':json.loads(i.free_we.replace("'",'"')) if i.free_we else '',
-            'free_th':json.loads(i.free_th.replace("'",'"')) if i.free_th else '',
-            'free_fr':json.loads(i.free_fr.replace("'",'"')) if i.free_fr else '',
-            'free_sa':json.loads(i.free_sa.replace("'",'"')) if i.free_sa else '',
-            'free_su':json.loads(i.free_su.replace("'",'"')) if i.free_su else '',
+            'work':to_dobule(i.work),
+            'relax':to_dobule(i.relax),
+            'free':to_dobule(i.free),
+            'free_tu':to_dobule(i.free_tu),
+            'free_we':to_dobule(i.free_we),
+            'free_th':to_dobule(i.free_th),
+            'free_fr':to_dobule(i.free_fr),
+            'free_sa':to_dobule(i.free_sa),
+            'free_su':to_dobule(i.free_su),
             'id':i.id,
             'diff_type':i.diff_type,
             'name':i.name
@@ -179,14 +188,14 @@ def card_type(request):
             t = request.POST.get('type')
 
         elif action == 'export':
-            w = export_excel(cardtype[0],u'卡片类型管理')
+            w,e = export_excel(cardtype[0],u'卡片类型管理')
             row = 1
             s= ''
             for i  in cardtype:
                 w.write(row, 0, i.name)
                 w.write(row, 1, i.work)
                 w.write(row, 2, i.relax)
-                w.write(row, 3, i.get_diff_type_display)
+                w.write(row, 3, i.get_diff_type_display())
                 w.write(row, 4, i.free)
                 w.write(row, 5, i.free_tu)
                 w.write(row, 6, i.free_we)
@@ -194,8 +203,9 @@ def card_type(request):
                 w.write(row, 8, i.free_fr)
                 w.write(row, 9, i.free_sa)
                 w.write(row, 10, i.free_su)
+                row +=1
             output = io.BytesIO()
-            w.save(output)
+            e.save(output)
             # 重新定位到开始
             output.seek(0)
             response = HttpResponse(content_type='application/vnd.ms-excel')
@@ -476,25 +486,28 @@ def card(request):
                 r = Card.objects.filter(owner=owner.strip()).exclude(id=int(id))
             else:   
                 r = Card.objects.filter(owner=owner.strip())
+
             if r.exists():
                     return JsonResponse({'valid': False})
+                    print(111)
 
             return JsonResponse({'valid': True})
 
         elif action == 'export':
-            w = export_excel(cards[0],u'开卡管理')
+            w,e = export_excel(cards[0],u'开卡管理')
             row = 1
             s= ''
             for i  in cards:
                 w.write(row, 0, i.owner)
-                w.write(row, 1, i.my_card)
+                w.write(row, 1, i.my_card.name)
                 w.write(row, 2, i.valid_start)
                 w.write(row, 3, i.valid_end)
                 for j in i.suit.all():
                     s += j.name+'  '
                 w.write(row, 4, s)
+                row +=1
             output = io.BytesIO()
-            w.save(output)
+            e.save(output)
             # 重新定位到开始
             output.seek(0)
             response = HttpResponse(content_type='application/vnd.ms-excel')
