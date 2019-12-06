@@ -141,22 +141,27 @@ function setPointer(obj,tip){
     check(tip)
 
     if(s == 0){
-        $('#item_'+tip).css('background-color',var_c)
+        $('#item_'+tip).css('background-color',var_c);
+        list.push(tip)
     }else{
         if(list[tail] > tip){
-            check_contain(tip,list[tail])
-            generate(tip,list[tail])
+            check_contain(tip,list[tail]);
+            generate(tip,list[tail]);
+            list.push(tip)
         }
         else if(list[tail] == tip){
-            $('#item_'+tip).css('background-color',base_c)
+            $('#item_'+tip).css('background-color',base_c);
+            list.pop(tail);
+
         }
         else{
             check_contain(list[tail],tip)
-            generate(list[tail],tip)
+            generate(list[tail],tip);
+            list.push(tip)
         }
 
     }
-    list.push(tip)
+    
     if(list.length == 2){
         if(list[0] >list[1]){
             time_list.push([list[1],list[0]]);
@@ -178,7 +183,7 @@ function show(){
     var tmp = []
     if(time_list.length >0){
         for(var i=0;i<time_list.length;i++){
-            tmp.push(time_op(time_list[i][0]/2,time_list[i][1]/2))
+            tmp.push(time_op(time_list[i][0]/2,(time_list[i][1]+1)/2))
         }
         $(nam).val(tmp);
         
@@ -219,7 +224,7 @@ function set_curr(){
     var tmp = []
     if(time_list.length >0){
         for(var i=0;i<time_list.length;i++){
-            tmp.push(time_op(time_list[i][0]/2,time_list[i][1]/2))
+            tmp.push(time_op(time_list[i][0]/2,(time_list[i][1]+1)/2))
         }
         $('#tim_con').val(tmp);
         
