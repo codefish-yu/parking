@@ -121,26 +121,17 @@ class CardType(models.Model):
 
     status = models.IntegerField(default=0)
     name = models.CharField(max_length=30, verbose_name='名称')
-    work_start = models.CharField(max_length=30,null=True,verbose_name='工作开始')
-    work_end = models.CharField(max_length=30,null=True,verbose_name='工作结束')
-    relax_start = models.CharField(max_length=30,null=True,verbose_name='休息开始')
-    relax_end = models.CharField(max_length=30,null=True,verbose_name='休息结束')
-    diff_type = models.IntegerField(null=True,verbose_name='减免指标',choices=[(0,'工作日'),(1,'单日')],default=0)
-    free_start = models.CharField(max_length=30,null=True,verbose_name='周一优惠开始') 
-    free_end = models.CharField(max_length=30,null=True,verbose_name='周一优惠结束')
-    free_start_tu = models.CharField(max_length=30,null=True,verbose_name='周二优惠开始') 
-    free_end_tu = models.CharField(max_length=30,null=True,verbose_name='周二优惠结束')
-    free_start_we = models.CharField(max_length=30,null=True,verbose_name='周三优惠开始') 
-    free_end_we = models.CharField(max_length=30,null=True,verbose_name='周三优惠结束')
-    free_start_th = models.CharField(max_length=30,null=True,verbose_name='周四优惠开始') 
-    free_end_th = models.CharField(max_length=30,null=True,verbose_name='周四优惠结束')
-    free_start_fr = models.CharField(max_length=30,null=True,verbose_name='周五优惠开始') 
-    free_end_fr = models.CharField(max_length=30,null=True,verbose_name='周五优惠结束')
-    free_start_sa = models.CharField(max_length=30,null=True,verbose_name='周六优惠开始') 
-    free_end_sa = models.CharField(max_length=30,null=True,verbose_name='周六优惠结束')
-    free_start_su = models.CharField(max_length=30,null=True,verbose_name='周日优惠开始') 
-    free_end_su = models.CharField(max_length=30,null=True,verbose_name='周日优惠结束')
-    is_diff = models.IntegerField(choices=[(0,'否'),(1,'是')],default=0)
+    work = models.TextField(max_length=30,null=True,verbose_name='工作开始') 
+    relax = models.TextField(max_length=30,null=True,verbose_name='休息开始')
+    diff_type = models.IntegerField(null=True,verbose_name='减免指标',choices=[(0,'工作日'),(1,'自定义')],default=0)
+    free = models.TextField(max_length=30,null=True,verbose_name='周一优惠开始') 
+    free_tu = models.TextField(max_length=30,null=True,verbose_name='周二优惠开始') 
+    free_we = models.TextField(max_length=30,null=True,verbose_name='周三优惠开始') 
+    free_th = models.TextField(max_length=30,null=True,verbose_name='周四优惠开始') 
+    free_fr = models.TextField(max_length=30,null=True,verbose_name='周五优惠开始') 
+    free_sa = models.TextField(max_length=30,null=True,verbose_name='周六优惠开始') 
+    free_su = models.TextField(max_length=30,null=True,verbose_name='周日优惠开始') 
+    
 
  
 
@@ -225,6 +216,22 @@ class Card(models.Model):
         else:
             results = nor_one_cal(self,start,end)
         return results
+
+
+#基础规则
+class BaseRule(models.Model):
+    class Meta:
+        verbose_name =verbose_name_plural ='基础规则'
+
+
+
+    status = models.IntegerField(default=0)
+    parkinglot = models.ForeignKey(ParkingLot,on_delete=models.SET_NULL, null=True)
+    per_hour = models.FloatField(default=0,verbose_name='小时费')
+    free_time = models.IntegerField(default=0,verbose_name='免费时间')#单位：分钟
+    day_max = models.FloatField(default=0,verbose_name='单日最大费用时段')
+    min_price = models.IntegerField(default=0,verbose_name='最短计价时间')#单位：分钟
+            
 
 
 

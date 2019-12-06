@@ -1,1 +1,306 @@
-base_rule.html
+{% extends 'iframe.html' %}
+{% block content %}
+<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <ol class="col-lg-5 breadcrumb">
+                            <li>停车场管理</li>
+                            <li>停车场管理</li>
+                        </ol>
+                        <div class="ibox-tools">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#" onclick="location.reload()"><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
+                                </li>
+                            </ul>
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                   
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-6 m-b-xs">
+                                <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
+                                <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
+                                <!-- <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button> -->
+                            </div>
+                            <div class="col-sm-3 m-b-xs"></div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped  table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>编号</th>
+                                        <th>车场名称</th>
+                                        <th>小时费</th>
+                                        <th>免费时段</th>
+                                        <th>单日最大费用时段</th>
+                                        <th>最短计价时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-view">
+                                    <form id='delete-form' action="" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value='delete'>
+                                    {% for i in rules %}
+                                        <tr>
+                                            <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
+                                            <td>{{forloop.counter}} </td>
+                                            <td>{{ i.parkinglot.name }}</td>
+                                            <td>{{i.per_hour}} </td>
+                                            <td>{{i.free_time}} </td>
+                                            <td>{{i.day_max}} </td>
+                                            <td>{{ i.min_price}} </td>
+                                        </tr>
+                                    {% empty %}
+                                    <tr class="text-center">
+                                        <td colspan="11">没有找到匹配的记录</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </form>
+
+                                </tbody>
+
+                                <script id="data-tmpl" type="text/x-jquery-tmpl">
+                                     
+                                </script>
+
+                            </table>
+                        </div>
+                        {% include 'common/page.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- update model -->
+    {% for i in rules %}
+        <div id='update_model_{{ i.id }}' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改用户</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+                <div class="form-horizontal" id="verifyCheck">
+                    <form id='update_form_{{i.id}}' action='' method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">车场名称</label>
+                            <div class="col-sm-4">
+                                <select data-placeholder="车场名称" class="form-control chosen-select" name="parkinglot">
+                                            <option value="">选择停车场</option>
+                                            {% for m in parkinglots %}
+                                            <option value="{{m.id}} "  >{{ m.name }} </option>
+                                            {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">小时费</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="per_hour" class="form-control pus" value="{{ i.per_hour}} ">
+                                <div  class="unit ">&nbsp;元</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">免费时段</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="free_time" class="form-control required pus" value="{{i.free_time }} ">
+                                <div class="unit " >&nbsp;分钟</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">单日最大费用时段</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="day_max" class="form-control required pus" value="{{i.day_max }} ">
+                                <div class="unit ">&nbsp;小时</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">最短计价时间</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="min_price" class="form-control required pus" value="{{i.min_price }} ">
+                                <div class="unit " >&nbsp;分钟</div>
+                            </div>
+                        </div>
+                       
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="id" class="form-control" value='{{i.id}}'>
+                                <input type="hidden" name="action" class="form-control" value='update'>
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;width: 60%"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div></div>
+            <span class="layui-layer-setwin">
+                <!-- <a class="layui-layer-min" href="javascript:;"><cite></cite></a>
+                <a class="layui-layer-ico layui-layer-max" href="javascript:;"></a> -->
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span></div>
+       </div>
+       {% endfor %}
+
+<!-- add model -->
+       <div id='add_role_model' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
+
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 新增用户</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+                <div class="form-horizontal" id="verifyCheck">
+                    <form id='add_form' action='' method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">车场名称</label>
+                            <div class="col-sm-4">
+                                <select data-placeholder="车场名称" class="form-control chosen-select" name="parkinglot" >
+                                            <option value="">选择停车场</option>
+                                            {% for m in parkinglots %}
+                                            <option value="{{m.id}} ">{{ m.name }} </option>
+                                            {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">小时费</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="per_hour" class="form-control pus">
+                                <div class="unit ">&nbsp;元</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">免费时段</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="free_time" class="form-control required pus" >
+                                <div class="unit ">&nbsp;分钟</div>
+                            </div>
+                        </div>
+                       <div class="form-group">
+                            <label class="col-sm-2 control-label">单日最大费用时段</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="day_max" class="form-control required pus" >
+                                <div class="unit ">&nbsp;小时</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">最短计价时间</label>
+                            <div class="col-sm-3">
+                                <input type="text" name="min_price" class="form-control required pus" >
+                                <div class="unit ">&nbsp;分钟</div>
+                            </div>
+                        </div>
+                        
+                        <div class="hr-line-dashed"></div>
+                        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="action" class="form-control" value='add'>
+
+                                <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
+                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 取消</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div></div>
+            <span class="layui-layer-setwin">
+                <!-- <a class="layui-layer-min" href="javascript:;"><cite></cite></a>
+                <a class="layui-layer-ico layui-layer-max" href="javascript:;"></a> -->
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span></div>
+       </div>
+    </div>
+<style type="text/css">
+    .pus{
+        display: inline-block;
+        width: 70%
+    }
+    .unit{
+        display: inline-block;
+
+    }
+</style>
+{% endblock %}
+
+{% block js %}
+ <script>
+    $('.chosen-select').chosen();
+    $('.chosen-select').next().css('width', '200px');
+    initValidator('#add_form','');
+    function initValidator(name,id){
+        $(name).bootstrapValidator({
+
+　　　　　　 message: 'This value is not valid',
+        　 feedbackIcons: {
+            　　　　　　　　valid: 'glyphicon glyphicon-ok',
+            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+        　　　　　　　　   },
+
+            fields: {
+                per_hour: {
+                    validators: {
+                        notEmpty: {
+                            message: '小时费不能为空'
+                        }
+                    },    
+                },
+                day_max: {
+                    validators: {
+                        notEmpty: {
+                            message: '单日最大费用时段不能为空'
+                        }
+                    }
+                },
+                min_price: {
+                    validators: {
+                        notEmpty: {
+                            message: '最短计价时间不能为空'
+                        }
+                    }
+                },
+                free_time: {
+                    validators: {
+                        notEmpty: {
+                            message: '免费时间不能为空'
+                        }
+                    }
+                }
+
+            }
+        })
+    }
+
+
+    function change(){
+        var ids = $('input[name=ids]:checked')
+                if(ids.length == 1){
+                    initValidator('#update_form_'+ids[0].value,ids[0].value)
+
+                    $('#update_model_'+ids[0].value).show()
+                }
+    }
+    function rel(){
+
+    	window.location.reload()
+    }
+   
+    </script>
+
+{% endblock %}

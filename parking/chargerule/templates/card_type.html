@@ -33,7 +33,7 @@
                                         <select name='type' class="form-control chosen-select" data-placeholder='划分类别' onchange="que()">
                                             <option value="2"{% if type == 2%}selected{% endif%} >选择查询类别</option>
                                             <option value="0" {% if type == 0%}selected{% endif%}>工作日</option>
-                                            <option value="1" {% if type == 1%}selected{% endif%}>单日</option>    
+                                            <option value="1" {% if type == 1%}selected{% endif%}>自定义</option>    
                                         </select>
                                         <input type="hidden" name="action" class="form-control" value='select'>
                                     </form>
@@ -46,6 +46,12 @@
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
                                 <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
+                                <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;" onclick="exp()"><i class="fa fa-trash"></i>&nbsp;导出</button>
+                                <form action="" method="post" id='export_form'>
+                                    {% csrf_token%}
+                                    <input type="hidden" name="action" value="export">
+                                    
+                                </form>
                                 <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
                                 <!-- <button type="button" id="Enable" onclick="que()" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button> -->
                             </div>
@@ -86,19 +92,54 @@
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{forloop.counter}} </td>
                                             <td>{{ i.name }}</td>
-                                            <td>{{i.work_start}} - {{i.work_end}}</td>
-                                            <td>{{i.relax_start}} - {{i.relax_end}}</td>
+                                            <td>
+                                                {% for j in i.work%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.relax%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
                                             {% elif type == 1%}
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{forloop.counter}} </td>
-                                            <td>{{ i.name }}</td>
-                                            <td>{{i.free_start }} - {{i.free_end }} </td>
-                                            <td>{{i.free_start_tu }} - {{i.free_end_tu }} </td>
-                                            <td>{{i.free_start_we }} - {{i.free_end_we }} </td>
-                                            <td>{{i.free_start_th }} - {{i.free_end_th }} </td>
-                                            <td>{{i.free_start_fr }} - {{i.free_end_fr }} </td>
-                                            <td>{{i.free_start_sa }} - {{i.free_end_sa }} </td>
-                                            <td>{{i.free_start_su }} - {{i.free_end_su }} </td>
+                                            <td>
+                                                {% for j in i.free%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_tu%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_we%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_th%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_fr%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_sa%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
+                                            <td>
+                                                {% for j in i.free_su%} 
+                                                <span>{{j.start}}-{{j.end}} </span>
+                                                {% endfor%} 
+                                            </td>
                                             {% endif%}
                                         </tr>
                                     {% empty %}
@@ -139,97 +180,97 @@
                                 <input type="text" name="name" class="name_{{forloop.counter}} form-control required" value="{{i.name}} ">
                             </div>
                         </div>
-                        <div class="form-group">
+                        {% if i.diff_type == 0 %}
+                        <!-- <div class="form-group">
                            <label class="col-sm-2 control-label">是否错峰</label>
                             <div class="col-sm-4">
-                                <input name='is_diff' onchange="setDiff(this)" type='radio' value='0'{% if i.is_diff == 0 %}checked{% endif %} />
+                                <input name='is_diff' onchange="setDiff(this,{{forloop.counter}})" type='radio' value='0'{% if i.is_diff == 0 %}checked{% endif %} />
                                 <span>否</span>
-                                <input name='is_diff' onchange="setDiff(this)" type='radio' value='1' {% if i.is_diff == 1 %}checked{% endif %}/>
+                                <input name='is_diff' onchange="setDiff(this,{{forloop.counter}})" type='radio' value='1' {% if i.is_diff == 1 %}checked{% endif %}/>
                                 <span>是</span>
                             </div>  
-                        </div>
-                        {% if i.diff_type == 0 %}
+                        </div> -->
                         <div class="form-group">
                             <label class="col-sm-2 control-label">工作日优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="work_start" class="work_start_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.work_start}}">
+                                <input type="" name="work" class="work_start_{{forloop.counter}} form-control" value="{% for j in i.work%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
-                            <div class="col-sm-4">
-                                <input type="text" name="work_end" class="work_end_{{forloop.counter}} laydate-icon form-control layer-date " value="{{i.work_end}} ">
-                            </div>
+                          <!--   <div class="col-sm-4">
+                                <input type="text" name="work_end" class="work_end_{{forloop.counter}} form-control " value="{{i.work_end}} " onclick="set_tim(this)">
+                            </div> -->
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">非工作日优惠时间段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="relax_start" class="laydate-icon form-control layer-date relax_start_{{forloop.counter}}" value="{{i.relax_start}} ">
+                                <input type="" name="relax" class="form-control relax_start_{{forloop.counter}}" value="{% for j in i.relax%} {{j.start}}-{{j.end}} {% endfor%} " onclick="set_tim(this)">
                             </div>
-                            <div class="col-sm-4">
-                                <input type="text" name="relax_end" class="relax_end_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.relax_end}} ">
-                            </div>
+                           <!--  <div class="col-sm-4">
+                                <input type="text" name="relax_end" class="relax_end_{{forloop.counter}} form-control" value="{{i.relax_end}} " onclick="set_tim(this)">
+                            </div> -->
                         </div>
                         {% elif i.diff_type == 1 %}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周一优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_start"  class="free_start_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start}} ">
+                                <input type="text" name="free"  class="free_start_{{forloop.counter}} form-control" value="{% for j in i.free%} {{j.start}}-{{j.end}}{% endfor%} " onclick="set_tim(this)">
                             </div>
-                            <div class="col-sm-4">
-                                <input type="text" name="free_end" class="free_end_{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end}} ">
-                            </div>
+                           <!--  <div class="col-sm-4">
+                                <input type="text" name="free_end" class="free_end_{{forloop.counter}} form-control" value="{{i.free_end}} " >
+                            </div> -->
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周二优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_start_tu" class="free_start_tu{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_tu}} ">
+                                <input type="text" name="free_tu" class="free_start_tu{{forloop.counter}} form-control"value="{% for j in i.free_tu%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
-                            <div class="col-sm-4">
-                                <input type="text" name="free_end_tu" class="free_end_tu{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_tu}} ">
-                            </div>
+                            <!-- <div class="col-sm-4">
+                                <input type="text" name="free_end_tu" class="free_end_tu{{forloop.counter}} form-control" value="{{i.free_end_tu}} ">
+                            </div> -->
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周三优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_start_we" class="free_start_we{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_we}} ">
+                                <input type="text" name="free_we" class="free_start_we{{forloop.counter}} form-control"value="{% for j in i.free_we%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
-                            <div class="col-sm-4">
-                                <input type="text" name="free_end_we" class="free_end_we{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_we}} ">
-                            </div>
+                            <!-- <div class="col-sm-4">
+                                <input type="text" name="free_end_we" class="free_end_we{{forloop.counter}} form-control" value="{{i.free_end_we}} ">
+                            </div> -->
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周四优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_start_th" class="free_start_th{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_th}} ">
+                                <input type="text" name="free_th" class="free_start_th{{forloop.counter}} form-control" value="{% for j in i.free_tu%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
-                            <div class="col-sm-4">
-                                <input type="text" name="free_end_th" class="free_end_th{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_th}} ">
-                            </div>
+                           <!--  <div class="col-sm-4">
+                                <input type="text" name="free_end_th" class="free_end_th{{forloop.counter}} form-control" value="{{i.free_end_th}} ">
+                            </div> -->
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周五优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_start_fr" class="free_start_fr{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_fr}} ">
+                                <input type="text" name="free_fr" class="free_start_fr{{forloop.counter}} form-control" value="{% for j in i.free_fr%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
-                            <div class="col-sm-4">
-                                <input type="text" name="free_end_fr" class="free_end_fr{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_fr}} ">
-                            </div>
+                           <!--  <div class="col-sm-4">
+                                <input type="text" name="free_end_fr" class="free_end_fr{{forloop.counter}} form-control" value="{{i.free_end_fr}} ">
+                            </div> -->
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周六优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_start_sa"  class="free_start_sa{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_sa}} ">
+                                <input type="text" name="free_start_sa"  class="free_start_sa{{forloop.counter}} form-control" value="{% for j in i.free_sa%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
-                            <div class="col-sm-4">
-                                <input type="text" name="free_end_sa"  class="free_end_sa{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_sa}} ">
-                            </div>
+                            <!-- <div class="col-sm-4">
+                                <input type="text" name="free_end_sa"  class="free_end_sa{{forloop.counter}} form-control" value="{{i.free_end_sa}} ">
+                            </div> -->
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周日优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free_start_su" class="free_start_su{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_start_su}} ">
+                                <input type="text" name="free_su" class="free_start_su{{forloop.counter}} form-control" value="{% for j in i.free_su%}{{j.start}}-{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
-                            <div class="col-sm-4">
-                                <input type="text" name="free_end_su" class="free_end_su{{forloop.counter}} laydate-icon form-control layer-date" value="{{i.free_end_su}}">
-                            </div>
+                           <!--  <div class="col-sm-4">
+                                <input type="text" name="free_end_su" class="free_end_su{{forloop.counter}} form-control" value="{{i.free_end_su}}">
+                            </div> -->
                         </div>
                         {% endif %}
                         <div class="hr-line-dashed"></div>
@@ -252,6 +293,9 @@
             <span class="layui-layer-resize"></span></div>
        </div>
        {% endfor %}
+        <div id='time_div'>
+            {% include 'test.html' %}
+        </div>
 
 <!-- add model -->
        <div id='add_role_model' class='model'>
@@ -264,7 +308,7 @@
                     <select data-placeholder="选择减免类别" class="form-control chosen-select" onchange="sel(this)">
                         <option value="">选择减免类别</option>
                         <option value="0">工作日</option>
-                        <option value="1">单日</option>
+                        <option value="1">自定义</option>
                     </select>
                     <form id='add_form' action='' method="post" style="display: none">
                         {% csrf_token %}
@@ -275,32 +319,32 @@
                                     <input type="text" id='name' name="name" class="form-control required">
                                 </div>
                             </div>  
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                <label class="col-sm-2 control-label">是否错峰</label>
                                 <div class="col-sm-4">
-                                    <input name='is_diff' onchange="setDiff(this)" type='radio' value='0' />
+                                    <input name='is_diff' onchange="setDiff(this)" id='is_diff' type='radio' value='0' />
                                     <span>&nbsp;&nbsp;否&nbsp;&nbsp;</span>
                                     <input name='is_diff' onchange="setDiff(this)" type='radio' value='1' />
                                     <span>&nbsp;&nbsp;是</span>
                                 </div>  
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">工作日优惠时间段</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="work_start" id='work_start' class="laydate-icon form-control layer-date">
+                                    <input type="text" name="work" id='work_start' class="form-control" placeholder="起" onclick="set_tim(this)">
                                 </div>
-                                <div class="col-sm-4">
-                                    <input type="text" name="work_end" id='work_end' class="laydate-icon form-control layer-date">
-                                </div>
+                                <!-- <div class="col-sm-4">
+                                    <input type="text" name="work_end" id='work_end' class="form-control" placeholder="止" onclick="set_tim(this)">
+                                </div> -->
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">非工作日优惠时间段</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="relax_start" id='relax_start' class="laydate-icon form-control layer-date">
+                                    <input type="text" name="relax" id='relax_start' class="form-control" placeholder="起" onclick="set_tim(this)">
                                 </div>
-                                <div class="col-sm-4">
-                                    <input type="text" name="relax_end" id='relax_end' class="laydate-icon form-control layer-date">
-                                </div>
+                               <!--  <div class="col-sm-4">
+                                    <input type="text" name="relax_end" id='relax_end' class="form-control" placeholder="止" onclick="set_tim(this)">
+                                </div> -->
                             </div>
                             <input type="hidden" name="diff_type" id='diff_type' value="">
                         </div>
@@ -326,65 +370,65 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">周一优惠时段</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="free_start" id='free_start' class="laydate-icon form-control layer-date" value="{{i.free_start}} ">
+                                    <input type="text" name="free" id='free_start' class="form-control" value="{{i.free_start}} " onclick="set_tim(this)">
                                 </div>
-                                <div class="col-sm-4">
-                                    <input type="text" name="free_end" id='free_end' class="laydate-icon form-control layer-date" value="{{i.free_end}} ">
-                                </div>
+                               <!--  <div class="col-sm-4">
+                                    <input type="text" name="free_end" id='free_end' class="form-control" value="{{i.free_end}} ">
+                                </div> -->
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">周二优惠时段</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="free_start_tu" id='free_start_tu' class="laydate-icon form-control layer-date" value="{{i.free_start_tu}} ">
+                                    <input type="text" name="free_tu" id='free_start_tu' class="form-control" value="{{i.free_start_tu}} " onclick="set_tim(this)">
                                 </div>
-                                <div class="col-sm-4">
-                                    <input type="text" name="free_end_tu" id='free_end_tu' class="laydate-icon form-control layer-date" value="{{i.free_end_tu}} ">
-                                </div>
+                               <!--  <div class="col-sm-4">
+                                    <input type="text" name="free_end_tu" id='free_end_tu' class="form-control" value="{{i.free_end_tu}} ">
+                                </div> -->
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">周三优惠时段</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="free_start_we" id='free_start_we' class="laydate-icon form-control layer-date" value="{{i.free_start_we}} ">
+                                    <input type="text" name="free_we" id='free_start_we' class="form-control" value="{{i.free_start_we}} " onclick="set_tim(this)">
                                 </div>
-                                <div class="col-sm-4">
-                                    <input type="text" name="free_end_we" id='free_end_we' class="laydate-icon form-control layer-date" value="{{i.free_end_we}} ">
-                                </div>
+                                <!-- <div class="col-sm-4">
+                                    <input type="text" name="free_end_we" id='free_end_we' class="form-control" value="{{i.free_end_we}} ">
+                                </div> -->
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">周四优惠时段</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="free_start_th" id='free_start_th' class="laydate-icon form-control layer-date" value="{{i.free_start_th}} ">
+                                    <input type="text" name="free_th" id='free_start_th' class="form-control" value="{{i.free_start_th}} " onclick="set_tim(this)">
                                 </div>
-                                <div class="col-sm-4">
-                                    <input type="text" name="free_end_th" id='free_end_th' class="laydate-icon form-control layer-date" value="{{i.free_end_th}} ">
-                                </div>
+                               <!--  <div class="col-sm-4">
+                                    <input type="text" name="free_end_th" id='free_end_th' class="form-control" value="{{i.free_end_th}} ">
+                                </div> -->
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">周五优惠时段</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="free_start_fr" id='free_start_fr' class="laydate-icon form-control layer-date" value="{{i.free_start_fr}} ">
+                                    <input type="text" name="free_fr" id='free_start_fr' class="form-control" value="{{i.free_start_fr}} " onclick="set_tim(this)">
                                 </div>
-                                <div class="col-sm-4">
-                                    <input type="text" name="free_end_fr" id='free_end_fr' class="laydate-icon form-control layer-date" value="{{i.free_end_fr}} ">
-                                </div>
+                                <!-- <div class="col-sm-4">
+                                    <input type="text" name="free_end_fr" id='free_end_fr' class="form-control" value="{{i.free_end_fr}} ">
+                                </div> -->
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">周六优惠时段</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="free_start_sa" id='free_start_sa' class="laydate-icon form-control layer-date" value="{{i.free_start_sa}} ">
+                                    <input type="text" name="free_sa" id='free_start_sa' class="form-control" value="{{i.free_start_sa}} " onclick="set_tim(this)">
                                 </div>
-                                <div class="col-sm-4">
-                                    <input type="text" name="free_end_sa" id='free_end_sa' class="laydate-icon form-control layer-date" value="{{i.free_end_sa}} ">
-                                </div>
+                              <!--   <div class="col-sm-4">
+                                    <input type="text" name="free_end_sa" id='free_end_sa' class="form-control" value="{{i.free_end_sa}} ">
+                                </div> -->
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">周日优惠时段</label>
                                 <div class="col-sm-4">
-                                    <input type="text" name="free_start_su" id='free_start_su' class="laydate-icon form-control layer-date" value="{{i.free_start_su}} ">
+                                    <input type="text" name="free_su" id='free_start_su' class="form-control" value="{{i.free_start_su}} " onclick="set_tim(this)">
                                 </div>
-                                <div class="col-sm-4">
-                                    <input type="text" name="free_end_su" id='free_end_su' class="laydate-icon form-control layer-date" value="{{i.free_end_su}} ">
-                                </div>
+                               <!--  <div class="col-sm-4">
+                                    <input type="text" name="free_end_su" id='free_end_su' class="form-control" value="{{i.free_end_su}} ">
+                                </div> -->
                             </div>
                         </div>
 
@@ -411,6 +455,17 @@
             <span class="layui-layer-resize"></span></div>
        </div>
     </div>
+<style type="text/css">
+    #time_div{
+        display: none;
+        z-index: 19891021;
+        position: fixed;
+        
+        border: 1px solid gray;
+        width:100%;
+        height: 100%;
+    }
+</style>
 {% endblock %}
 
 {% block js %}
@@ -419,55 +474,55 @@
  <script>
     $('.chosen-select').chosen();
     $('.chosen-select').next().css('width', '200px');
-    function ren(id ,t=0){
-        laydate.render({
-          elem: id,
-          type: 'time',
-          format: "HH:mm"
-        });
-        if(t == 0){
-            $(id).val('');
-        }
+    // function ren(id ,t=0){
+    //     laydate.render({
+    //       elem: id,
+    //       type: 'time',
+    //       format: "HH:mm"
+    //     });
+    //     if(t == 0){
+    //         $(id).val('');
+    //     }
         
-    };
-    ren("#work_start");
-    ren("#relax_start");
-    ren("#work_end");
-    ren("#relax_end");
-    ren('#free_start');
-    ren('#free_end');
-    ren('#free_start_tu');
-    ren('#free_end_tu');
-    ren('#free_start_we');
-    ren('#free_end_we');
-    ren('#free_start_th');
-    ren('#free_end_th');
-    ren('#free_start_fr');
-    ren('#free_end_fr');
-    ren('#free_start_sa');
-    ren('#free_end_sa')
-    ren('#free_start_su');
-    ren('#free_end_su');
-    for(var i=1;i<=$('.ups').length;i++){
-        ren(".work_start_"+i,1);
-        ren(".relax_start_"+i,1);
-        ren(".work_end_"+i,1);
-        ren(".relax_end_"+i,1);
-        ren('.free_start_'+i,1);
-        ren('.free_end_'+i,1);
-        ren('.free_start_tu'+i,1);
-        ren('.free_end_tu'+i),1;
-        ren('.free_start_we'+i,1);
-        ren('.free_end_we'+i,1);
-        ren('.free_start_th'+i,1);
-        ren('.free_end_th'+i,1);
-        ren('.free_start_fr'+i,1);
-        ren('.free_end_fr'+i,1);
-        ren('.free_start_sa'+i,1);
-        ren('.free_end_sa'+i,1);
-        ren('.free_start_su'+i,1);
-        ren('.free_end_su'+i,1);
-    }
+    // };
+    // ren("#work_start");
+    // ren("#relax_start");
+    // ren("#work_end");
+    // ren("#relax_end");
+    // ren('#free_start');
+    // ren('#free_end');
+    // ren('#free_start_tu');
+    // ren('#free_end_tu');
+    // ren('#free_start_we');
+    // ren('#free_end_we');
+    // ren('#free_start_th');
+    // ren('#free_end_th');
+    // ren('#free_start_fr');
+    // ren('#free_end_fr');
+    // ren('#free_start_sa');
+    // ren('#free_end_sa')
+    // ren('#free_start_su');
+    // ren('#free_end_su');
+    // for(var i=1;i<=$('.ups').length;i++){
+    //     ren(".work_start_"+i,1);
+    //     ren(".relax_start_"+i,1);
+    //     ren(".work_end_"+i,1);
+    //     ren(".relax_end_"+i,1);
+    //     ren('.free_start_'+i,1);
+    //     ren('.free_end_'+i,1);
+    //     ren('.free_start_tu'+i,1);
+    //     ren('.free_end_tu'+i),1;
+    //     ren('.free_start_we'+i,1);
+    //     ren('.free_end_we'+i,1);
+    //     ren('.free_start_th'+i,1);
+    //     ren('.free_end_th'+i,1);
+    //     ren('.free_start_fr'+i,1);
+    //     ren('.free_end_fr'+i,1);
+    //     ren('.free_start_sa'+i,1);
+    //     ren('.free_end_sa'+i,1);
+    //     ren('.free_start_su'+i,1);
+    //     ren('.free_end_su'+i,1);
+    // }
         $(function () { 
             // pager.init(); 
 
@@ -582,6 +637,8 @@
 
     	window.location.reload()
     }
+
+
     function sel(obj){
         if($(obj).val() == '0'){
             $('#add_form1').hide();
@@ -596,18 +653,47 @@
             console.log($('#diff_type1').val())
         }
     }
+
+
     function can(){
         $('#add_role_model').hide();
         $('#add_form').hide();
         $('#add_form1').hide();
     }
+
+
     function que(){
         $('#sel_form').submit()
     }
-    function setDiff(obj){
 
+
+    function exp(){
+        $('#export_form').submit()
     }
+    // function setDiff(obj,t=''){
+    //     function set(obj,name,name1){
+    //         if($(obj).val() == 0){
+    //             $(name).val('');
+    //             $(name1).val('')
+    //             $(name).attr('disabled','disabled');
+    //             $(name).attr('disabled','disabled')
+
+    //         }else if($(obj).val() == 1){
+    //             document.getElementById(name).disabled="";
+    //             document.getElementById(name1).disabled=""
+           
+    //         }
+
+    //     }
+    //     if(t == ''){
+    //         set(obj,'#relax_start','#relax_end')
+    //     }else{
+    //         set(obj,'#relax_start_'+t,'#relax_end'+t)
+    //     }
+        
+    // }
    
     </script>
+
 
 {% endblock %}

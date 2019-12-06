@@ -1,0 +1,258 @@
+
+
+<div class="tim_body">
+    <div id='tit'>
+        <p1 >时段选择（支持多段）</p1>
+    </div>
+    <div class="it">
+        {% for i in num %}
+        <div style="display: inline-block;">
+            <div class="item" id='item_{%  widthratio i.k 1 2 %}' onclick="setPointer(this,{%  widthratio i.k 1 2 %})"></div>
+            <div class="sim" style="{% if i.v == '2'%}color:white{% endif %} ">{{ i.v}}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="it">
+        {% for j in num1%}
+        <div style="display: inline-block;">
+            <div class="item" id='item_{%  widthratio j.k 1 2 %}' onclick="setPointer(this,{%  widthratio j.k 1 2 %})"></div>
+            <div class="sim" style="{% if j.v == '2'%}color:white{% endif %} ">{{j.v}}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <div style="margin-top: 10px;" class="it">
+        已选时间段：<input type="text" id='tim_con'>
+    </div>
+    <div style="text-align: center;margin-top: 20px;">
+        <input type="button" value="确定" class="btn btn-primary" onclick="show()">
+        <input type="button" value="清除"  class="btn btn-primary" onclick="clea()">
+        <input type="button" value="取消"  class="btn btn-primary" onclick="canc()">
+    </div>
+
+</div>
+<style type="text/css">
+        .it{
+            margin-left: 40px
+        }
+        #tit{
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 35px;
+        }
+        .item{
+           
+            background-color: white;
+            width: 30px;
+            margin-left: -4px;
+            border: 0.5px solid rgba(210, 210, 210, 0.5);
+            font-size: 8pt;
+            height: 30px; 
+        }
+        .sim{
+            margin: 5px 0 0 -7px;
+            font-size: 8px;
+        }
+        .tim_body{
+            background: white;
+            position: fixed;
+            margin: 30px 18px 0px 50px;
+            width:800px;
+            height: 300px;
+            border: 1px solid rgba(210, 210, 210, 0.5);
+            right: 200px
+        }
+</style>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script>
+var key = true;
+var list = []
+var time_list = []
+var nam ;
+function setPointer(obj,tip){
+    var s = list.length%2
+    var tail = list.length-1
+    tip = parseInt(tip)
+    base_c = 'white'
+    var_c = 'red'
+
+
+    function generate(start,end,t=0){
+        for(var i=start;i<=end;i++){
+            if(t == 0){
+                $('#item_'+i).css('background-color',var_c)
+            }else{
+                $('#item_'+i).css('background-color',base_c)
+            }
+            
+        }
+        return true
+    }
+
+
+    function check(tip){
+        if(time_list.length > 0){
+            for(var i=0;i<time_list.length;i++){
+                var m = time_list[i]
+                if(m[0] <=tip && m[1] >= tip){
+                    generate(m[0],m[1],1);
+                    time_list.splice(i,1);
+                    set_curr()
+
+                }
+
+            }
+        }
+
+    }
+    function check_contain(start,end){
+        if(time_list.length > 0){
+            for(var i=0;i<time_list.length;i++){
+                var m = time_list[i]
+                if(m[0] >=start && m[1] >= start && m[0] <=end && m[1]<=end){
+                    generate(m[0],m[1],1);
+                    time_list.splice(i,1);
+                    set_curr()
+
+                }
+
+            }
+        }
+
+
+    }
+
+    // function check_near(tip){
+    //     if(time_list.length > 0){
+    //         for(var i=0;i<time_list.length;i++){
+    //             var m = time_list[i]
+    //             if(m[0] +1 == tip){
+    //                 m[0] == tip;
+    //                 check_near(tip)
+    //             }else if(m[1] == tip +1){
+    //                 m[1] == tip;
+    //                 check_near(tip)
+    //             }
+
+    //         }
+    //     }
+
+    // }
+    check(tip)
+
+    if(s == 0){
+        $('#item_'+tip).css('background-color',var_c)
+    }else{
+        if(list[tail] > tip){
+            check_contain(tip,list[tail])
+            generate(tip,list[tail])
+        }
+        else if(list[tail] == tip){
+            $('#item_'+tip).css('background-color',base_c)
+        }
+        else{
+            check_contain(list[tail],tip)
+            generate(list[tail],tip)
+        }
+
+    }
+    list.push(tip)
+    if(list.length == 2){
+        if(list[0] >list[1]){
+            time_list.push([list[1],list[0]]);
+          
+        }else{
+            time_list.push([list[0],list[1]]);
+            
+            
+        }
+        set_curr()
+        list = []
+    }
+}
+function save(){
+    $(tmp).val(time_list)
+}
+
+function show(){
+    var tmp = []
+    if(time_list.length >0){
+        for(var i=0;i<time_list.length;i++){
+            tmp.push(time_op(time_list[i][0]/2,time_list[i][1]/2))
+        }
+        $(nam).val(tmp);
+        
+    }
+    $('#time_div').hide() 
+    
+
+
+
+}
+function clea(){
+    for(var i=0;i<48;i++){
+        $('#item_'+i).css('background-color','white')
+    }
+    list = []
+    time_list = []
+    $('#tim_con').val('')
+    $(nam).val('')
+}
+
+function canc(){
+    clea();
+    $('#time_div').hide()
+
+    
+}
+function set_tim(obj){
+    time_list = [];
+    list =[];
+    $('#tim_con').val();
+    for(var i=0;i<48;i++){
+        $('#item_'+i).css('background-color','white')
+    }
+    $('#time_div').show();
+    nam = obj;  
+}
+function set_curr(){
+    var tmp = []
+    if(time_list.length >0){
+        for(var i=0;i<time_list.length;i++){
+            tmp.push(time_op(time_list[i][0]/2,time_list[i][1]/2))
+        }
+        $('#tim_con').val(tmp);
+        
+    }
+
+}
+
+function time_op(start,end){
+    start = ''+start
+    end = ''+ end
+
+    return re_time(start)+'--'+re_time(end)
+}
+function re_time(str){
+    console.log(str)
+    if(str.replace(/\.5/,':30') == str){
+        return str+':00'
+    }else{
+        return str.replace(/\.5/,':30')
+    }
+}
+
+
+
+
+
+// $("#time_div").click(function(event){
+//     console.log($(event.currentTarget).attr('id'));
+//     // event.stopPropagation();
+// });
+// function tim_hi(){
+//     $('').hide();
+// }
+   
+</script>
+

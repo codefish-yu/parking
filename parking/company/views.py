@@ -28,7 +28,7 @@ def company(request):
 			_save_attr_(r, request)
 			parking = request.POST.get('suit')
 			if parking:
-				r.parkinglot = ParkingLot.objects.filter(id=int(id)).first()
+				r.parkinglot = ParkingLot.objects.filter(id=int(parking)).first()
 				r.save()
 		elif action == 'update':
 			id = request.POST.get('id', '')
@@ -36,7 +36,8 @@ def company(request):
 			_save_attr_(r, request)
 			parking = request.POST.get('suit')
 			if parking:
-				r.parkinglot = ParkingLot.objects.filter(id=int(id)).first()
+				r.parkinglot = ParkingLot.objects.filter(id=int(parking)).first()
+				print(r.parkinglot)
 				r.save()
 		elif action == 'delete':
 			operate_in_batch(-1,request)
