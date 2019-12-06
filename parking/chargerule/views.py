@@ -516,11 +516,6 @@ def card(request):
             return response
 
 
-
-
-
-
-
     ctx['users'] = AdminUser.objects.all()
     ctx['cardtypes'] = CardType.objects.filter(status=0).all()
     ctx['cards'] = ctx['objects'] = cards

@@ -62,7 +62,7 @@
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{forloop.counter}} </td>
-                                            <td>{{ i.owner.real_name }}</td>
+                                            <td>{{ i.owner }}</td>
                                             <td>{{i.my_card.name}} </td>
                                             <td>{{i.valid_start | date:'Y-m-d H:m'}}--{{ i.valid_end |date:'Y-m-d H:m'}}</td>
                                             
