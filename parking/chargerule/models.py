@@ -217,6 +217,20 @@ class Card(models.Model):
             results = nor_one_cal(self,start,end)
         return results
 
+
+#基础规则
+class BaseRule(models.Model):
+    class Meta:
+        verbose_name =verbose_name_plural ='基础规则'
+
+
+
+    status = models.IntegerField(default=0)
+    parkinglot = models.ForeignKey(ParkingLot,on_delete=models.SET_NULL, null=True)
+    per_hour = models.FloatField(default=0,verbose_name='小时费')
+    free_time = models.IntegerField(default=0,verbose_name='免费时间')#单位：分钟
+    day_max = models.FloatField(default=0,verbose_name='单日最大费用时段')
+    min_price = models.IntegerField(default=0,verbose_name='最短计价时间')#单位：分钟
             
 
 

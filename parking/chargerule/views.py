@@ -12,12 +12,43 @@ from administrator.decorators import page, _save_attr_,export_excel
 
 '''计费规则管理'''
 
-
+@page
 def base_rule(request):
     '''基本计费规则配置'''
-    pass
+    ctx = {}
+    if request.method == 'POST':
+        action = request.POST.get('action','')
+        if action == 'add':
 
-    return render(request, 'base_rule.html')
+            r = BaseRule()
+            _save_attr_(r, request)
+            park = request.POST.get('parkinglot')
+            if park:
+                r.parkinglot = ParkingLot.objects.filter(id=int(park)).first()
+                r.save()
+
+        elif action == 'update':
+            id = request.POST.get('id', '')
+            r = BaseRule.objects.filter(id=id)
+            _save_attr_(r.first(), request)
+            park = request.POST.get('parkinglot')
+            if park:
+                r.parkinglot = ParkingLot.objects.filter(id=int(park)).first()
+                r.save()
+
+        elif action == 'delete':
+            ids = request.POST.getlist('ids', '')
+            u = BaseRule.objects.filter(id__in=ids).all()
+            for item in u:
+                item.status = -1
+                item.save()
+
+
+    ctx['parkinglots'] = ParkingLot.objects.all()
+    ctx['rules'] =ctx['objects'] = BaseRule.objects.filter(status=0).all() 
+    return (ctx,'base_rule.html')
+
+
 @page
 def card_type(request):
     '''卡片类型设置'''
