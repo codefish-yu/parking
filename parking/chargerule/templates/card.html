@@ -62,7 +62,7 @@
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{forloop.counter}} </td>
-                                            <td>{{ i.owner.real_name }}</td>
+                                            <td>{{ i.owner }}</td>
                                             <td>{{i.my_card.name}} </td>
                                             <td>{{i.valid_start | date:'Y-m-d H:m'}}--{{ i.valid_end |date:'Y-m-d H:m'}}</td>
                                             
@@ -105,7 +105,7 @@
                             </div>
                             <label class="col-sm-2 control-label">卡片类型</label>
                             <div class="col-sm-4">
-                                <select name='my_card' class="form-control required">
+                                <select name='my_card' class="form-control required chosen-select">
                                     <option value="">选择卡片类型</option>
                                     {% for n in cardtypes%}
                                     <option value="{{ n.id}}" {% if i.my_card.id == n.id%}selected{% endif %}>{{ n.name}} </option>
@@ -178,9 +178,9 @@
                             <div class="col-sm-4">
                                 <input type="text" name="owner" class="form-control">
                             </div>
-                            <label class="col-sm-2 control-label">卡片类型</label>
+                            <label class="col-sm-2 control-label ">卡片类型</label>
                             <div class="col-sm-4">
-                                <select name='my_card' class="form-control required">
+                                <select name='my_card' class="form-control required chosen-select">
                                     <option value="">选择卡片类型</option>
                                     {% for n in cardtypes%}
                                     <option value="{{ n.id}}" >{{ n.name}} </option>
@@ -245,7 +245,7 @@
 <link href="/static/css/laydate.css" rel="stylesheet">
  <script>
         $('.chosen-select').chosen();
-        $('.chosen-select').chosen({'width': '200px'});
+        $('.chosen-select').next().css({'width': '100%'});
         laydate.render({
           elem: "#valid_timea_1"
           
@@ -321,10 +321,10 @@
                             validators: {
                                 notEmpty: {},
                                 digits: {},
-                                phone: {
-                                    country: 'CN',
-                                    message: '请输入十一位手机号码'
-                                }
+                                regexp: {
+                                    regexp: /^1[3456789]\d{9}$/,
+                                    message: '手机号码无效'
+                                },
                             }
                         },
 

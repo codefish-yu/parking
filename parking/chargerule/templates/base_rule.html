@@ -258,6 +258,10 @@
                     validators: {
                         notEmpty: {
                             message: '小时费不能为空'
+                        },
+                        regexp: {
+                            regexp: /^[-+]?[0-9]*\.?[0-9]+$/,
+                            message: '请输入整数或浮点数'
                         }
                     },    
                 },
@@ -265,13 +269,26 @@
                     validators: {
                         notEmpty: {
                             message: '单日最大费用时段不能为空'
-                        }
+                        },
+                        stringLength: {
+                            min: 0,
+                            max: 24,
+                            message: '时间应在0到24小时内'
+                        },
+                        regexp: {
+                            regexp: /^[-+]?[0-9]*\.?[0-9]+$/,
+                            message: '请输入整数或浮点数'
+                        },
                     }
                 },
                 min_price: {
                     validators: {
                         notEmpty: {
                             message: '最短计价时间不能为空'
+                        },
+                        regexp: {
+                            regexp: /^[0-9]+$/,
+                            message: '请输入整数'
                         }
                     }
                 },
@@ -279,6 +296,10 @@
                     validators: {
                         notEmpty: {
                             message: '免费时间不能为空'
+                        },
+                        regexp: {
+                            regexp: /^[0-9]+$/,
+                            message: '请输入整数'
                         }
                     }
                 }

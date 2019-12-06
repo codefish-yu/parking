@@ -1,7 +1,7 @@
 from django.urls import path
 from django.shortcuts import render,redirect
 from .models import *
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -32,6 +32,7 @@ def page(func):
         
         result = func(request, *args, **kwargs)
 
+
         if isinstance(result, tuple):
              
             res = result[0]
@@ -48,6 +49,8 @@ def page(func):
         elif isinstance(result, JsonResponse):
             return result
 
+        elif isinstance(result,HttpResponse):
+            return result
     view.__name__ = func.__name__
 
     return view
@@ -80,7 +83,7 @@ def export_excel(obj,name):
         w.write(0,tip,i.verbose_name)
         tip += 1
 
-    return w
+    return w,e
 
 # def menu_deploy(view_func):
     
