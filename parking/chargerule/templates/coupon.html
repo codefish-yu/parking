@@ -39,7 +39,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group" style="width: 200px">
-                                        <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" id='company' style="display: none;">
+                                        <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" id='gate_a' style="display: none;">
                                             <option value="" selected="selected">选择商家</option>
                                             {% for i in companies %}
                                             <option value='{{i.id}}' 
@@ -144,6 +144,7 @@
                                 </script>
 
                             </table>
+                            {{all_companies}}
                         </div>
                         {% include 'common/page.html' %}
                     </div>
@@ -166,7 +167,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='gate_add' name="parkinglot_id" style="display: none;width: 100%">
+                                <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='company_update_{{i.id}}' name="parkinglot_id" style="display: none;width: 100%">
                                     <option value=''>选择停车场</option>
                                     {% for x in parkinglots %}
                                         <option value='{{x.id}}'
@@ -177,7 +178,7 @@
                             </div>
                             <label class="col-sm-1 control-label">商家</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" style="display: none;width: 100%">
+                                <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" id='company_update_{{i.id}}' style="display: none;width: 100%">
                                     <option value=''>选择商家</option>
                                     {% for i in companies %}
                                         <option value="{{i.id}}">{{i.name}}</option>
@@ -303,7 +304,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='gate_add' name="parkinglot_id" style="display: none;width: 100%">
+                                <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='company_add' name="parkinglot_id" style="display: none;width: 100%">
                                     <option value=''>选择停车场</option>
                                     {% for i in parkinglots %}
                                         <option value='{{i.id}}'>{{i.name}}</option>
@@ -312,7 +313,7 @@
                             </div>
                             <label class="col-sm-1 control-label">商家</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" style="display: none;width: 100%">
+                                <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" id='company_add' style="display: none;width: 100%">
                                     <option value=''>选择商家</option>
                                     {% for i in companies %}
                                         <option value="{{i.id}}">{{i.name}}</option>
@@ -422,8 +423,10 @@
     $(function () { 
 
         var all_tickets = {{ all_tickets | safe }};
-        console.info(all_tickets)
         var all_companies = {{ all_companies | safe}};
+
+        console.info(all_companies)
+
         $('.chosen-select').chosen({'width': '200px'});
 
         var buy_time_add = { elem: "#buy_time_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
@@ -462,6 +465,7 @@
          $('select[name=parkinglot_id]').on('change', function(){
             var companies = all_companies[$(this).val()]
             var child_id = $(this).attr('child-id')
+            console.info(all_companies)
             $('#'+child_id).empty()
             $('#'+child_id).chosen("destroy")
             $('#'+child_id).append('<option value="" >选择商家</option>')

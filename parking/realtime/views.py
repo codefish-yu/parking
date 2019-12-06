@@ -32,44 +32,93 @@ def parkin(request):
             # 'triger_data': {'action': 'on'},
             # 'whitelist_data': []
         }
-    
-    
+    # resp = {
+    #     'type': 'online', 
+    #     'mode': '5', 
+    #     'plate_num': '京PH3XJ0', 
+    #     'car_logo': '未知', 
+    #     'plate_val': 'true', 
+    #     'confidence': '24', 
+    #     'plate_color': '蓝色', 
+    #     'car_color': '未知', 
+    #     'vehicle_type': '轿车', 
+    #     'start_time': '1575536095', 
+    #     'park_id': '5', 
+    #     'cam_id': '100200041313', 
+    #     'cam_ip': '192.168.10.100', 
+    #     'vdc_type': 'in', 
+    #     'is_whitelist': 'false', 
+    #     'triger_type': 'video'
+    # }
+
+    print(request.body)
     params = get_params(request)
 
     if 'type'in params and params['type'] == 'HeartBeat':
+        print(params.keys())
 
         pass
         
     if 'type'in params and params['type'] == 'online':
         print(params.keys())
 
-        r = InAndOut(
-            number=params['car_plate'],
-            color=params['color'],
-            logo=params['car_logo'],
-            start_time=datetime.datetime.fromtimestamp(int(params['start_time'])),
-            park_id=params['park_id'],
-            cam_id=params['camera_id'],
+        if params['vdc_type'] == 'in':  # 入场
+            r = InAndOut(
+                number=params['plate_num'],
+                in_time=datetime.datetime.fromtimestamp(int(params['start_time'])),
+                plate_color_in=params['plate_color'],
+                logo_in=params['car_logo'],
+                park_id=params['park_id'],
+                cam_id_in=params['cam_id'],
+                cam_ip_in=params['cam_ip'],
+                plate_val_in=True if params['plate_val'] == 'true' else False,
+                confidence_in=params['confidence'],
+                color_in=params['car_color'],
+                vdc_type=params['vdc_type'],
+                triger_type_in=params['triger_type'],
+                vehicle_type_in=params['vehicle_type'],
             )
 
+        else:  # 出场
+            number = params['plate_num']
 
+            r = InAndOut.objects.filter(number=number).first()
+
+            if r:
+                r.out_time = datetime.datetime.fromtimestamp(int(params['start_time']))
+                r.plate_color_out = params['plate_color']
+                r.logo_out = params['car_logo']
+                r.park_id = params['park_id']
+                r.cam_id_out = params['cam_id']
+                r.cam_ip_out = params['cam_ip']
+                r.plate_val_out = True if params['plate_val'] == 'true' else False
+                r.confidence_out = params['confidence']
+                r.color_out = params['car_color']
+                r.vdc_type = params['vdc_type']
+                r.triger_type_out = params['triger_type']
+                r.vehicle_type_out = params['vehicle_type']
+        
         park_id = params['park_id']
         parkinglot = ParkingLot.objects.filter(id=park_id)
         if parkinglot.exists():
             r.parkinglot = parkinglot.first()
-
-        camera_id = params['camera_id']
-        print(camera_id)
+            
+        camera_id = params['cam_id']
         camera = Camera.objects.filter(mac_address=camera_id)
         if camera.exists():
-            print(camera.first())
-            r.camera = camera.first()
-            print(r.camera.in_or_out)
-            if r.camera.in_or_out == 1:
-                print('ssss')
-            result["gpio_data"] = [{"ionum":"io1","action":"on"}]
-            result["triger_data"] = {"action":"on"}
-        try:
+                         
+            if params['vdc_type'] == 'in':
+                r.camera_in = camera.first()
+                r.cam_id_in = camera_id
+            else:
+                r.camera_out = camera.first()
+                r.cam_id_out = camera_id
+
+            if not r.parkinglot and r.camera_in.parkinglot:
+                r.parkinglot = r.camera_in.parkinglot
+          
+        # 保存汽车出入时抓拍的全景图和车牌特写图
+        try: 
             picture =  base64.b64decode(params['picture'].replace('-', '+').replace('.', '=').replace('_','/'))
             plate_pic =  base64.b64decode(params['closeup_pic'].replace('-', '+').replace('.', '=').replace('_','/'))
 
@@ -84,14 +133,21 @@ def parkin(request):
             with open(plate, 'wb') as f:
                 f.write(plate_pic)
 
-
-            r.picture = 'car/' + name + '.jpg'
-            r.closeup_pic = 'plate/' + name + '.jpg'
+            if params['vdc_type'] == 'in':
+                r.picture_in = 'car/' + name + '.jpg'
+                r.closeup_pic_in = 'plate/' + name + '.jpg'
+            else:
+                r.picture_out = 'car/' + name + '.jpg'
+                r.closeup_pic_out = 'plate/' + name + '.jpg'
 
         except Exception as e:
             print(e)
 
         r.save()
+        
+        if True:
+            result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
+
     print(result)
     return JsonResponse(result)
 
@@ -148,7 +204,7 @@ def in_out(request):
                 records = records.filter(manufacturer=manufacturer)
                 
 
-    ctx['objects'] = records.order_by('-start_time')
+    ctx['objects'] = records.order_by('-in_time')
     # ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
     # print(ctx['parkinglots'])
     # all_gates = {}

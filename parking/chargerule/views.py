@@ -251,6 +251,7 @@ def coupon(request):
             companies[i.id].append({'id': i.id, 'name': i.name})
         else:
             companies[i.id] = [{'id': i.id, 'name': i.name}]
+    print(c)
     ctx['all_companies'] = companies
 
     all_tickets = {}
