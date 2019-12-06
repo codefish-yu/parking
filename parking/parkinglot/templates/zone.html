@@ -195,9 +195,46 @@
     $('.chosen-select').chosen();
     $('.chosen-select').next().css('width', '100%');
 
+   initValidator('#add_form','');
+    function initValidator(name,id){
+        $(name).bootstrapValidator({
+
+　　　　　　 message: 'This value is not valid',
+        　 feedbackIcons: {
+            　　　　　　　　valid: 'glyphicon glyphicon-ok',
+            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+        　　　　　　　　   },
+
+            fields: {
+                place_num: {
+                    validators: {
+                        notEmpty: {
+                            message: '泊位数不能为空'
+                        },
+                        regexp: {
+                            regexp: /^[0-9]+$/,
+                            message: '请输入整数'
+                        }
+                    }
+                },
+                zone_name:{
+                    validators:{
+                        notEmpty:{
+                            message:'停车场名称不能为空'
+                        }
+                    }
+                }
+
+            }
+        })
+    }
+
+
     function change(){
         var ids = $('input[name=ids]:checked')
                 if(ids.length == 1){
+                    initValidator('#update_form_'+ids[0].value,ids[0].value)
 
                     $('#update_model_'+ids[0].value).show()
                 }
