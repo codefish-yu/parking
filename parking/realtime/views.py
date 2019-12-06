@@ -51,9 +51,8 @@ def parkin(request):
     #     'triger_type': 'video'
     # }
 
-    print(request.body)
     params = get_params(request)
-
+    print(params)
     if 'type'in params and params['type'] == 'HeartBeat':
         print(params.keys())
 
@@ -81,8 +80,8 @@ def parkin(request):
 
         else:  # 出场
             number = params['plate_num']
-
-            r = InAndOut.objects.filter(number=number).first()
+            print(number)
+            r = InAndOut.objects.filter(number=number).order_by('-in_time').first()
 
             if r:
                 r.out_time = datetime.datetime.fromtimestamp(int(params['start_time']))
@@ -97,6 +96,19 @@ def parkin(request):
                 r.vdc_type = params['vdc_type']
                 r.triger_type_out = params['triger_type']
                 r.vehicle_type_out = params['vehicle_type']
+
+            if r.bill and r.bill.status == 1:
+                print('sss')
+                result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
+            else:
+                b = Bill(
+                    payable=100, 
+                    payment=100, 
+                    pay_time=datetime.datetime.now(),
+                    status=0
+                )
+                b.save()
+                r.bill = b
         
         park_id = params['park_id']
         parkinglot = ParkingLot.objects.filter(id=park_id)
@@ -144,9 +156,7 @@ def parkin(request):
             print(e)
 
         r.save()
-        
-        if True:
-            result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
+    
 
     print(result)
     return JsonResponse(result)
@@ -186,25 +196,35 @@ def in_out(request):
         action = request.POST.get('action', '')
         if action == 'search':
             ctx['brand'] = brand = request.POST.get('brand', '')
-            ctx['manufacturer'] = manufacturer = request.POST.get('manufacturer', '')
-           
-            gate_id = request.POST.get('gate_id', '')
             parkinglot_id = request.POST.get('parkinglot_id', '')
 
             if parkinglot_id:
                 ctx['parkinglot_id'] = int(parkinglot_id)
                 records = records.filter(parkinglot_id=int(parkinglot_id))
-                ctx['gates'] = Gate.objects.filter(parkinglot_id=int(parkinglot_id))
-            if gate_id:
-                ctx['gate_id'] = int(gate_id)
-                records = records.filter(gate_id=int(gate_id))
-            if brand:
-                records = records.filter(brand=brand)
-            if manufacturer:
-                records = records.filter(manufacturer=manufacturer)
-                
+        elif action == 'pay':
+            id = request.POST.get('id', '')
+            if id:
+                r = InAndOut.objects.filter(id=id).first()
+                if r:
+                    if r.bill:
+                        r.bill.status = 1
+                        r.bill.save()
+                    else:
+                        b = Bill(
+                            payable=100, 
+                            payment=100, 
+                            pay_time=datetime.datetime.now(),
+                            status=1
+                        )
+                        b.save()
+                        r.bill = b
+                        r.save()
 
-    ctx['objects'] = records.order_by('-in_time')
+                    return JsonResponse({'success': True})
+
+            return JsonResponse({'success': False})
+
+    ctx['objects'] = records.order_by('-update_time')
     # ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
     # print(ctx['parkinglots'])
     # all_gates = {}

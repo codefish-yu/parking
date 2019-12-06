@@ -18,10 +18,6 @@ class InAndOut(models.Model):
     plate_color_out = models.CharField(max_length=100, verbose_name='车牌颜色')
     logo_out = models.CharField(max_length=200, verbose_name='logo')
 
-    color = models.CharField(max_length=100, verbose_name='车辆颜色')
-    plate_color = models.CharField(max_length=100, verbose_name='车牌颜色')
-    logo = models.CharField(max_length=200, verbose_name='logo')
-
     in_time = models.DateTimeField(null=True, verbose_name='入口识别时间')
     out_time = models.DateTimeField(null=True, verbose_name='出口识别时间')
     picture_in = models.ImageField(null=True, upload_to='car/%Y/%m/%d', verbose_name='车辆图片')
@@ -38,20 +34,24 @@ class InAndOut(models.Model):
     
     cam_id_out = models.CharField(max_length=100, null=True, verbose_name='camera_id(Mac地址)')
     camera_out = models.ForeignKey(Camera, related_name='camera_out', null=True, on_delete=models.SET_NULL, verbose_name='摄像头')
+    
+    vdc_type = models.CharField(max_length=100, null=True, verbose_name='出入口类型')
    
     cam_ip_in = models.CharField(max_length=100, null=True, verbose_name='IP地址')
     plate_val_in = models.BooleanField(default=True, verbose_name='是否虚假车牌')
     confidence_in = models.FloatField(null=True, verbose_name='置信度')
     vehicle_type_in = models.CharField(max_length=100, verbose_name='车辆类型')
-    vdc_type_in = models.CharField(max_length=100, null=True, verbose_name='出入口类型')
     triger_type_in = models.CharField(max_length=100, null=True, verbose_name='触发类型')
 
     cam_ip_out = models.CharField(max_length=100, null=True, verbose_name='IP地址')
     plate_val_out = models.BooleanField(default=True, verbose_name='是否虚假车牌')
     confidence_out = models.FloatField(null=True, verbose_name='置信度')
     vehicle_type_out = models.CharField(max_length=100, verbose_name='车辆类型')
-    vdc_type_out = models.CharField(max_length=100, null=True, verbose_name='出入口类型')
     triger_type_out = models.CharField(max_length=100, null=True, verbose_name='触发类型')
+
+    update_time = models.DateTimeField(auto_now_add=True, verbose_name='更新时间')
+
+    bill = models.ForeignKey('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单')
     # params = {
     #     'type': 'online', 
     #     'mode': '5', 
@@ -93,7 +93,6 @@ class Bill(models.Model):
     pay_type = models.IntegerField(null=True, choices=[(0, '现金'),(1, '微信'),(2, '支付宝'),(3, '刷卡')], verbose_name='支付方式')
 
     parking_time = models.FloatField(null=True, verbose_name='停车时长(分钟)')
-    in_and_out = models.ForeignKey(InAndOut, null=True, on_delete=models.SET_NULL, verbose_name='停车记录')
     # card = 
     # coupun = 
     # 滞留时间, 滞留收费
