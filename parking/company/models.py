@@ -16,7 +16,7 @@ class Company(models.Model):
 	address = models.CharField(max_length=30,null=True,verbose_name='商家地址')
 	account = models.CharField(max_length=30,verbose_name='登录账号')
 	owner = models.CharField(max_length=30,verbose_name='联系人姓名')
-	phone = models.IntegerField(default=0,verbose_name='联系人电话')
+	phone = models.CharField(max_length=30, default=0,verbose_name='联系人电话')
 	balance = models.FloatField(default=0,verbose_name='余额')
 	duration = models.FloatField(default=0,verbose_name='时长')
 	type = models.IntegerField(default=0,verbose_name='限制类型',choices=[(0,'无限制'),(1,'限制天'),(2,'限制周'),(3,'限制月')])
