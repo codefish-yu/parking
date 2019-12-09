@@ -1,16 +1,18 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
 from .models import * 
 from parkinglot.models import *
-from administrator.decorators import page, _save_attr_
+from administrator.decorators import page, _save_attr_,export_excel
 
 
 import json
 import base64
 import datetime
+import io
+import xlwt
 
 
 '''实时管理模块'''
@@ -102,9 +104,9 @@ def parkin(request):
                 result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
             else:
                 b = Bill(
-                    payable=100, 
-                    payment=100, 
-                    pay_time=datetime.datetime.now(),
+                    billable=100, 
+                    billment=100, 
+                    bill_time=datetime.datetime.now(),
                     status=0
                 )
                 b.save()
@@ -201,7 +203,7 @@ def in_out(request):
             if parkinglot_id:
                 ctx['parkinglot_id'] = int(parkinglot_id)
                 records = records.filter(parkinglot_id=int(parkinglot_id))
-        elif action == 'pay':
+        elif action == 'bill':
             id = request.POST.get('id', '')
             if id:
                 r = InAndOut.objects.filter(id=id).first()
@@ -211,9 +213,9 @@ def in_out(request):
                         r.bill.save()
                     else:
                         b = Bill(
-                            payable=100, 
-                            payment=100, 
-                            pay_time=datetime.datetime.now(),
+                            billable=100, 
+                            billment=100, 
+                            bill_time=datetime.datetime.now(),
                             status=1
                         )
                         b.save()
@@ -240,10 +242,13 @@ def in_out(request):
     return (ctx, 'in_out.html')
 
 @page
-def pay(request):
+def bill(request):
 
     ctx = {}
-    pays = Pay.objects.all()
+    bills = Bill.objects.all()
+
+    def g_t(str):
+        return datetime.datetime.strptime(str,'%Y-%m-%d %H:%M')
 
     if request.method == 'POST':
         action = request.POST.get('action','')
@@ -252,21 +257,54 @@ def pay(request):
             p = request.POST.get('parkinglot','')
             w = request.POST.get('tollman','')
             t = request.POST.get('type','')
-            s = request.POST.get('start_time','')
-            e = request.POST.get('end_time','')
+            s = request.POST.get('in_time','')
+            e = request.POST.get('out_time','')
 
             if p:
-                pays = pays.filter(tollman_parkinglot__id=park).all()
-            if w:
-                pays = pays.filter(tollman_id=q).all()
-            if t:
-                pays = pays.filter(detail__type=t).all()
+                tmp =[]    
+                iao = InAndOut.objects.filter(parkinglot_id=p).all()
+                for i in iao:
+                    tmp.append(i.bill)
+
+                bills =tmp
             if s:
-                print(s)
-                print(type(s))
+                tmp =[] 
+                start = g_t(s)
+                iao = InAndOut.objects.filter(in_time__gt=start).all()
+                for i in iao:
+                    tmp.append(i.bill)
+
+                bills =tmp
             if e:
-                print(e)
-                print(type(e))
+                tmp =[] 
+                end = g_t(e)
+                iao = InAndOut.objects.filter(out_time__lt=end).all()
+                for i in iao:
+                    tmp.append(i.bill)
+
+                bills =tmp
+
+            if w:
+                if isinstance(bills,list):
+                    for i in bills:
+                        if i.tollman:
+                            if i.tollman.id !=int(q):
+                                bills.remove(i)
+                        else:
+                            bills.remove(i)
+                else:
+                    bills = bills.filter(tollman__id=int(w)).all()
+            if t:
+                if isinstance(bills,list):
+                    for i in bills:
+                        if i.detail:
+                            if i.detail.type !=int(t):
+                                bills.remove(i)
+                        else:
+                            bills.remove(i)
+                else:
+                    bills = bills.filter(detail__type=int(t)).all()
+
             ctx['p'] = int(p) if p else ''
             ctx['t'] = int(t) if t else ''
             ctx['w'] = int(w) if w else ''
@@ -274,13 +312,48 @@ def pay(request):
             ctx['e'] = e
 
         elif action == 'export':
-            print(1111)
+            if bills:
+                e = xlwt.Workbook(encoding='utf-8')
+                w = e.add_sheet(u'付费记录')
+                w.write(0,0,'车牌号')
+                w.write(0,1,'收费员')
+                w.write(0,2,'入场时间')
+                w.write(0,3,'离场时间')
+                w.write(0,4,'停车时长')
+                w.write(0,5,'车辆类型')
+                w.write(0,6,'应收费用')
+                w.write(0,7,'实收费用')
+                w.write(0,8,'收费类型')
+                w.write(0,9,'收费时间')
+                row = 1
+                for i  in bills:
+                    w.write(row, 0, i.InAndOut.number if i.InAndOut else '')
+                    w.write(row, 1, i.tollman)
+                    w.write(row, 2, i.InAndOut.in_time if i.InAndOut else '')
+                    w.write(row, 3, i.InAndOut.out_time if i.InAndOut else '')
+                    w.write(row,4,i.parking_time)
+                    w.write(row,5,i.InAndOut.vehicle_type_in if i.InAndOut else '')
+                    w.write(row,6,i.payable)
+                    w.write(row,7,i.payment)
+                    w.write(row,8,i.detail.get_type_display if i.detail else '')
+                    w.write(row,9,i.detail.time if i.detail else '')
+                    row +=1
+                output = io.BytesIO()
+                e.save(output)
+                # 重新定位到开始
+                output.seek(0)
+                response = HttpResponse(content_type='application/vnd.ms-excel')
+                response['Content-Disposition'] = 'attachment;filename=bill.xls'
+                response.write(output.getvalue())
+                return response
 
 
 
-            
-
-    ctx['objects'] = ctx['pays'] = pays
-    return (ctx,'pay.html')
+    print(11111)
+    print(Worker.objects.all())     
+    ctx['parkinglots'] = ParkingLot.objects.all()
+    ctx['workers'] = Worker.objects.all()
+    ctx['objects'] = ctx['bills'] = bills
+    return (ctx,'bill.html')
 
 

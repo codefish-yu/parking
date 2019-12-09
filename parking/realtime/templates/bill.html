@@ -40,7 +40,7 @@
                                         <select data-placeholder="收费员" class="form-control chosen-select"  name="tollman">
                                             <option value="" {% if not w %}selected{% endif %}>选择收费员</option>
                                             {% for j in workers %}
-                                            <option value="{{ j.id}}" {% if w == j.id %}selected{% endif %}>{{ j.real_name}} </option>
+                                            <option value="{{ j.id}}" {% if w == j.id %}selected{% endif %}>{{ j.name}} </option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -54,10 +54,10 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <input type="datetime-local" placeholder="开始时间" name="start_time" value="{%if s %}{{s}}{% endif %}" class="form-control">
+                                        <input type="datetime" id='in_time' placeholder="开始时间" name="in_time" value="{%if s %}{{s}}{% endif %}" class="laydate-icon form-control layer-date">
                                     </div>
                                     <div class="form-group">
-                                        <input type="datetime-local" name="end_time"  placeholder="结束时间" value="{%if e %}{{e}}{% endif %}" class="form-control"  >
+                                        <input type="datetime" id='out_time' name="out_time"  placeholder="结束时间" value="{%if e %}{{e}}{% endif %}" class="laydate-icon form-control layer-date"  >
                                     </div>
                                     <input type="hidden" name="action" value="select">
                             </form>
@@ -67,7 +67,7 @@
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
                                 <button type="button" id="Enable" class="btn btn-primary" onclick="que()"><i class="fa fa-check-circle-o" ></i>&nbsp;查询</button>
-                                <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;导出</button>
+                                <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;" onclick="exp()"><i class="fa fa-trash"></i>&nbsp;导出</button>
                                 <form action="" method="post" id='export_form'>
                                      {% csrf_token%}
                                     <input type="hidden" name="action" value="export">
@@ -97,18 +97,18 @@
                                     <form id='delete-form' action="" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="action" value='delete'>
-                                    {% for i in pays %}
+                                    {% for i in bills %}
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{forloop.counter}} </td>
-                                            <td>{{i.car_number }} </td>
+                                            <td>{{i.InAndOut.number }} </td>
                                             <td>{{ i.tollman }}</td>
-                                            <td>{{i.arrived_time}} </td>
-                                            <td>{{i.left_time}} </td>
-                                            <td>{{i.duration }} </td>
-                                            <td>{{ i.car_type }} </td>
-                                            <td>{{ i.price }} </td>
-                                            <td>{{i.real_price}} </td>
+                                            <td>{{i.InAndOut.in_time}} </td>
+                                            <td>{{i.InAndOut.out_time}} </td>
+                                            <td>{{i.parking_time }} </td>
+                                            <td>{{ i.vehicle_type_in }} </td>
+                                            <td>{{ i.payable }} </td>
+                                            <td>{{i.payment}} </td>
                                             <td>{{i.detail}} </td>
                                            
                                         </tr>
@@ -135,86 +135,27 @@
 {% endblock %}
 
 {% block js %}
+<script src="/static/js/laydate.js"></script>
+<link href="/static/css/laydate.css" rel="stylesheet">
  <script>
+    function ren(id){
+        laydate.render({
+          elem: id,
+          type: 'datetime',
+          format:'yyyy-MM-dd HH:mm'
+        })
+    };
+    ren('#in_time');
+    ren('#out_time');
     $('.chosen-select').chosen();
     $('.chosen-select').next().css('width', '100%');
-    initValidator('#add_form','');
-    function initValidator(name,id){
-        $(name).bootstrapValidator({
-
-　　　　　　 message: 'This value is not valid',
-        　 feedbackIcons: {
-            　　　　　　　　valid: 'glyphicon glyphicon-ok',
-            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
-            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
-        　　　　　　　　   },
-
-            fields: {
-                car_type: {
-                    message: '车辆类型不能为空',
-                    validators: {
-                        notEmpty: {
-                            message: '车辆类型不能为空'
-                        }
-                    },    
-                },
-                use: {
-                    validators: {
-                        notEmpty: {
-                            message: '使用类型不能为空'
-                        }
-                    }
-                },
-                parkinglot: {
-                    validators: {
-                        notEmpty: {
-                            message: '所属车场不能为空'
-                        }
-                    }
-                }
-
-            }
-        })
-    }
-
-    function change(){
-        var ids = $('input[name=ids]:checked')
-                if(ids.length == 1){
-                    initValidator('#update_form_'+ids[0].value,ids[0].value)
-
-                    $('#update_model_'+ids[0].value).show()
-                }
-    }
     function que(){
         $('#query_form').submit()
     }
-    function getZ(obj,tip,t=''){
-        var id = $(obj).val();
-        if(id == ''){
-            return false
-        }
-        myajax('/parkinglot/place/', {id: id, action:'getZone',csrfmiddlewaretoken:'{{ csrf_token }}'}, (data)=>{
-            if(data.data){
-                var list = data.data;
-                $('#zone_'+tip+''+t).empty();
-                $('#zone_'+tip+''+t).append('<option value="">'+'选择区域'+'</option>');
-                console.log($('#zone_'+tip+''+t));
-                console.log(list);
-                for(var i=0;i<list.length;i++){
-                    // $('#zone_'+tip+''+t).append('<option value="'+list[i].id+'">'+'2222'+'</option>')
-                    try{
-                        $('#zone_'+tip+''+t).append('<option id="hanhan'+i+'" value="'+list[i].id+'">'+list[i].name+'</option>');
-                    }
-                    catch(e){
-                        console.log(e)
-                    }
-                    
-                }
-                
-            }
-        })
-
+    function exp(){
+        $('#export_form').submit()
     }
+   
     </script>
 
 {% endblock %}
