@@ -37,7 +37,7 @@
                                                 >{{i.name}}</option>
                                             {% endfor %}
                                         </select>
-                                    </div>
+                                    </div> ~
                                     <div class="form-group" style="width: 200px">
                                         <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" id='gate_a' style="display: none;">
                                             <option value="" selected="selected">选择商家</option>
@@ -48,7 +48,7 @@
                                             {% endfor %}
                                         </select>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" style="margin-left: 50px">
                                         <select data-placeholder="优惠券类型" class="form-control chosen-select" child-id='ticket_search' name="ticket_type" style="display: none;width: 100%">
                                            <option value='' >优惠券类型</option>
                                            <option value="0"{% if ticket_type == 0 %} selected{% endif %}>打折券</option>
@@ -56,7 +56,7 @@
                                            <option value="2"{% if ticket_type == 2 %} selected{% endif %}>抵扣券</option>
                                            <option value="3"{% if ticket_type == 3 %} selected{% endif %}>满时券</option>
                                         </select>
-                                    </div>
+                                    </div> ~
                                     <div class="form-group">
                                        <select data-placeholder="优惠券类型" class="form-control chosen-select" id='ticket_search' name="ticket_id" style="display: none;width: 100%">
                                         <option value="" >选择券</option>
@@ -120,7 +120,7 @@
                                                 {% elif i.ticket_type == 3 %}满时券
                                                 {% endif %}
                                             </td>
-                                            <td>{{ i.ticket_name }}</td>
+                                            <td>{{ i.coupons.name }}</td>
                                             <td>{{ i.amount }}</td>
                                             <td>{{ i.buy_time|date:'Y-m-d' }}</td>
                                             <!-- <td></td> -->
@@ -144,7 +144,6 @@
                                 </script>
 
                             </table>
-                            {{all_companies}}
                         </div>
                         {% include 'common/page.html' %}
                     </div>
@@ -202,15 +201,7 @@
                             <div class="col-sm-4">
                                 <select data-placeholder="选择优惠券" class="form-control chosen-select" name="ticket_id" id='ticket_update_{{i.id}}'
                                 style="display: none;width: 100%">
-                                    {% if i.discount %}
-                                    <option value='{{ i.discount.id }}'>{{i.discount.name}}</option>
-                                    {% elif i.voucher %}
-                                    <option value='{{ i.voucher.id }}'>{{i.voucher.name}}</option>
-                                    {% elif i.coupon %}
-                                    <option value='{{ i.coupon.id }}'>{{i.coupon.name}}</option>
-                                    {% elif i.hourticket %}
-                                    <option value='{{ i.hourticket.id }}'>{{i.hourticket.name}}</option>
-                                    {% endif %}
+                                    <option value='{{ i.discount.id }}'>{{i.coupons.name}}</option>
                                 </select>
                             </div>
                         </div>
