@@ -109,7 +109,7 @@
                                             <td>{{ i.vehicle_type_in }} </td>
                                             <td>{{ i.payable }} </td>
                                             <td>{{i.payment}} </td>
-                                            <td>{{i.detail}} </td>
+                                            <td><button type="button" id="view-btn" class="btn btn-primary " onclick="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;查看</button></td>
                                            
                                         </tr>
                                     {% empty %}
@@ -132,6 +132,68 @@
                 </div>
             </div>
         </div>
+         {% for i in bills %}
+    <div id='update_model_{{ i.id }}' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改卡类</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+                <div class="form-horizontal" id="verifyCheck">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">应付金额</label>
+                            <div class="col-sm-4">
+                                {{i.payable}}
+                            </div>
+                            <label class="col-sm-2 control-label">应付金额</label>
+                            <div class="col-sm-4">
+                                {{i.payment}}
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">支付时间</label>
+                            <div class="col-sm-4">
+                                {{i.pay_time   }}
+                            </div>
+                            <label class="col-sm-2 control-label">支付方式</label>
+                            <div class="col-sm-4">
+                                {{i.pay_type}}
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">停车时长</label>
+                            <div class="col-sm-4">
+                                {{i.parking_time}}
+                            </div>
+                            <label class="col-sm-2 control-label">支付状态</label>
+                            <div class="col-sm-4">
+                                {{i.status}}
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">收费时间</label>
+                            <div class="col-sm-4">
+                                {{i.detail.time}}
+                            </div>
+                            <label class="col-sm-2 control-label">收费类型</label>
+                            <div class="col-sm-4">
+                                {{i.detail.type}}
+                            </div>
+
+                        </div>
+                     
+                </div>
+            </div></div>
+            <span class="layui-layer-setwin">
+                <!-- <a class="layui-layer-min" href="javascript:;"><cite></cite></a>
+                <a class="layui-layer-ico layui-layer-max" href="javascript:;"></a> -->
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span></div>
+       </div>
+       {% endfor %}
 {% endblock %}
 
 {% block js %}
@@ -154,6 +216,10 @@
     }
     function exp(){
         $('#export_form').submit()
+    }
+    function change(id){
+        console.log('wefgyw');
+        $('#update_model_'+id).show()
     }
    
     </script>
