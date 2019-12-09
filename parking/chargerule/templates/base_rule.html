@@ -57,10 +57,10 @@
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{forloop.counter}} </td>
                                             <td>{{ i.parkinglot.name }}</td>
-                                            <td>{{i.per_hour}} </td>
-                                            <td>{{i.free_time}} </td>
-                                            <td>{{i.day_max}} </td>
-                                            <td>{{ i.min_price}} </td>
+                                            <td>{{i.per_hour}}元</td>
+                                            <td>{{i.free_time}}分钟</td>
+                                            <td>{{i.day_max}}小时</td>
+                                            <td>{{ i.min_price}}分钟</td>
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
