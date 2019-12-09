@@ -2,8 +2,7 @@ from django.db import models
 
 
 from device.models import Camera
-from parkinglot.models import ParkingLot
-from administrator.models import AdminUser as User
+from parkinglot.models import ParkingLot,Worker
 
 
 class InAndOut(models.Model):
@@ -115,7 +114,7 @@ class Pay(models.Model):
 
     #车牌号、收费员、入场时间、离场时间、停车时长、车辆类型、应收费用、实收费用、收费明细
     car_number = models.CharField(max_length=30,null=True,verbose_name='车牌号')
-    tollman = models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name='收费员',null=True)
+    tollman = models.ForeignKey(Worker,on_delete=models.SET_NULL,verbose_name='收费员',null=True)
     arrived_time = models.DateTimeField(null=True,verbose_name='入场时间')
     left_time = models.DateTimeField(null=True,verbose_name='离场时间')
     duration = models.FloatField(null=True,verbose_name='停车时长')

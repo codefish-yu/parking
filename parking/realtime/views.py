@@ -246,20 +246,39 @@ def pay(request):
     pays = Pay.objects.all()
 
     if request.method == 'POST':
-        action = request.POST.get(action,'')
+        action = request.POST.get('action','')
 
         if action == 'select':
             p = request.POST.get('parkinglot','')
-            u = request.POST,get('tollman','')
-            t = request.POST.get('type','','')
+            w = request.POST.get('tollman','')
+            t = request.POST.get('type','')
             s = request.POST.get('start_time','')
             e = request.POST.get('end_time','')
 
-            ctx['p'] = p
-            ctx['t'] = t
-            ctx['u'] = u
+            if p:
+                pays = pays.filter(tollman_parkinglot__id=park).all()
+            if w:
+                pays = pays.filter(tollman_id=q).all()
+            if t:
+                pays = pays.filter(detail__type=t).all()
+            if s:
+                print(s)
+                print(type(s))
+            if e:
+                print(e)
+                print(type(e))
+            ctx['p'] = int(p) if p else ''
+            ctx['t'] = int(t) if t else ''
+            ctx['w'] = int(w) if w else ''
             ctx['s'] = s
             ctx['e'] = e
+
+        elif action == 'export':
+            print(1111)
+
+
+
+            
 
     ctx['objects'] = ctx['pays'] = pays
     return (ctx,'pay.html')
