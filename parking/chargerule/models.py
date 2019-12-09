@@ -10,54 +10,18 @@ import datetime
 
 '''计费规则模块'''
 
-
-class Discount(models.Model):
+class Coupons(models.Model):
     class Meta:
-        verbose_name = verbose_name_plural = '打折券'
+        verbose_name = verbose_name_plural = '优惠券'
+
+    type = models.IntegerField(choices=[(0, '打折券'),(1, '代金券'),(2, '抵扣券'),(3, '满时券')])
+
+    name = models.CharField(max_length=200, verbose_name='名称')
+    detail = models.CharField(max_length=200, verbose_name='说明')
 
     rate = models.FloatField(null=True, blank=True, verbose_name='折扣率')
-    name = models.CharField(max_length=200, verbose_name='名称')
-    detail = models.CharField(max_length=200, verbose_name='备注')
-    rule = models.CharField(max_length=200, verbose_name='细则')
-
-    is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
-    create_time = models.DateTimeField(auto_now_add=True, null=True)
-    update_time = models.DateTimeField(auto_now=True, null=True)
-
-
-class Voucher(models.Model):
-    class Meta:
-        verbose_name = verbose_name_plural = '代金券'
-
-    money = models.FloatField(null=True, blank=True, verbose_name='金额')
-    name = models.CharField(max_length=200, verbose_name='名称')
-    detail = models.CharField(max_length=200, verbose_name='备注')
-    rule = models.CharField(max_length=200, verbose_name='细则')
-    
-    is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
-    create_time = models.DateTimeField(auto_now_add=True, null=True)
-    update_time = models.DateTimeField(auto_now=True, null=True)
-
-
-class Coupon(models.Model):
-    class Meta: 
-        verbose_name = verbose_name_plural = '抵扣券'
-        '''规定小时内只付一定的钱, 超出时间算临停'''
-
     money = models.FloatField(null=True, blank=True, verbose_name='金额')
     hours = models.FloatField(null=True, blank=True, verbose_name='小时数')
-    name = models.CharField(max_length=200, verbose_name='名称')
-    detail = models.CharField(max_length=200, verbose_name='备注')
-    rule = models.CharField(max_length=200, verbose_name='细则')
-    
-    is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
-    create_time = models.DateTimeField(auto_now_add=True, null=True)
-    update_time = models.DateTimeField(auto_now=True, null=True)
-
-
-class HourTicket(models.Model):
-    class Meta:
-        verbose_name = verbose_name_plural = '满时券'
 
     money1 = models.FloatField(null=True, blank=True, verbose_name='金额')
     hours1 = models.FloatField(null=True, blank=True, verbose_name='小时数')
@@ -67,13 +31,29 @@ class HourTicket(models.Model):
     hours3 = models.FloatField(null=True, blank=True, verbose_name='小时数')
     money4 = models.FloatField(null=True, blank=True, verbose_name='金额')
     hours4 = models.FloatField(null=True, blank=True, verbose_name='小时数')
-    name = models.CharField(max_length=200, verbose_name='名称')
-    detail = models.CharField(max_length=200, verbose_name='备注')
-    rule = models.CharField(max_length=200, verbose_name='细则')
-    
+
     is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
     create_time = models.DateTimeField(auto_now_add=True, null=True)
     update_time = models.DateTimeField(auto_now=True, null=True)
+
+    def rule(self):
+        if self.type == 0:
+            return '计费打 %s 折'% (self.rate/10)
+        elif self.type == 1:
+            return '计费减免 %s 元' % (self.money)
+        elif self.type == 2:
+            return '%s 个小时内均计费为 %s 元, 超出部分正常计费' %(self.hours, self.money)
+        else:
+            s = ''
+            if self.money1 and self.hours1:
+                s = s + '前 %s 小时计费为 %s 元;'%(self.hours1, self.money1)
+            if self.money2 and self.hours2:
+                s = s + '\n前 %s 小时计费为 %s 元;'%(self.hours2, self.money2)
+            if self.money3 and self.hours3:
+                s = s + '\n前 %s 小时计费为 %s 元;'%(self.hours3, self.money3)
+            if self.money4 and self.hours4:
+                s = s + '\n前 %s 小时计费为 %s 元;'%(self.hours4, self.money4)
+            return s
 
 
 class TicketRecord(models.Model):
@@ -85,10 +65,7 @@ class TicketRecord(models.Model):
 
     ticket_type = models.IntegerField(choices=[(0, '折扣券'),(1, '代金券'),(2, '抵扣券'),(3, '满时券')])
 
-    discount = models.ForeignKey(Discount, on_delete=models.SET_NULL, null=True)
-    voucher = models.ForeignKey(Voucher, on_delete=models.SET_NULL, null=True)
-    coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, null=True)
-    hourticket = models.ForeignKey(HourTicket, on_delete=models.SET_NULL, null=True)
+    coupons = models.ForeignKey(Coupons, on_delete=models.SET_NULL, null=True)
 
     buy_time = models.DateTimeField(null=True, verbose_name='购买时间')
     amount = models.IntegerField(null=True, verbose_name='购买数量')
@@ -103,16 +80,6 @@ class TicketRecord(models.Model):
     end_time2 = models.FloatField(null=True, verbose_name='优惠时段截止')
 
     # is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
-
-    def ticket_name(self):
-        if self.discount:
-            return self.discount.name
-        elif self.voucher:
-            return self.voucher.name
-        elif self.coupon:
-            return self.coupon.name
-        elif self.hourticket:
-            return self.hourticket.name
 
 
 class CardType(models.Model):
