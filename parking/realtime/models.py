@@ -3,6 +3,7 @@ from django.db import models
 
 from device.models import Camera
 from parkinglot.models import ParkingLot
+from administrator.models import AdminUser as User
 
 
 class InAndOut(models.Model):
@@ -98,4 +99,38 @@ class Bill(models.Model):
     # 滞留时间, 滞留收费
     status = models.IntegerField(default=0, choices=[(0, '未支付'),(1, '已支付')])
 
+class PayDetail(models.Model):
+    class Meta:
+        verbose_name = verbose_name_plural = '收费明细'
+
+    time = models.DateTimeField(verbose_name='收费时间')
+    type = models.IntegerField(default=0,choices=[(0,'全部'),(1,'手动免费开闸'),(2,'异常出车'),(3,'现金支付')],verbose_name='收费类型')
+    price = models.FloatField(default=0,verbose_name='应收费用',null=True)
+    real_price = models.FloatField(default=0,verbose_name='实收费用')
+
+
+class Pay(models.Model):
+    class Meta:
+        verbose_name =verbose_name_plural = '付费记录'
+
+    #车牌号、收费员、入场时间、离场时间、停车时长、车辆类型、应收费用、实收费用、收费明细
+    car_number = models.CharField(max_length=30,null=True,verbose_name='车牌号')
+    tollman = models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name='收费员',null=True)
+    arrived_time = models.DateTimeField(null=True,verbose_name='入场时间')
+    left_time = models.DateTimeField(null=True,verbose_name='离场时间')
+    duration = models.FloatField(null=True,verbose_name='停车时长')
+    car_type = models.IntegerField(null=True,verbose_name='车辆类型',choices=[(0,'临停车'),(1,'月租车')] ,default=0)
+    price = models.FloatField(default=0,verbose_name='应收费用',null=True)
+    real_price = models.FloatField(default=0,verbose_name='实收费用')
+    detail = models.ForeignKey('PayDetail',on_delete=models.SET_NULL,verbose_name='收费明细',related_name='detail',null=True)
+
+
+
+        
+
+
+
+
+           
+        
 

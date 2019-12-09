@@ -88,6 +88,7 @@ urlpatterns = [
 
     path('realtime/parkin/',realtime.parkin),
     path('realtime/in_out/',realtime.in_out),
+    path('realtime/pay/',realtime.pay),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

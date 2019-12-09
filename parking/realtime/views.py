@@ -239,5 +239,29 @@ def in_out(request):
 
     return (ctx, 'in_out.html')
 
+@page
+def pay(request):
+
+    ctx = {}
+    pays = Pay.objects.all()
+
+    if request.method == 'POST':
+        action = request.POST.get(action,'')
+
+        if action == 'select':
+            p = request.POST.get('parkinglot','')
+            u = request.POST,get('tollman','')
+            t = request.POST.get('type','','')
+            s = request.POST.get('start_time','')
+            e = request.POST.get('end_time','')
+
+            ctx['p'] = p
+            ctx['t'] = t
+            ctx['u'] = u
+            ctx['s'] = s
+            ctx['e'] = e
+
+    ctx['objects'] = ctx['pays'] = pays
+    return (ctx,'pay.html')
 
 

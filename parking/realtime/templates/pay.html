@@ -1,0 +1,220 @@
+{% extends 'iframe.html' %}
+{% block content %}
+<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <ol class="col-lg-5 breadcrumb">
+                            <li>停车场配置</li>
+                            <li>泊位管理</li>
+                        </ol>
+                        <div class="ibox-tools">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#" onclick="location.reload()"><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
+                                </li>
+                            </ul>
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" id="searchForm">
+                        <div class="form-inline ">
+                            <div class="form-inline">
+                                <form id='query_form' action='' method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <select data-placeholder="车场选择" class="form-control chosen-select" name="parkinglot">
+                                            <option value="" {% if not p %}selected{% endif %} >选择停车场</option>
+                                            {% for i in parkinglots %}
+                                            <option value="{{ i.id}}" {% if p == i.id %}selected{% endif %}>{{ i.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select data-placeholder="收费员" class="form-control chosen-select"  name="tollman">
+                                            <option value="" {% if not u %}selected{% endif %}>选择收费员</option>
+                                            {% for j in users %}
+                                            <option value="{{ j.id}}" {% if u == j.id %}selected{% endif %}>{{ j.real_name}} </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select data-placeholder="收费类型" class="form-control chosen-select" id="parkinglot" name="type" >
+                                            <option value="" {% if not t %}selected{% endif %} >选择收费类型</option>
+                                            <option value="0" {% if t == 0 %}selected{% endif%} >全部</option>
+                                            <option value="1" {% if t == 1 %}selected{% endif%}>手动免费开闸</option>
+                                            <option value="2" {% if t == 2 %}selected{% endif%}>异常出车</option>
+                                            <option value="3" {% if t == 3 %}selected{% endif%}>现金支付</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" placeholder="开始时间" name="start_name" value="{%if s %}{{s}}{% endif %}" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" name="end_name"  placeholder="结束时间" value="{%if e %}{{e}}{% endif %}" class="form-control"  >
+                                    </div>
+                                    <input type="hidden" name="action" value="select">
+                            </form>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-6 m-b-xs">
+                                <button type="button" id="Enable" class="btn btn-primary" onclick="que()"><i class="fa fa-check-circle-o" ></i>&nbsp;查询</button>
+                                <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;导出</button>
+                                <form action="" method="post" id='export_form'>
+                                     {% csrf_token%}
+                                    <input type="hidden" name="action" value="export">
+                                    
+                                </form>
+                            </div>
+                            <div class="col-sm-3 m-b-xs"></div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped  table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>编号</th>
+                                        <th>车牌号</th>
+                                        <th>收费员</th>
+                                        <th>入场时间</th>
+                                        <th>离场时间</th>
+                                        <th>停车时长</th>
+                                        <th>车辆类型</th>
+                                        <th>应收费用</th>
+                                        <th>实收费用</th>
+                                        <th>收费明细</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-view">
+                                    <form id='delete-form' action="" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value='delete'>
+                                    {% for i in pays %}
+                                        <tr>
+                                            <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
+                                            <td>{{forloop.counter}} </td>
+                                            <td>{{i.car_number }} </td>
+                                            <td>{{ i.tollman }}</td>
+                                            <td>{{i.arrived_time}} </td>
+                                            <td>{{i.left_time}} </td>
+                                            <td>{{i.duration }} </td>
+                                            <td>{{ i.car_type }} </td>
+                                            <td>{{ i.price }} </td>
+                                            <td>{{i.real_price}} </td>
+                                            <td>{{i.detail}} </td>
+                                           
+                                        </tr>
+                                    {% empty %}
+                                    <tr class="text-center">
+                                        <td colspan="11">没有找到匹配的记录</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </form>
+
+                                </tbody>
+
+                                <script id="data-tmpl" type="text/x-jquery-tmpl">
+                                     
+                                </script>
+
+                            </table>
+                        </div>
+                       {% include 'common/page.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}
+
+{% block js %}
+ <script>
+    $('.chosen-select').chosen();
+    $('.chosen-select').next().css('width', '100%');
+    initValidator('#add_form','');
+    function initValidator(name,id){
+        $(name).bootstrapValidator({
+
+　　　　　　 message: 'This value is not valid',
+        　 feedbackIcons: {
+            　　　　　　　　valid: 'glyphicon glyphicon-ok',
+            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+        　　　　　　　　   },
+
+            fields: {
+                car_type: {
+                    message: '车辆类型不能为空',
+                    validators: {
+                        notEmpty: {
+                            message: '车辆类型不能为空'
+                        }
+                    },    
+                },
+                use: {
+                    validators: {
+                        notEmpty: {
+                            message: '使用类型不能为空'
+                        }
+                    }
+                },
+                parkinglot: {
+                    validators: {
+                        notEmpty: {
+                            message: '所属车场不能为空'
+                        }
+                    }
+                }
+
+            }
+        })
+    }
+
+    function change(){
+        var ids = $('input[name=ids]:checked')
+                if(ids.length == 1){
+                    initValidator('#update_form_'+ids[0].value,ids[0].value)
+
+                    $('#update_model_'+ids[0].value).show()
+                }
+    }
+    function que(){
+        $('#query_form').submit()
+    }
+    function getZ(obj,tip,t=''){
+        var id = $(obj).val();
+        if(id == ''){
+            return false
+        }
+        myajax('/parkinglot/place/', {id: id, action:'getZone',csrfmiddlewaretoken:'{{ csrf_token }}'}, (data)=>{
+            if(data.data){
+                var list = data.data;
+                $('#zone_'+tip+''+t).empty();
+                $('#zone_'+tip+''+t).append('<option value="">'+'选择区域'+'</option>');
+                console.log($('#zone_'+tip+''+t));
+                console.log(list);
+                for(var i=0;i<list.length;i++){
+                    // $('#zone_'+tip+''+t).append('<option value="'+list[i].id+'">'+'2222'+'</option>')
+                    try{
+                        $('#zone_'+tip+''+t).append('<option id="hanhan'+i+'" value="'+list[i].id+'">'+list[i].name+'</option>');
+                    }
+                    catch(e){
+                        console.log(e)
+                    }
+                    
+                }
+                
+            }
+        })
+
+    }
+    </script>
+
+{% endblock %}
