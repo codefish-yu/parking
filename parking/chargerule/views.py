@@ -228,79 +228,38 @@ def card_type(request):
 def coupon_type(request):
     ''' 优惠券类型设置 ''' 
     
-    ctx = {'type': '0'}
+    ctx = {}
 
-    objects = []
+    objects = Coupons.objects.all().filter(is_delete=0)
 
     if request.method == 'POST':
         action = request.POST.get('action', '')
-        ctx['type'] = type = request.POST.get('type', '')
-        type = int(type)
-        print(type)
-        if type == 0:
-            R = Discount
-        elif type == 1:
-            R = Voucher
-        elif type == 2:
-            R = Coupon
-        else:
-            R = HourTicket
-        objects = R.objects.all().filter(is_delete=0)
-
+         
         if action == 'add':
              
-            r = R()
+            r = Coupons()
             _save_attr_(r, request)
  
         elif action == 'update':
             id = request.POST.get('id', '')
-            print(id)
-            r = R.objects.filter(id=id).first()
-            _save_attr_(r, request)
+            if id:
+                r = Coupons.objects.filter(id=int(id)).first()
+                _save_attr_(r, request)
              
         elif action == 'search':
             ctx['name'] = name = request.POST.get('name', '')
-            forbidden = request.POST.get('forbidden', '')
-            parkinglot = request.POST.get('parkinglot', '')
-
-            if forbidden:
-                ctx['forbidden'] = int(forbidden)
-                workers = objects.filter(forbidden=int(forbidden))
-            if parkinglot:
-                ctx['parkinglot'] = int(parkinglot)
-                workers = objects.filter(parkinglot_id=int(parkinglot))
+            ctx['type'] = type = request.POST.get('type', '')
+            
+            if type:
+                objects = objects.filter(type=int(type))
             if name:
                 objects = objects.filter(name__contains=name)
 
         elif action == 'delete':
             ids = request.POST.getlist('ids', '')
-            R.objects.filter(id__in=ids).update(is_delete=1)
-
-        # elif action == 'forbidden':
-        #     id = request.POST.get('id', '')
-        #     Worker.objects.filter(id=id).update(forbidden=1)
-        #     return JsonResponse({'success': True})
-
-        # elif action == 'awaken':
-        #     id = request.POST.get('id', '')
-        #     Worker.objects.filter(id=id).update(forbidden=0)
-        #     return JsonResponse({'success': True})
-
-        # elif action == 'validate':
-        #     number = request.POST.get('number', '')
-        #     id = request.POST.get('id', '')
-
-        #     r = Worker.objects.filter(number=number.strip())
-        #     if r.exists():
-        #         if id:
-        #             if r.first().id != int(id):
-        #                 return JsonResponse({'valid': False})
-        #         else:
-        #             return JsonResponse({'valid': False})
-
-        #     return JsonResponse({'valid': True})
-
-    ctx['objects'] = objects.order_by('-update_time') if objects else objects
+            Coupons.objects.filter(id__in=ids).update(is_delete=1)
+ 
+    ctx['objects'] = objects.order_by('-update_time')
    
     return (ctx, 'coupon_type.html')
 

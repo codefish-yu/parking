@@ -10,6 +10,50 @@ import datetime
 
 '''计费规则模块'''
 
+class Coupons(models.Model):
+    class Meta:
+        verbose_name = verbose_name_plural = '优惠券'
+
+    type = models.IntegerField(choices=[(0, '打折券'),(1, '代金券'),(2, '抵扣券'),(3, '满时券')])
+
+    name = models.CharField(max_length=200, verbose_name='名称')
+    detail = models.CharField(max_length=200, verbose_name='说明')
+
+    rate = models.FloatField(null=True, blank=True, verbose_name='折扣率')
+    money = models.FloatField(null=True, blank=True, verbose_name='金额')
+    hours = models.FloatField(null=True, blank=True, verbose_name='小时数')
+
+    money1 = models.FloatField(null=True, blank=True, verbose_name='金额')
+    hours1 = models.FloatField(null=True, blank=True, verbose_name='小时数')
+    money2 = models.FloatField(null=True, blank=True, verbose_name='金额')
+    hours2 = models.FloatField(null=True, blank=True, verbose_name='小时数')
+    money3 = models.FloatField(null=True, blank=True, verbose_name='金额')
+    hours3 = models.FloatField(null=True, blank=True, verbose_name='小时数')
+    money4 = models.FloatField(null=True, blank=True, verbose_name='金额')
+    hours4 = models.FloatField(null=True, blank=True, verbose_name='小时数')
+
+    is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
+    create_time = models.DateTimeField(auto_now_add=True, null=True)
+    update_time = models.DateTimeField(auto_now=True, null=True)
+
+    def rule(self):
+        if self.type == 0:
+            return '计费打 %s 折'% (rate/10)
+        elif self.type == 1:
+            return '计费减免 %s 元' % (money)
+        elif self.type == 2:
+            return '%s 个小时内均计费为 %s 元, 超出部分正常计费' %(hours, money)
+        else:
+            s = ''
+            if money1 and hours1:
+                s = s + '前 %s 小时计费为 %s 元;'%(hours1, money1)
+            if money2 and hours2:
+                s = s + '\n前 %s 小时计费为 %s 元;'%(hours2, money2)
+            if money3 and hours3:
+                s = s + '\n前 %s 小时计费为 %s 元;'%(hours3, money3)
+            if money4 and hours4:
+                s = s + '\n前 %s 小时计费为 %s 元;'%(hours4, money4)
+
 
 class Discount(models.Model):
     class Meta:
