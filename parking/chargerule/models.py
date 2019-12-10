@@ -98,7 +98,7 @@ class CardType(models.Model):
     free_fr = models.TextField(max_length=30,null=True,verbose_name='周五优惠开始') 
     free_sa = models.TextField(max_length=30,null=True,verbose_name='周六优惠开始') 
     free_su = models.TextField(max_length=30,null=True,verbose_name='周日优惠开始') 
-    
+
 
  
 
