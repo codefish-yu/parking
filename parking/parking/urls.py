@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -24,6 +24,7 @@ from car import views as car
 from device import views as device
 from parkinglot import views as park
 from company import views as com
+from wechat import views as wechat
 from chargerule import views as charge
 from realtime import views as realtime
 
@@ -31,6 +32,7 @@ from realtime import views as realtime
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    path('', include('meta.urls')),
 
 
     # administrator
@@ -88,6 +90,10 @@ urlpatterns = [
 
     path('realtime/parkin/',realtime.parkin),
     path('realtime/in_out/',realtime.in_out),
+
+
+    # wechat
+    path('wechat/leave/',wechat.leave),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

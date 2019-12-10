@@ -141,9 +141,11 @@ def parkin(request):
 
             with open(car, 'wb') as f:
                 f.write(picture)
+                f.close()
 
             with open(plate, 'wb') as f:
                 f.write(plate_pic)
+                f.close()
 
             if params['vdc_type'] == 'in':
                 r.picture_in = 'car/' + name + '.jpg'

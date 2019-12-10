@@ -39,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'car',
+    'meta',
     'bill',
     'user',
     'data',
+    'wechat',
     'device',
     'company',
     'realtime',
@@ -137,3 +139,17 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR, "media")
+
+
+WECHAT = {
+    'public_account':{
+        'appid': 'wx3d59f92c7bf0d0f9',
+        'secret': '04e6251c3b54340f68e693dafe761a0c'
+    },
+    'domain': 'http://127.0.0.1:8000'
+}
+
+
+
+
+

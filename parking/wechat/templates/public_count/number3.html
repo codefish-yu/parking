@@ -1,0 +1,18 @@
+<!-- 有车牌的车辆 -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>出场</title>
+</head>
+<body>
+	<form>
+		<h3>账 单: </h3>
+		<span>车牌号: {{ r.car_number }}</span>
+		<span>入场时间: {{ r.in_time|date:'Y-m-d H:i:s'}}</span>
+		<input type="hidden" name='action' value='leave' />
+		<input type="hidden" name='id' value='{{ r.id }}' />
+		<input type="submit" text='支付' style='width: 100px;'/>
+	</form>
+</body>
+</html>

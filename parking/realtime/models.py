@@ -1,6 +1,7 @@
 from django.db import models
 
 
+from meta.models import User
 from device.models import Camera
 from parkinglot.models import ParkingLot
 
@@ -52,6 +53,9 @@ class InAndOut(models.Model):
     update_time = models.DateTimeField(auto_now_add=True, verbose_name='更新时间')
 
     bill = models.ForeignKey('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单')
+
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name='停车用户')
+    
     # params = {
     #     'type': 'online', 
     #     'mode': '5', 

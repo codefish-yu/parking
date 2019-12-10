@@ -106,7 +106,7 @@
                                             </td>
                                             <td>{{ i.number }}</td>
                                             <td>{{ i.logo_in }}</td>
-                                            <td><img src='{{ i.plate_pic_in }}'></img></td>
+                                            <td><img src='{{ i.plate_pic_in }}' class='model-btn' data-target='img_model_{{ i.id }}'></img></td>
                                             <td>{{ i.in_time|date:'Y-m-d H:i' }}</td>
                                             <td>{{ i.out_time|date:'Y-m-d H:i' }}</td>
                                             <td>
@@ -129,6 +129,27 @@
                 </div>
             </div>
         </div>
+{% for i in objects %}
+    <div id='img_model_{{ i.id }}' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;">
+        </div>
+
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 抓拍详情</div>
+            <div class="layui-layer-content">
+                 <img src='{{i.plate_pic_in}}' /><br>
+                 <img src='{{i.car_pic_in}}' /><br>
+                 <img src='{{i.plate_pic_out}}' /><br>
+                 <img src='{{i.car_pic_in}}' /><br>
+            </div>
+        
+            <span class="layui-layer-setwin"> 
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span>
+        </div>
+    </div>
+{% endfor %}
 
 <!-- update model -->
 {% for i in objects %}
@@ -485,7 +506,6 @@
 {% block js %}
 <script type="text/javascript">
     $(document).ready(function(){
-
 
         $('.pay').click(function(){
             var id = $(this).attr('_id')
