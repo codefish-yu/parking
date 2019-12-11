@@ -40,6 +40,9 @@
                                         <input type="text" name="associate_name" placeholder="联系人姓名" class="form-control ">
                                     </div>
                                     <input type="hidden" name="action" value="select">
+                                    <div class="form-group">
+                                        <button type="submit" id="Enable" class="btn btn-primary search-btn " ><i class="fa fa-search"></i>&nbsp;查询</button>
+                                    </div>
                             </form>
                         </div>
                     </div>
@@ -54,7 +57,6 @@
                                 <!-- <button type="button" id="recharge-btn" class="btn btn-primary " onclick="recharge()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;充值</button>
                                 <button type="button" id="refund-btn" onclick="refund()" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;退款</button> -->
                                 <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;导出</button>
-                                <button type="button" id="Enable" class="btn btn-primary" onclick="que()"><i class="fa fa-check-circle-o" ></i>&nbsp;查询</button>
                             </div>
                             <div class="col-sm-3 m-b-xs"></div>
                         </div>
@@ -537,9 +539,6 @@
                     $('#refund_model_'+ids[0].value).show()
                 }
 
-    }
-    function que(){
-        $('#query_form').submit()
     }
     function getZ(obj,tip){
         var id = $(obj).val();

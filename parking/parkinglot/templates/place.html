@@ -60,6 +60,9 @@
                                         </select>
                                     </div>
                                     <input type="hidden" name="action" value="select">
+                                    <div class="form-group">
+                                        <button type="submit" id="Enable" class="btn btn-primary search-btn " ><i class="fa fa-search"></i>&nbsp;查询</button>
+                                    </div>
                             </form>
                         </div>
                     </div>
@@ -68,7 +71,6 @@
                             <div class="col-sm-6 m-b-xs">
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
-                                <button type="button" id="Enable" class="btn btn-primary" onclick="que()"><i class="fa fa-check-circle-o" ></i>&nbsp;查询</button>
                             </div>
                             <div class="col-sm-3 m-b-xs"></div>
                         </div>
@@ -315,9 +317,6 @@
     function change(id){
         initValidator('#update_form_'+id,id);
         $('#update_model_'+id).show()
-    }
-    function que(){
-        $('#query_form').submit()
     }
     function getZ(obj,tip,t=''){
         var id = $(obj).val();

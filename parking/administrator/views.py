@@ -129,7 +129,7 @@ def user(request):
             ctx['r'] = int(role) if role else ''
 
 
-    ctx['users'] = ctx['objects'] =  users
+    ctx['users'] = ctx['objects'] = users
     ctx['roles'] = roles
 
     return (ctx,'user.html')
