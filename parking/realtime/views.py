@@ -347,6 +347,7 @@ def bill(request):
                 response.write(output.getvalue())
                 return response
 
+
     ctx['parkinglots'] = ParkingLot.objects.all()
     ctx['workers'] = Worker.objects.all()
     ctx['objects'] = ctx['bills'] = bills

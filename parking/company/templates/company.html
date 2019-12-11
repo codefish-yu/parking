@@ -57,6 +57,11 @@
                                 <!-- <button type="button" id="recharge-btn" class="btn btn-primary " onclick="recharge()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;充值</button>
                                 <button type="button" id="refund-btn" onclick="refund()" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;退款</button> -->
                                 <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;导出</button>
+                                <form action="" method="post" id='export_form'>
+                                     {% csrf_token%}
+                                    <input type="hidden" name="action" value="export">
+                                    
+                                </form>
                             </div>
                             <div class="col-sm-3 m-b-xs"></div>
                         </div>
@@ -568,6 +573,11 @@
     }
     $('.chosen-select').chosen();
     $('.chosen-select').next().css('width', '100%');
+    $('#export-btn').click(()=>(
+        $('#export_form').submit()
+    ))
+        
+    
     </script>
 
 {% endblock %}
