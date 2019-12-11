@@ -26,8 +26,8 @@ MEIDA_ROOT = '/var/whale/media'
 WECHAT = {
     'domain': 'http://parking.metatype.cn',
     'public_account': {
-        'appid': 'wx92dd34c839ab4552',
-        'secret': '29043c0560c51f38640a83a65ea943f9'
+        'appid': 'wxc7594d7d49e0235f',
+        'secret': '04e6251c3b54340f68e693dafe761a0c'
     },
     # 'miniapp': {
     #     'appid': 'wxc6af1276b4340f68',
