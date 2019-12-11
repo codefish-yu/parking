@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 
 
 from meta import api
 from meta.models import Product, Order
-from realtime.models import InAndOut
+from realtime.models import InAndOut, Bill
 
 
+import datetime
 import functools
 
 
@@ -107,14 +109,13 @@ def leave(request, user, parkinglot_id):
                 r.bill = bill
                 r.save()
 
-                product = Product.objects.create(price=bill.payment, name='停车费用', company='杰停科技', category='停车服务')
-                order = Order.objects.create(user=user, price=bill.payment, product=product)
+                product = Product.objects.create(price=bill.payment, name='parking fee', company='jietingkeji', category='parking service')
                 
                 bill.product = product
                 bill.save()
                 
                 ctx['record'] = r
-                ctx['order'] = order
+                ctx['product'] = product
 
                 return render(request, 'public_count/number3.html', ctx)
 

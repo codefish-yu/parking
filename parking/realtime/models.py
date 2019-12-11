@@ -1,7 +1,7 @@
 from django.db import models
 
 
-from meta.models import User
+from meta.models import User, Product
 from device.models import Camera
 from parkinglot.models import ParkingLot
 
@@ -55,7 +55,7 @@ class InAndOut(models.Model):
     bill = models.ForeignKey('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单')
 
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name='停车用户')
-    
+
     # params = {
     #     'type': 'online', 
     #     'mode': '5', 
@@ -101,5 +101,7 @@ class Bill(models.Model):
     # coupun = 
     # 滞留时间, 滞留收费
     status = models.IntegerField(default=0, choices=[(0, '未支付'),(1, '已支付')])
+
+    product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
 
 
