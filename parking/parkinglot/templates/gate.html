@@ -115,7 +115,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">使用类型</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="使用类型" class="form-control chosen-select" name="use_type" value="{{ i.use_type}} ">
+                                <select data-placeholder="使用类型" class="form-control chosen-select" name="use_type" value="{{ i.use_type}}">
                                             <option value="0">停车场内</option>
                                             <option value="1">停车场入口</option>
                                             <option value="2">停车场出口</option>
@@ -125,7 +125,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">控制类型</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="控制类型" class="form-control chosen-select" name="ctrl_type" value="{{ i.ctrl_type}} ">
+                                <select data-placeholder="控制类型" class="form-control chosen-select" name="ctrl_type" value="{{ i.ctrl_type}}">
                                             <option value="0">临停车控制</option>
                                             <option value="1">入口不控制</option>
                                             <option value="2">控制入车类型</option>
@@ -141,7 +141,7 @@
                             <div class="col-sm-4">
                                 <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" >
                                             {% for m in parkinglots %}
-                                            <option value="{{m.id}} ">{{ m.name }} </option>
+                                            <option value="{{m.id}}">{{ m.name }} </option>
                                             {% endfor %}
                                 </select>
                             </div>
@@ -149,7 +149,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属区域</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" name='zone' value='{{ i.zone}} '>
+                                <select data-placeholder="所属区域" class="form-control chosen-select" name='zone' value='{{ i.zone}}'>
                                     <option value="0">地面</option>
                                     <option value="1">地库</option>
                                 </select>
@@ -164,7 +164,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">收费规则</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" name='charge_rule' value='{{ i.charge_rule}} '>
+                                <select data-placeholder="所属区域" class="form-control chosen-select" name='charge_rule' value='{{ i.charge_rule}}'>
                                     <option value="0">按出口所在区域收费</option>
                                     <option value="1">按入口所在区域收费</option>
                                 </select>
@@ -196,7 +196,7 @@
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
 
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 新增用户</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 新增出入口</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='add_form' action='' method="post">

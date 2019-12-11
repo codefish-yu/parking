@@ -6,8 +6,8 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <ol class="col-lg-5 breadcrumb">
-                            <li>停车场管理</li>
-                            <li>停车场管理</li>
+                            <li>计费规则设置</li>
+                            <li>基本规则配置</li>
                         </ol>
                         <div class="ibox-tools">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -89,7 +89,7 @@
         <div id='update_model_{{ i.id }}' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改用户</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改基本规则</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{i.id}}' action='' method="post">
@@ -100,7 +100,7 @@
                                 <select data-placeholder="车场名称" class="form-control chosen-select" name="parkinglot">
                                             <option value="">选择停车场</option>
                                             {% for m in parkinglots %}
-                                            <option value="{{m.id}} "  >{{ m.name }} </option>
+                                            <option value="{{m.id}}"  >{{ m.name }} </option>
                                             {% endfor %}
                                 </select>
                             </div>
@@ -108,28 +108,28 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">小时费</label>
                             <div class="col-sm-3">
-                                <input type="text" name="per_hour" class="form-control pus" value="{{ i.per_hour}} ">
+                                <input type="text" name="per_hour" class="form-control pus" value="{{ i.per_hour}}">
                                 <div  class="unit ">&nbsp;元</div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">免费时段</label>
                             <div class="col-sm-3">
-                                <input type="text" name="free_time" class="form-control required pus" value="{{i.free_time }} ">
+                                <input type="text" name="free_time" class="form-control required pus" value="{{i.free_time }}">
                                 <div class="unit " >&nbsp;分钟</div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">单日最大费用时段</label>
                             <div class="col-sm-3">
-                                <input type="text" name="day_max" class="form-control required pus" value="{{i.day_max }} ">
+                                <input type="text" name="day_max" class="form-control required pus" value="{{i.day_max }}">
                                 <div class="unit ">&nbsp;小时</div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">最短计价时间</label>
                             <div class="col-sm-3">
-                                <input type="text" name="min_price" class="form-control required pus" value="{{i.min_price }} ">
+                                <input type="text" name="min_price" class="form-control required pus" value="{{i.min_price }}">
                                 <div class="unit " >&nbsp;分钟</div>
                             </div>
                         </div>
@@ -160,7 +160,7 @@
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
 
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 新增用户</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 新增基本规则</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='add_form' action='' method="post">

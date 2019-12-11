@@ -28,7 +28,6 @@
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
                                 <button type="button" id="Add" onclick="sh()" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;开卡</button>
-                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;续卡</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
                                 <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;" onclick="exp()"><i class="fa fa-trash"></i>&nbsp;导出</button>
                                 <form action="" method="post" id='export_form'>
@@ -51,6 +50,7 @@
                                         <th>持卡人</th>
                                         <th>卡片类型</th>
                                         <th>有效期</th>
+                                        <th>操作</th>
                                        
                                     </tr>
                                 </thead>
@@ -64,12 +64,13 @@
                                             <td>{{forloop.counter}} </td>
                                             <td>{{ i.owner }}</td>
                                             <td>{{i.my_card.name}} </td>
-                                            <td>{{i.valid_start | date:'Y-m-d H:m'}}--{{ i.valid_end |date:'Y-m-d H:m'}}</td>
+                                            <td>{{i.valid_start | date:'Y-m-d'}}--{{ i.valid_end |date:'Y-m-d'}}</td>
+                                            <td><button type="button" id="update-btn" class="btn btn-primary " onclick="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;续卡</button></td>
                                             
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
-                                        <td colspan="11">没有找到匹配的记录</td>
+                                        <td colspan="6">没有找到匹配的记录</td>
                                     </tr>
                                     {% endfor %}
                                     </form>
@@ -101,7 +102,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">持卡人</label>
                             <div class="col-sm-4">
-                                <input type="text" name="owner" value="{{i.owner}} " class="form-control">
+                                <input type="text" name="owner" value="{{i.owner}}" class="form-control">
                             </div>
                             <label class="col-sm-2 control-label">卡片类型</label>
                             <div class="col-sm-4">
@@ -116,21 +117,21 @@
                          <div class="form-group">
                             <label class="col-sm-2 control-label">车牌号</label>
                             <div class="col-sm-4">
-                                <input type="text" name="car_number" value="{{i.car_number}} " class="form-control">
+                                <input type="text" name="car_number" value="{{i.car_number}}" class="form-control">
                             </div>
                             <label class="col-sm-2 control-label">联系人电话</label>
                             <div class="col-sm-4">
-                                <input type="text" name="phone" value="{{i.phone}} " class="form-control">
+                                <input type="text" name="phone" value="{{i.phone}}" class="form-control">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">生效日期</label>
                             <div class="col-sm-4">
-                                <input placeholder="有效开始" class="laydate-icon form-control layer-date" value="{{i.valid_start }}" name="valid_start" id='valid_times_{{forloop.counter}}'>
+                                <input placeholder="有效开始" class="laydate-icon form-control layer-date" value="{{i.valid_start|date:'Y-m-d' }}" name="valid_start" id='valid_times_{{forloop.counter}}'>
                             </div>
                             <label class="col-sm-2 control-label">截止日期</label>
                             <div class="col-sm-4">
-                                <input placeholder="有效开始" class="laydate-icon form-control layer-date" value="{{i.valid_end }}" name="valid_end" id='valid_timee_{{forloop.counter}}'>
+                                <input placeholder="有效开始" class="laydate-icon form-control layer-date" value="{{i.valid_end|date:'Y-m-d' }}" name="valid_end" id='valid_timee_{{forloop.counter}}'>
                             </div>
                         </div>
                         <div class="form-group">
@@ -337,13 +338,9 @@
        
 
 
-    function change(){
-        var ids = $('input[name=ids]:checked')
-                if(ids.length == 1){
-                    initValidator('#update_form_'+ids[0].value,ids[0].value)
-
-                    $('#update_model_'+ids[0].value).show()
-                }
+    function change(id){
+        initValidator('#update_form_'+id,id);
+        $('#update_model_'+id).show()
     }
     function rel(){
 
