@@ -79,7 +79,7 @@ def log(request):
     return render(request, 'log.html')
 
 
-# @page
+@page
 def user(request):
     ctx = {}
 
@@ -129,10 +129,10 @@ def user(request):
             ctx['r'] = int(role) if role else ''
 
 
-    ctx['users'] = users
+    ctx['users'] = ctx['objects'] =  users
     ctx['roles'] = roles
 
-    return render(request,'user.html',ctx)
+    return (ctx,'user.html')
 
 
 @csrf_exempt

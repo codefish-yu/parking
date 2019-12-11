@@ -80,7 +80,7 @@
                                             <td>{{i.phone}} </td>
                                             <td>{{ i.display_sex }}</td>
                                             <td>{{i.remark}} </td>
-                                            <td><button type="button" id="update-btn" class="btn btn-primary " onblur="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button></td>
+                                            <td><button type="button" class="btn btn-primary " onclick="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button></td>
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
@@ -152,9 +152,9 @@
                             <label class="col-sm-2 control-label">性别</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="性别" class="form-control chosen-select" name="sex">
-                                            <option value="{{ i.sex}} " selected="selected">{{ i.display_sex }} </option>
-                                            <option value="0">男</option>
-                                            <option value="1">女</option>
+                                            <option value="">选择性别</option>
+                                            <option value="0" {% if i.sex == 0 %}selected{% endif%}>男</option>
+                                            <option value="1" {% if i.sex == 1 %}selected{% endif%}>女</option>
                                 </select>
                             </div>
                         </div>
