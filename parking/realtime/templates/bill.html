@@ -60,13 +60,15 @@
                                         <input type="datetime" id='out_time' name="out_time"  placeholder="结束时间" value="{%if e %}{{e}}{% endif %}" class="laydate-icon form-control layer-date"  >
                                     </div>
                                     <input type="hidden" name="action" value="select">
+                                    <div class="form-group">
+                                        <button type="submit" id="Enable" class="btn btn-primary search-btn " ><i class="fa fa-search"></i>&nbsp;查询</button>
+                                    </div>
                             </form>
                         </div>
                     </div>
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
-                                <button type="button" id="Enable" class="btn btn-primary" onclick="que()"><i class="fa fa-check-circle-o" ></i>&nbsp;查询</button>
                                 <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;" onclick="exp()"><i class="fa fa-trash"></i>&nbsp;导出</button>
                                 <form action="" method="post" id='export_form'>
                                      {% csrf_token%}
@@ -211,9 +213,6 @@
     ren('#out_time');
     $('.chosen-select').chosen();
     $('.chosen-select').next().css('width', '100%');
-    function que(){
-        $('#query_form').submit()
-    }
     function exp(){
         $('#export_form').submit()
     }

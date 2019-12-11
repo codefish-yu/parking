@@ -88,7 +88,7 @@ def export_excel(obj,name):
 
     return w,e
 
-# def menu_deploy(view_func):
+# 以下为计费模块
 
 # time to float
 def transform(st):
@@ -283,6 +283,7 @@ def chec_days(start,end,obj,card):
 
 
 # 根据出入场记录计算费用
+# get_price函数传入的对象必需包含以下参数：停车场、入场时间、出场时间、根据是否有卡，计费方式产生差异
 def get_price(obj):
     start = obj.in_time
     end = obj.out_time

@@ -82,7 +82,8 @@ def company(request):
 				w.write(0,8,'限制规则')
 				w.write(0,9,'限制张数')
 				w.write(0,10,'商家描述')
-				w.write(0,11,'状态')
+				w.write(0,11,'所属停车场')
+				w.write(0,12,'状态')
 				row = 1
 				for i  in companys:
 					w.write(row, 0, i.name)
@@ -96,7 +97,8 @@ def company(request):
 					w.write(row, 8, i.rule)
 					w.write(row, 9, i.amount)
 					w.write(row, 10, i.descript)
-					w.write(row, 11, i.get_status_display())
+					w.write(row, 11,i.parkinglot.name if i.parkinglot else '')
+					w.write(row, 12, i.get_status_display())
 					row +=1
 				output = io.BytesIO()
 				e.save(output)
