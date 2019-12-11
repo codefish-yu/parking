@@ -54,10 +54,11 @@ def modify(request,me):
 
             r = AdminUser.objects.filter(id=id)
             _save_attr_(r.first(), request)
-
-            return redirect('/administrator/modify/')
-
-
+            role = request.POST.get('role_name','')
+            if role:
+                r.role_name.id =int(role)
+                r.save()
+            
 
     ctx['me'] =  me
     ctx['roles'] = roles = Role.objects.all()
