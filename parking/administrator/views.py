@@ -52,11 +52,12 @@ def modify(request,me):
         if action == 'update':
             id = request.POST.get('id', '')
 
-            r = AdminUser.objects.filter(id=id)
-            _save_attr_(r.first(), request)
+            r = AdminUser.objects.filter(id=id).first()
+            _save_attr_(r, request)
             role = request.POST.get('role_name','')
             if role:
-                r.role_name.id =int(role)
+                role = Role.objects.filter(id=int(role)).first()
+                r.role_name = role
                 r.save()
             
 

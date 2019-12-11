@@ -79,8 +79,8 @@
                             <div class="col-sm-4">
                                 <select data-placeholder="性别" class="form-control chosen-select" name="sex">
                                             <option value=" ">选择性别</option>
-                                            <option value="0"{% if m.sex == 0 %}selected{% endif %} >男</option>
-                                            <option value="1"{% if m.sex == 1 %}selected{% endif %}>女</option>
+                                            <option value="0"{% if me.sex == 0 %}selected{% endif %}>男</option>
+                                            <option value="1"{% if me.sex == 1 %}selected{% endif %}>女</option>
                                 </select>
                             </div>
                         </div>
@@ -102,7 +102,7 @@
                                 <input type="hidden" name="id" class="form-control" value='{{me.id}}'>
                                 <input type="hidden" name="action" class="form-control" value='update'>
                                 <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 提交</button>&nbsp;
-                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 重置</button>
+                                <button id='reset' class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 重置</button>
                             </div>
                         </div>
                     </form>
@@ -119,6 +119,9 @@
  <script>
     $('.chosen-select').chosen();
     $('.chosen-select').next().css('width', '100%');
+    $("#reset").click(()=>(
+        window.location.reload()
+    ));
     initValidator('#modify_form','')
 
     
