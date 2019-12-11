@@ -100,7 +100,7 @@
                                 <select data-placeholder="车场名称" class="form-control chosen-select" name="parkinglot">
                                             <option value="">选择停车场</option>
                                             {% for m in parkinglots %}
-                                            <option value="{{m.id}}"  >{{ m.name }} </option>
+                                            <option value="{{m.id}}" {% if i.parkinglot.id == m.id %}selected{% endif %} >{{ m.name }} </option>
                                             {% endfor %}
                                 </select>
                             </div>
