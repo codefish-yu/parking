@@ -158,8 +158,9 @@
                                 <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" onchange="getZ(this,1,{{forloop.counter}})">
                                             <option value="">选择停车场</option>
                                             {% for m in parkinglots %}
-                                            <option value="{{m.id}}" {% if m.id == i.parkinglot.id %}selected {% endif %} >{{ m.name }} </option>
+                                            <option value="{{m.id}}"  >{{ m.name }} </option>
                                             {% endfor %}
+                                            <!-- {% if m.id == i.parkinglot.id %}selected {% endif %} -->
                                 </select>
                             </div>
                         </div>
