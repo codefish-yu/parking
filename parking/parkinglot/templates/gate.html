@@ -44,7 +44,6 @@
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
                                 <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
                                 <button type="button" id="Downcode" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;下载绑定出入口二维码</button>
@@ -63,6 +62,7 @@
                                         <th>所属区域</th>
                                         <th>所属监控</th>
                                         <th>收费规则</th>
+                                        <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="data-view">
@@ -79,10 +79,11 @@
                                             <td>{{ i.get_zone_display }} </td>
                                             <td>{{i.monitor}} </td>
                                             <td>{{i.get_charge_rule_display}} </td>
+                                            <td><button type="button" id="update-btn" class="btn btn-primary " onclick="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button></td>
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
-                                        <td colspan="11">没有找到匹配的记录</td>
+                                        <td colspan="9">没有找到匹配的记录</td>
                                     </tr>
                                     {% endfor %}
                                     </form>
@@ -299,6 +300,9 @@
     function rel(){
 
         window.location.reload()
+    }
+    function change(id){
+        $('#update_model_'+id).show()
     }
     $('.chosen-select').chosen();
     $('.chosen-select').next().css('width', '100%');

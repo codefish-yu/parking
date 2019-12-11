@@ -174,7 +174,8 @@ def card_type(request):
             id = request.POST.get('id','')
             r = CardType.objects.filter(id=id).first()
             _save_attr_(r,request)
-            t = int(request.POST.get('diff_type'))
+            save_time(r,request)
+            t = int(request.POST.get('diff'))
 
         elif action == 'delete':
             ids = request.POST.getlist('ids', '')

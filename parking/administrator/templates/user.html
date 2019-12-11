@@ -48,7 +48,6 @@
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
                                 <button onblur="sh()" type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                                <button type="button" id="update-btn" class="btn btn-primary " onblur="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
                                 <button type="button" id="Enable" class="btn btn-primary " onclick="que()"><i class="fa fa-check-circle-o"></i>&nbsp;查询</button>
                             </div>
@@ -65,6 +64,7 @@
                                         <th>手机号码</th>
                                         <th>性别</th>
                                         <th>备注</th>
+                                        <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="data-view">
@@ -80,10 +80,11 @@
                                             <td>{{i.phone}} </td>
                                             <td>{{ i.display_sex }}</td>
                                             <td>{{i.remark}} </td>
+                                            <td><button type="button" id="update-btn" class="btn btn-primary " onblur="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button></td>
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
-                                        <td colspan="11">没有找到匹配的记录</td>
+                                        <td colspan="8">没有找到匹配的记录</td>
                                     </tr>
                                     {% endfor %}
                                     </form>
@@ -359,13 +360,9 @@
     }
 
 
-    function change(){
-        var ids = $('input[name=ids]:checked')
-                if(ids.length == 1){
-                    initValidator('#update_form_'+ids[0].value,ids[0].value)
-
-                    $('#update_model_'+ids[0].value).show()
-                }
+    function change(id){
+        initValidator('#update_form_'+id,id);
+        $('#update_model_'+id).show()
     }
     $('.chosen-select').chosen();
     $('.chosen-select').next().css('width', '100%');
