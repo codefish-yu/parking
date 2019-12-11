@@ -126,7 +126,7 @@ def user(request):
             if user:
                 users = users.filter(user_name__icontains=user)
             ctx['u'] = user
-            ctx['r'] = int(role)
+            ctx['r'] = int(role) if role else ''
 
 
     ctx['users'] = users
