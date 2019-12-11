@@ -1,0 +1,226 @@
+{% extends 'iframe.html' %}
+{% block content %}
+<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <ol class="col-lg-5 breadcrumb">
+                            <li>实时管理</li>
+                            <li>付费记录</li>
+                        </ol>
+                        <div class="ibox-tools">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#" onclick="location.reload()"><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
+                                </li>
+                            </ul>
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" id="searchForm">
+                        <div class="form-inline ">
+                            <div class="form-inline">
+                                <form id='query_form' action='' method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <select data-placeholder="车场选择" class="form-control chosen-select" name="parkinglot">
+                                            <option value="" {% if not p %}selected{% endif %} >选择停车场</option>
+                                            {% for i in parkinglots %}
+                                            <option value="{{ i.id}}" {% if p == i.id %}selected{% endif %}>{{ i.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select data-placeholder="收费员" class="form-control chosen-select"  name="tollman">
+                                            <option value="" {% if not w %}selected{% endif %}>选择收费员</option>
+                                            {% for j in workers %}
+                                            <option value="{{ j.id}}" {% if w == j.id %}selected{% endif %}>{{ j.name}} </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <select data-placeholder="收费类型" class="form-control chosen-select" id="parkinglot" name="type" >
+                                            <option value="" {% if not t %}selected{% endif %} >选择收费类型</option>
+                                            <option value="0" {% if t == 0 %}selected{% endif%} >全部</option>
+                                            <option value="1" {% if t == 1 %}selected{% endif%}>手动免费开闸</option>
+                                            <option value="2" {% if t == 2 %}selected{% endif%}>异常出车</option>
+                                            <option value="3" {% if t == 3 %}selected{% endif%}>现金支付</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="datetime" id='in_time' placeholder="开始时间" name="in_time" value="{%if s %}{{s}}{% endif %}" class="laydate-icon form-control layer-date">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="datetime" id='out_time' name="out_time"  placeholder="结束时间" value="{%if e %}{{e}}{% endif %}" class="laydate-icon form-control layer-date"  >
+                                    </div>
+                                    <input type="hidden" name="action" value="select">
+                                    <div class="form-group">
+                                        <button type="submit" id="Enable" class="btn btn-primary search-btn " ><i class="fa fa-search"></i>&nbsp;查询</button>
+                                    </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-6 m-b-xs">
+                                <button type="button" id="export-btn" class="btn btn-primary " style="display: inline-block;" onclick="exp()"><i class="fa fa-trash"></i>&nbsp;导出</button>
+                                <form action="" method="post" id='export_form'>
+                                     {% csrf_token%}
+                                    <input type="hidden" name="action" value="export">
+                                    
+                                </form>
+                            </div>
+                            <div class="col-sm-3 m-b-xs"></div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped  table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>编号</th>
+                                        <th>车牌号</th>
+                                        <th>收费员</th>
+                                        <th>入场时间</th>
+                                        <th>离场时间</th>
+                                        <th>停车时长</th>
+                                        <th>车辆类型</th>
+                                        <th>应收费用</th>
+                                        <th>实收费用</th>
+                                        <th>收费明细</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="data-view">
+                                    <form id='delete-form' action="" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value='delete'>
+                                    {% for i in bills %}
+                                        <tr>
+                                            <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
+                                            <td>{{forloop.counter}} </td>
+                                            <td>{{i.InAndOut.number }} </td>
+                                            <td>{{ i.tollman }}</td>
+                                            <td>{{i.InAndOut.in_time}} </td>
+                                            <td>{{i.InAndOut.out_time}} </td>
+                                            <td>{{i.parking_time }} </td>
+                                            <td>{{ i.vehicle_type_in }} </td>
+                                            <td>{{ i.payable }} </td>
+                                            <td>{{i.payment}} </td>
+                                            <td><button type="button" id="view-btn" class="btn btn-primary " onclick="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;查看</button></td>
+                                           
+                                        </tr>
+                                    {% empty %}
+                                    <tr class="text-center">
+                                        <td colspan="11">没有找到匹配的记录</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </form>
+
+                                </tbody>
+
+                                <script id="data-tmpl" type="text/x-jquery-tmpl">
+                                     
+                                </script>
+
+                            </table>
+                        </div>
+                       {% include 'common/page.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+         {% for i in bills %}
+    <div id='update_model_{{ i.id }}' class='model'>
+        <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
+        <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 收费明细</div>
+            <div id="" class="layui-layer-content"><div class="ibox-content">
+                <div class="form-horizontal" id="verifyCheck">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">应付金额</label>
+                            <div class="col-sm-4">
+                                {{i.payable}}
+                            </div>
+                            <label class="col-sm-2 control-label">应付金额</label>
+                            <div class="col-sm-4">
+                                {{i.payment}}
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">支付时间</label>
+                            <div class="col-sm-4">
+                                {{i.pay_time   }}
+                            </div>
+                            <label class="col-sm-2 control-label">支付方式</label>
+                            <div class="col-sm-4">
+                                {{i.pay_type}}
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">停车时长</label>
+                            <div class="col-sm-4">
+                                {{i.parking_time}}
+                            </div>
+                            <label class="col-sm-2 control-label">支付状态</label>
+                            <div class="col-sm-4">
+                                {{i.status}}
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">收费时间</label>
+                            <div class="col-sm-4">
+                                {{i.detail.time}}
+                            </div>
+                            <label class="col-sm-2 control-label">收费类型</label>
+                            <div class="col-sm-4">
+                                {{i.detail.type}}
+                            </div>
+
+                        </div>
+                     
+                </div>
+            </div></div>
+            <span class="layui-layer-setwin">
+                <!-- <a class="layui-layer-min" href="javascript:;"><cite></cite></a>
+                <a class="layui-layer-ico layui-layer-max" href="javascript:;"></a> -->
+                <a class="layui-layer-ico layui-layer-close layui-layer-close1" href="javascript:;"></a>
+            </span>
+            <span class="layui-layer-resize"></span></div>
+       </div>
+       {% endfor %}
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/laydate.js"></script>
+<link href="/static/css/laydate.css" rel="stylesheet">
+ <script>
+    function ren(id){
+        laydate.render({
+          elem: id,
+          type: 'datetime',
+          format:'yyyy-MM-dd HH:mm'
+        })
+    };
+    ren('#in_time');
+    ren('#out_time');
+    $('.chosen-select').chosen();
+    $('.chosen-select').next().css('width', '100%');
+    function exp(){
+        $('#export_form').submit()
+    }
+    function change(id){
+        console.log('wefgyw');
+        $('#update_model_'+id).show()
+    }
+   
+    </script>
+
+{% endblock %}

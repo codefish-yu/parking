@@ -28,7 +28,6 @@
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change()" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
                                 <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
                                 <!-- <button type="button" id="Enable" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;查询</button> -->
@@ -44,6 +43,7 @@
                                         <th>车场名称</th>
                                         <th>区域数</th>
                                         <th>泊位数</th>
+                                        <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="data-view">
@@ -57,10 +57,11 @@
                                             <td>{{ i.name }}</td>
                                             <td>{{i.zone_num}} </td>
                                             <td>{{i.place_num}} </td>
+                                            <td><button type="button" id="update-btn" class="btn btn-primary " onclick="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button></td>
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
-                                        <td colspan="11">没有找到匹配的记录</td>
+                                        <td colspan="6">没有找到匹配的记录</td>
                                     </tr>
                                     {% endfor %}
                                     </form>
@@ -84,7 +85,7 @@
         <div id='update_model_{{ i.id }}' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改用户</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 修改停车场信息</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{i.id}}' action='' method="post">
@@ -92,19 +93,19 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">车场名称</label>
                             <div class="col-sm-4">
-                                <input type="text" name="name" class="form-control required" value="{{ i.name }} ">
+                                <input type="text" name="name" class="form-control required" value="{{ i.name }}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">区域数</label>
                             <div class="col-sm-4">
-                                <input type="text" name="zone_num" class="form-control" value="{{ i.zone_num}} ">
+                                <input type="text" name="zone_num" class="form-control" value="{{ i.zone_num}}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">泊位数</label>
                             <div class="col-sm-4">
-                                <input type="text" name="place_num" class="form-control required" value="{{i.place_num }} ">
+                                <input type="text" name="place_num" class="form-control required" value="{{i.place_num }}">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -133,7 +134,7 @@
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
 
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 新增用户</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-user"></i> 新增停车场</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='add_form' action='' method="post">
@@ -230,13 +231,9 @@
     }
 
 
-    function change(){
-        var ids = $('input[name=ids]:checked')
-                if(ids.length == 1){
-                    initValidator('#update_form_'+ids[0].value,ids[0].value)
-
-                    $('#update_model_'+ids[0].value).show()
-                }
+    function change(id){
+        initValidator('#update_form_'+id,id);
+        $('#update_model_'+id).show()
     }
     function rel(){
 

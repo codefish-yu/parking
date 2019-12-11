@@ -90,6 +90,7 @@ urlpatterns = [
 
     path('realtime/parkin/',realtime.parkin),
     path('realtime/in_out/',realtime.in_out),
+    path('realtime/bill/',realtime.bill),
 
 
     # wechat

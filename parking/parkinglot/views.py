@@ -53,7 +53,7 @@ def gate(request):
 			_save_attr_(r, request)
 		elif action == 'update':
 			id = request.POST.get('id', '')
-			r = Gate.objects.filter(id=id).firtst()
+			r = Gate.objects.filter(id=id).first()
 			park = request.POST.get('parkinglot')
 			if park:
 				r.parkinglot = ParkingLot.objects.filter(id=int(park)).first()

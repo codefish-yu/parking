@@ -79,11 +79,11 @@ def log(request):
     return render(request, 'log.html')
 
 
-# @page
+@page
 def user(request):
     ctx = {}
 
-    users = AdminUser.objects.all()
+    users = AdminUser.objects.exclude(status=-1).all()
     roles = Role.objects.all()
 
     if request.method == 'POST':
@@ -118,12 +118,21 @@ def user(request):
 
             return JsonResponse({'valid': True})
 
+        elif action =='select':
+            role = request.POST.get('role_name','')
+            user = request.POST.get('user_name','')
+            if role:
+                users = users.filter(role_name__id=role).all()
+            if user:
+                users = users.filter(user_name__icontains=user)
+            ctx['u'] = user
+            ctx['r'] = int(role) if role else ''
 
 
-    ctx['users'] = users.exclude(status=-1).all()
+    ctx['users'] = ctx['objects'] = users
     ctx['roles'] = roles
 
-    return render(request,'user.html',ctx)
+    return (ctx,'user.html')
 
 
 @csrf_exempt

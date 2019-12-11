@@ -3,7 +3,7 @@ from django.db import models
 
 from meta.models import User, Product
 from device.models import Camera
-from parkinglot.models import ParkingLot
+from parkinglot.models import ParkingLot,Worker
 
 
 class InAndOut(models.Model):
@@ -52,10 +52,9 @@ class InAndOut(models.Model):
 
     update_time = models.DateTimeField(auto_now_add=True, verbose_name='更新时间')
 
-    bill = models.ForeignKey('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单')
-
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name='停车用户')
 
+    bill = models.OneToOneField('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单',related_name='InAndOut')
     # params = {
     #     'type': 'online', 
     #     'mode': '5', 
@@ -95,13 +94,22 @@ class Bill(models.Model):
     payment = models.FloatField(verbose_name='实付金额')
     pay_time = models.DateTimeField(null=True, verbose_name='支付时间')
     pay_type = models.IntegerField(null=True, choices=[(0, '现金'),(1, '微信'),(2, '支付宝'),(3, '刷卡')], verbose_name='支付方式')
-
+    tollman = models.ForeignKey(Worker,on_delete=models.SET_NULL,verbose_name='收费员',null=True,blank=True)
     parking_time = models.FloatField(null=True, verbose_name='停车时长(分钟)')
-    # card = 
-    # coupun = 
-    # 滞留时间, 滞留收费
     status = models.IntegerField(default=0, choices=[(0, '未支付'),(1, '已支付')])
+    detail = models.ForeignKey('PayDetail',on_delete=models.SET_NULL,verbose_name='收费明细',related_name='detail',null=True,blank=True)
+
+
+class PayDetail(models.Model):
+    class Meta:
+        verbose_name = verbose_name_plural = '收费明细'
+
+    time = models.DateTimeField(verbose_name='收费时间')
+    type = models.IntegerField(default=0,choices=[(0,'全部'),(1,'手动免费开闸'),(2,'异常出车'),(3,'现金支付')],verbose_name='收费类型')
+    price = models.FloatField(default=0,verbose_name='应收费用',null=True)
+    real_price = models.FloatField(default=0,verbose_name='实收费用')
 
     product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
 
+ 
 
