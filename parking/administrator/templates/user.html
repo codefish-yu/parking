@@ -289,7 +289,7 @@
     function initValidator(name,id){
                 $(name).bootstrapValidator({
 
-    　　　　　　　　  message: 'This value is not valid',
+    　　　　　　　　 message: 'This value is not valid',
                 　 feedbackIcons: {
                     　　　　　　　　valid: 'glyphicon glyphicon-ok',
                     　　　　　　　　invalid: 'glyphicon glyphicon-remove',
@@ -347,10 +347,10 @@
                             validators: {
                                 notEmpty: {},
                                 digits: {},
-                                phone: {
-                                    country: 'CN',
-                                    message: '请输入十一位手机号码'
-                                }
+                                regexp: {
+                                    regexp: /^1[3456789]\d{9}$/,
+                                    message: '手机号码无效'
+                                },
                             }
                         },
 
