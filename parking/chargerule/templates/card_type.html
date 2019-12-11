@@ -106,6 +106,7 @@
                                             {% elif type == 1%}
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{forloop.counter}} </td>
+                                            <td>{{ i.name }}</td>
                                             <td>
                                                 {% for j in i.free%} 
                                                 <span>{{j.start}}--{{j.end}} </span>
@@ -199,7 +200,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">非工作日优惠时间段</label>
                             <div class="col-sm-4">
-                                <input type="" name="relax" class="form-control relax_start_{{forloop.counter}}" value="{% for j in i.relax%} {{j.start}}--{{j.end}} {% endfor%} " onclick="set_tim(this)">
+                                <input type="" name="relax" class="form-control relax_start_{{forloop.counter}}" value="{% for j in i.relax%}{{j.start}}--{{j.end}}{% endfor%}" onclick="set_tim(this)">
                             </div>
                         </div>
                         <input type="hidden" name="diff" value="0">
@@ -207,7 +208,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">周一优惠时段</label>
                             <div class="col-sm-4">
-                                <input type="text" name="free"  class="free_start_{{forloop.counter}} form-control" value="{% for j in i.free%} {{j.start}}--{{j.end}}{% endfor%} " onclick="set_tim(this)">
+                                <input type="text" name="free"  class="free_start_{{forloop.counter}} form-control" value="{% for j in i.free%}{{j.start}}--{{j.end}}{% endfor%} " onclick="set_tim(this)">
                             </div>
                         </div>
                         <div class="form-group">

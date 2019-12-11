@@ -52,12 +52,14 @@ def modify(request,me):
         if action == 'update':
             id = request.POST.get('id', '')
 
-            r = AdminUser.objects.filter(id=id)
-            _save_attr_(r.first(), request)
-
-            return redirect('/administrator/modify/')
-
-
+            r = AdminUser.objects.filter(id=id).first()
+            _save_attr_(r, request)
+            role = request.POST.get('role_name','')
+            if role:
+                role = Role.objects.filter(id=int(role)).first()
+                r.role_name = role
+                r.save()
+            
 
     ctx['me'] =  me
     ctx['roles'] = roles = Role.objects.all()
@@ -83,6 +85,13 @@ def log(request):
 def user(request):
     ctx = {}
 
+    def op(r,request):
+        _save_attr_(r, request)
+        role = request.POST.get('user_role','')
+        if role:
+            r.role_name = Role.objects.filter(id=role).first()
+            r.save()
+
     users = AdminUser.objects.exclude(status=-1).all()
     roles = Role.objects.all()
 
@@ -90,15 +99,12 @@ def user(request):
         action = request.POST.get('action','')
         if action == 'add':
             r = AdminUser()
-            _save_attr_(r, request)
-            role = request.POST.get('user_role','')
-            if role:
-                r.role_name = Role.objects.filter(id=role).first()
-                r.save()
+            op(r,request)
+
         elif action == 'update':
             id = request.POST.get('id', '')
-            r = AdminUser.objects.filter(id=id)
-            _save_attr_(r.first(), request)
+            r = AdminUser.objects.filter(id=id).first()
+            op(r,request)
 
         elif action == 'delete':
             ids = request.POST.getlist('ids', '')

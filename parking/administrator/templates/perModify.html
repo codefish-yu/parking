@@ -60,10 +60,10 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">用户角色</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属商家" class="form-control chosen-select" name="user_role">
-                                            <option value="{{ me.role_name.id}}" selected="selected">{{ me.role_name.role_name}} </option>
+                                <select data-placeholder="所属商家" class="form-control chosen-select" name="role_name">
+                                            <option value="">选择用户角色</option>
                                             {% for j in roles %}
-                                            <option value="{{ j.id}}">{{j.role_name}} </option>
+                                            <option value="{{ j.id}}"{% if me.role_name.id == j.id%}selected{% endif %} >{{j.role_name}} </option>
                                             {% endfor %}
                                 </select>
                             </div>
@@ -78,9 +78,9 @@
                             <label class="col-sm-2 control-label">性别</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="性别" class="form-control chosen-select" name="sex">
-                                            <option value="{{ m.sex}} " selected="selected">{{ me.display_sex }} </option>
-                                            <option value="0">男</option>
-                                            <option value="1">女</option>
+                                            <option value=" ">选择性别</option>
+                                            <option value="0"{% if me.sex == 0 %}selected{% endif %}>男</option>
+                                            <option value="1"{% if me.sex == 1 %}selected{% endif %}>女</option>
                                 </select>
                             </div>
                         </div>
@@ -102,7 +102,7 @@
                                 <input type="hidden" name="id" class="form-control" value='{{me.id}}'>
                                 <input type="hidden" name="action" class="form-control" value='update'>
                                 <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 提交</button>&nbsp;
-                                <button class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 重置</button>
+                                <button id='reset' class="btn btn-warning cancel" type="button" style="display: inline-block;"><i class="fa fa-times"></i> 重置</button>
                             </div>
                         </div>
                     </form>
@@ -119,6 +119,9 @@
  <script>
     $('.chosen-select').chosen();
     $('.chosen-select').next().css('width', '100%');
+    $("#reset").click(()=>(
+        window.location.reload()
+    ));
     initValidator('#modify_form','')
 
     
@@ -144,19 +147,19 @@
                                      max: 20,
                                      message: '用户名长度必须在3到20之间'
                                  },
-                                remote:{
-                                    url: '',
-                                    data:function(validator) {
-                                        return {
-                                            id: $(name + ' input[name=id]').val(),
-                                            role_name: $(name + ' input[name=user_name]').val(),
-                                            action: 'validate',
-                                            csrfmiddlewaretoken:'{{ csrf_token  }}'
-                                        }
-                                    },
-                                    type:'post',
-                                    message: '用户名已存在'
-                                }
+                                // remote:{
+                                //     url: '',
+                                //     data:function(validator) {
+                                //         return {
+                                //             id: $(name + ' input[name=id]').val(),
+                                //             user_name: $(name + ' input[name=user_name]').val(),
+                                //             action: 'validate',
+                                //             csrfmiddlewaretoken:'{{ csrf_token  }}'
+                                //         }
+                                //     },
+                                //     type:'post',
+                                //     message: '用户名已存在'
+                                // }
                             },
 
                             
@@ -181,8 +184,12 @@
                         },
                        phone: {
                             validators: {
-                                notEmpty: {},
-                                digits: {},
+                                notEmpty: {
+                                    message:'手机号不能为空'
+                                },
+                                digits: {
+                                    message: '请输入数字'
+                                },
                                 regexp: {
                                     regexp: /^1[3456789]\d{9}$/,
                                     message: '手机号码无效'

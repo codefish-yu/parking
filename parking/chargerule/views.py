@@ -31,8 +31,8 @@ def base_rule(request):
 
         elif action == 'update':
             id = request.POST.get('id', '')
-            r = BaseRule.objects.filter(id=id)
-            _save_attr_(r.first(), request)
+            r = BaseRule.objects.filter(id=id).first()
+            _save_attr_(r, request)
             park = request.POST.get('parkinglot')
             if park:
                 r.parkinglot = ParkingLot.objects.filter(id=int(park)).first()
@@ -422,7 +422,6 @@ def card(request):
 
             if r.exists():
                     return JsonResponse({'valid': False})
-                    print(111)
 
             return JsonResponse({'valid': True})
 

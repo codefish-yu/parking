@@ -22,6 +22,12 @@ def company(request):
 		for item in u:
 			item.status = status
 			item.save()
+	def op(r,request):
+		parking = request.POST.get('suit')
+		if parking:
+			r.parkinglot = ParkingLot.objects.filter(id=int(parking)).first()
+			r.save()
+
 
 
 	if request.method == 'POST':
@@ -29,19 +35,14 @@ def company(request):
 		if action == 'add':
 			r = Company()
 			_save_attr_(r, request)
-			parking = request.POST.get('suit')
-			if parking:
-				r.parkinglot = ParkingLot.objects.filter(id=int(parking)).first()
-				r.save()
+			op(r,request)
+
 		elif action == 'update':
 			id = request.POST.get('id', '')
 			r = Company.objects.filter(id=id).first()
-			_save_attr_(r, request)
-			parking = request.POST.get('suit')
-			if parking:
-				r.parkinglot = ParkingLot.objects.filter(id=int(parking)).first()
-				print(r.parkinglot)
-				r.save()
+			_save_attr_(r,request)
+			op(r,request)
+			
 		elif action == 'delete':
 			operate_in_batch(-1,request)
 			
@@ -109,8 +110,18 @@ def company(request):
 				response.write(output.getvalue())
 				return response
 
+		elif action == 'select':
+			name = request.POST.get('busi_name','')
+			ass_name = request.POST.get('associate_name','')
+			if name:
+				name=int(name)
+				companys = companys.filter(id=name).all()
+				ctx['b']=name
+			if ass_name:
+				companys = companys.filter(owner__icontains=ass_name).all()
+				ctx['a']=ass_name
 
-	ctx['objects'] = ctx['company'] = Company.objects.exclude(status=-1).all()
+	ctx['objects'] = ctx['company'] = companys
 	ctx['parkinglot'] = ParkingLot.objects.all()
 
 	return (ctx,'company.html')

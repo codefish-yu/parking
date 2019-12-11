@@ -201,7 +201,6 @@ function clea(){
     list = []
     time_list = []
     $('#tim_con').val('')
-    $(nam).val('')
 }
 
 function canc(){
@@ -217,7 +216,7 @@ function set_tim(obj){
     for(var i=0;i<48;i++){
         $('#item_'+i).css('background-color','white')
     }
-    $('#tim_con').val($(obj).val());
+    $('#tim_con').val('');
     $('#time_div').show();
     nam = obj;  
 }
