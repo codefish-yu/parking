@@ -77,6 +77,7 @@ def _save_attr_(obj,request):
                 obj.__setattr__(field_name, value)
     obj.save()
     
+    
 def export_excel(obj,name):
     e = xlwt.Workbook(encoding='utf-8')
     w = e.add_sheet(name)
