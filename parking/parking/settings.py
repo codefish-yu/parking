@@ -147,7 +147,8 @@ WECHAT = {
     #     'secret':'04e6251c3b54340f68e693dafe761a0c',
     # },
     # 'domain': 'http://127.0.0.1:8000',
-    'domain': 'http://192.168.10.114:8000',
+    # 'domain': 'http://192.168.10.114:8000',
+    'domain': 'http://parking.metatype.cn',
 
     # 'domain': 'https://whitedinner.metatype.cn',
     'public_account': {
