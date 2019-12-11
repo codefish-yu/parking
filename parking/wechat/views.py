@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 
 from meta import api
+from meta.models import Product, Order
 from realtime.models import InAndOut
 
 
@@ -10,31 +11,30 @@ import functools
 
 '''手机客户端 ''' 
 
+from meta.decorators import user_required
+# def user_required(func):
 
-def user_required(func):
-
-    @functools.wraps(func)
-    def wrapper(request, *args, **kwargs):
-        from . import api
+#     @functools.wraps(func)
+#     def wrapper(request, *args, **kwargs):
         
-        wrapper.__name__ = func.__name__
+#         wrapper.__name__ = func.__name__
 
-        token = request.session['token'] if 'token' in request.session else ''
+#         token = request.session['token'] if 'token' in request.session else ''
         
-        if not token:
-            next_url = request.get_full_path()
-            return redirect('/login/public/account/?next=' + next_url)
+#         if not token:
+#             next_url = request.get_full_path()
+#             return redirect('/login/public/account/?next=' + next_url)
 
-        try:
-            user = api.check_token(token)
-        except APIError:
-            return redirect('/login/public/account/?next=' + next_url)
+#         try:
+#             user = api.check_token(token)
+#         except APIError:
+#             return redirect('/login/public/account/?next=' + next_url)
 
-        request.user = user
-        result = func(request, user=user, *args, **kwargs)
-        return result
+#         request.user = user
+#         result = func(request, user=user, *args, **kwargs)
+#         return result
 
-    return wrapper
+#     return wrapper
 
 
 def enter(request):
@@ -60,10 +60,11 @@ def enter(request):
 
 
 @user_required
-def leave(request, parkinglot_id):
-    token = request.session['token']
-    user = api.check_token(token)
+def leave(request, user, parkinglot_id):
+    ctx = {}
 
+    token = request.session['token']
+    
     r = InAndOut.objects.filter(parkinglot_id=int(parkinglot_id), user=user).order_by('in_time')
     if r.exists():
         r = r.first()
@@ -73,12 +74,12 @@ def leave(request, parkinglot_id):
 
     if request.method == 'POST':
         action = request.POST.get('action', '')
-
+        print(action)
         if action == 'record':
-            car_number = request.POST.get('car_number', '')
-
-            r = InAndOut.objects.filter(parkinglot_id=int(parkinglot_id), number=car_number).order_by('in_time')
-
+            ctx['car_number'] = car_number = request.POST.get('car_number', '')
+            print(car_number)
+            r = InAndOut.objects.filter(parkinglot_id=int(parkinglot_id), number=car_number).order_by('-in_time')
+            print(r)
             if r: 
                 r = r.first()
 
@@ -93,11 +94,27 @@ def leave(request, parkinglot_id):
 
             r = InAndOut.objects.filter(id=int(id))
             if r:
-
                 # 计算费用
+                r = r.first()
 
+                bill = Bill(
+                    payable=0.01, 
+                    payment=0.01, 
+                    pay_time=datetime.datetime.now(),
+                    status=0
+                )
+                bill.save()
+                r.bill = bill
+                r.save()
 
-                ctx['record'] = r.first()
+                product = Product.objects.create(price=bill.payment, name='停车费用', company='杰停科技', category='停车服务')
+                order = Order.objects.create(user=user, price=bill.payment, product=product)
+                
+                bill.product = product
+                bill.save()
+                
+                ctx['record'] = r
+                ctx['order'] = order
 
                 return render(request, 'public_count/number3.html', ctx)
 

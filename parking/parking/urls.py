@@ -93,7 +93,7 @@ urlpatterns = [
 
 
     # wechat
-    path('wechat/leave/',wechat.leave),
+    path('wechat/leave/<int:parkinglot_id>/',wechat.leave),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
