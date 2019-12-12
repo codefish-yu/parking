@@ -13,30 +13,30 @@ import functools
 
 '''手机客户端 ''' 
 
-from meta.decorators import user_required
-# def user_required(func):
+#from meta.decorators import user_required
+def user_required(func):
 
-#     @functools.wraps(func)
-#     def wrapper(request, *args, **kwargs):
+    @functools.wraps(func)
+    def wrapper(request, *args, **kwargs):
         
-#         wrapper.__name__ = func.__name__
+        wrapper.__name__ = func.__name__
 
-#         token = request.session['token'] if 'token' in request.session else ''
+        token = request.session['token'] if 'token' in request.session else ''
         
-#         if not token:
-#             next_url = request.get_full_path()
-#             return redirect('/login/public/account/?next=' + next_url)
+        if not token:
+            next_url = request.get_full_path()
+            print(next_url)
+            return redirect('/login/public/account/?next=' + next_url)
+        try:
+            user = api.check_token(token)
+        except APIError:
+            print('error')
+            return redirect('/login/public/account/?next=' + next_url)
+        request.user = user
+        result = func(request, user=user, *args, **kwargs)
+        return result
 
-#         try:
-#             user = api.check_token(token)
-#         except APIError:
-#             return redirect('/login/public/account/?next=' + next_url)
-
-#         request.user = user
-#         result = func(request, user=user, *args, **kwargs)
-#         return result
-
-#     return wrapper
+    return wrapper
 
 
 def enter(request):
@@ -64,7 +64,7 @@ def enter(request):
 @user_required
 def leave(request, user, parkinglot_id):
     ctx = {}
-
+    print(user)
     token = request.session['token']
     
     r = InAndOut.objects.filter(parkinglot_id=int(parkinglot_id), user=user).order_by('in_time')
@@ -109,7 +109,7 @@ def leave(request, user, parkinglot_id):
                 r.bill = bill
                 r.save()
 
-                product = Product.objects.create(price=bill.payment, name='parking fee', company='jietingkeji', category='parking service')
+                product = Product.objects.create(price=bill.payment, name='parking fee', company='jietingkeji', category='park')
                 
                 bill.product = product
                 bill.save()
