@@ -101,6 +101,8 @@ class OpeningOrder(models.Model):
     camera = models.ForeignKey(Camera, null=True, on_delete=models.CASCADE)
     status = models.IntegerField(default=0, choices=[(0, '关闭'),(1, '打开'),(2, '需要打开')])
 
+    in_and_out = models.ForeignKey('InAndOut', null=True, on_delete=models.CASCADE)
+
 
 class Bill(models.Model):
     class Meta:

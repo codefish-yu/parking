@@ -20,15 +20,16 @@ import functools
 def parkin(request, user, parkinglot_id, gate_id):
     '''卡口扫码入场'''
 
-    if not InAndOut.objects.filter(parkinglot_id=parkinglot_id, gate_in_id=gate_id, user=user, status=0).exists():
-        InAndOut.objects.create(
+    r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, gate_in_id=gate_id, user=user, status=0).first()
+    if not r:
+        r = InAndOut.objects.create(
             user=user, 
             enter_type=1, 
             gate_in_id=gate_id,
             parkinglot_id=parkinglot_id, 
             in_time=datetime.datetime.now(),
         )
-    OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2)
+    OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2, in_and_out=r)
     return render(request, 'public_count/in.html')
 
 # def user_required(func):
@@ -61,6 +62,8 @@ def parkout(request, user, parkinglot_id, gate_id):
     '''卡口扫码出场'''
     ctx = {'parkinglot_id': parkinglot_id, 'gate_id': gate_id}
 
+    r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, user=user, status=0).order_by('-in_time').first()
+
     if request.method == 'POST':
         action = request.POST.get('action', '')
         if action == 'payconfirm':
@@ -71,12 +74,10 @@ def parkout(request, user, parkinglot_id, gate_id):
                     from meta.models import Payment
                     if Payment.objects.filter(order=order).exists():
                         Bill.objects.filter(product_id=int(product_id)).update(status=1, pay_type=1, pay_time=datetime.datetime.now())
-                        OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2)
+                        OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, in_and_out=r, status=2)
                         
                         return JsonResponse({'success': True})
             return JsonResponse({'success': False})
-
-    r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, user=user, status=0).order_by('-in_time').first()
 
     if r:
         r.gate_out_id = gate_id
@@ -87,7 +88,7 @@ def parkout(request, user, parkinglot_id, gate_id):
 
         if r.bill: 
             if r.bill.status == 1:  # 已支付
-                OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2)
+                OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, in_and_out=r, status=2)
             else: 
                # 未支付
                 bill = r.bill

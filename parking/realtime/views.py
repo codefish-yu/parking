@@ -64,6 +64,10 @@ def parkin(request):
                 open_order = OpeningOrder.objects.filter(gate=camera.gate, status=2)
                 if open_order.exists():
                     open_order.update(status=1)
+                    open_order.in_and_out.status = 1
+                    open_order.in_and_out.final_out_time = datetime.datetime.now()
+                    open_order.in_and_out.save()
+
                     result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
         
     if 'type'in params and params['type'] == 'online':
