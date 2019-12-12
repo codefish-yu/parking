@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from meta import api
 from meta.models import Product, Order
+from meta.decorators import user_required
 from realtime.models import InAndOut, Bill
 
 
@@ -13,8 +14,6 @@ import functools
 
 
 '''手机客户端 ''' 
-
-from meta.decorators import user_required
 
 
 @user_required
@@ -31,6 +30,30 @@ def parkin(request, user, parkinglot_id, gate_id):
         )
 
     return render(request, 'public_count/in.html', ctx)
+
+# def user_required(func):
+
+#     @functools.wraps(func)
+#     def wrapper(request, *args, **kwargs):
+        
+#         wrapper.__name__ = func.__name__
+
+#         token = request.session['token'] if 'token' in request.session else ''
+        
+#         if not token:
+#             next_url = request.get_full_path()
+#             print(next_url)
+#             return redirect('/login/public/account/?next=' + next_url)
+#         try:
+#             user = api.check_token(token)
+#         except APIError:
+#             print('error')
+#             return redirect('/login/public/account/?next=' + next_url)
+#         request.user = user
+#         result = func(request, user=user, *args, **kwargs)
+#         return result
+
+#     return wrapper
 
 
 @user_required
@@ -100,7 +123,6 @@ def parkout(request, user, parkinglot_id, gate_id):
 @user_required
 def leave(request, user, parkinglot_id):
     ctx = {}
-    print(user)
 
     token = request.session['token']
     

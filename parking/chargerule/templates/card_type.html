@@ -30,7 +30,7 @@
                                 <div style="margin-bottom: 16px">
                                     <form id='sel_form' method="post" action="">
                                         {% csrf_token %}
-                                        <select name='type' class="form-control chosen-select" data-placeholder='划分类别' onchange="que()">
+                                        <select name='type' class="form-control chosen-select" data-placeholder='选择查询类别' onchange="que()">
                                             <option value="2"{% if type == 2%}selected{% endif%} >选择查询类别</option>
                                             <option value="0" {% if type == 0%}selected{% endif%}>工作日</option>
                                             <option value="1" {% if type == 1%}selected{% endif%}>自定义</option>    

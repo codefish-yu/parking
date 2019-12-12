@@ -19,8 +19,8 @@ DATABASES = {
 }
 
 
-STATIC_ROOT = '/var/parking/static'
-MEIDA_ROOT = '/var/whale/media'
+STATIC_ROOT = '/var/parking/static/'
+MEIDA_ROOT = '/var/parking/media/'
 
 
 WECHAT = {

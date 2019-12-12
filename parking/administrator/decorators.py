@@ -4,6 +4,7 @@ from .models import *
 from django.http import JsonResponse,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from chargerule.models import *
 
 
 import re
@@ -68,6 +69,8 @@ def _save_attr_(obj,request):
 
         if value:
             if str(type(field)) == "<class 'django.db.models.fields.related.ForeignKey'>":
+                pass
+            elif str(type(field)) == "<class 'django.db.models.fields.ImageField'>":
                 pass
             else:
                 obj.__setattr__(field_name, value.strip())
@@ -199,17 +202,17 @@ def cal(tmp,parkinglot):
         if c%1 <=mi:
             return (c-c%1 +mi)*ho
         else:
-            if math.ceil(c%1/mi ) >=1:
+            if math.ceil(c%1/mi ) >=(ho/mi):
                 return (c-c%1 +1)*ho
             else:
-                return (c-c%1 +math.ceil(c%1/mi ))*ho
+                return (c-c%1+math.ceil(c%1/mi )*mi)*ho
     else:
         return 8*ho
 
 
 # 无卡计算
 def no_card(start,end,parkinglot):
-    diff = get_day(start,day)
+    diff = get_day(start,end)
     start = time_float(start)
     end = time_float(end)
     if diff == 0:
@@ -287,7 +290,7 @@ def chec_days(start,end,obj,card):
 def get_price(obj):
     start = obj.in_time
     end = obj.out_time
-    card = Card.objects.filter(card_number=obj.number).first()
+    card = Card.objects.filter(car_number=obj.number).first()
     if card:
         now = datetime.datetime.now()
         if obj.parkinglot not in card.suit.all():

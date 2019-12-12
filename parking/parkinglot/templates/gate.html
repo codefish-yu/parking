@@ -29,7 +29,7 @@
                                 <form id='query_form' action='' method="post">
                                     {% csrf_token %}
                                     <div class="form-group">
-                                        <select data-placeholder="使用类型" class="form-control chosen-select" id="Parking_ID" name="use_type" onchange="chan()">
+                                        <select data-placeholder="选择使用类型" class="form-control chosen-select" id="Parking_ID" name="use_type" onchange="chan()">
                                             <option value=""  {% if not tip %}selected{% endif %}>选择使用类型</option>
                                             <option value="0" {% if tip == '0' %}selected{% endif %} >停车场内</option>
                                             <option value="1" {% if tip == '1' %}selected{% endif %}>停车场入口</option>
@@ -45,8 +45,6 @@
                             <div class="col-sm-6 m-b-xs">
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
-                                <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
-                                <button type="button" id="Downcode" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;下载绑定出入口二维码</button>
                             </div>
                             <div class="col-sm-3 m-b-xs"></div>
                         </div>
@@ -79,7 +77,11 @@
                                             <td>{{ i.get_zone_display }} </td>
                                             <td>{{i.monitor}} </td>
                                             <td>{{i.get_charge_rule_display}} </td>
-                                            <td><button type="button" id="update-btn" class="btn btn-primary " onclick="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button></td>
+                                            <td>
+                                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                                <button type="button" onclick="shCode({{i.id}})" class="btn btn-primary viewcode"><i class="fa fa-check-circle-o"></i>&nbsp;查看二维码</button>
+                                            </td>
+
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
@@ -104,6 +106,9 @@
 
 <!-- update model -->
     {% for i in gates %}
+        <div id='img_{{i.id}}' class="ig">
+            <img {% if i.code %}src="{{i.code.url}}"{% endif %} style="margin: 8% 25% 25% 25%" width="300" height="300">
+        </div>
         <div id='update_model_{{ i.id }}' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
@@ -115,33 +120,36 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">使用类型</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="使用类型" class="form-control chosen-select" name="use_type" value="{{ i.use_type}}">
-                                            <option value="0">停车场内</option>
-                                            <option value="1">停车场入口</option>
-                                            <option value="2">停车场出口</option>
+                                <select data-placeholder="选择使用类型" class="form-control chosen-select" name="use_type">
+                                            <option value="">选择使用类型</option>
+                                            <option value="0" {% if i.use_type == 0 %}selected{% endif %} >停车场内</option>
+                                            <option value="1" {% if i.use_type == 1 %}selected{% endif %}>停车场入口</option>
+                                            <option value="2" {% if i.use_type == 2 %}selected{% endif %}>停车场出口</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">控制类型</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="控制类型" class="form-control chosen-select" name="ctrl_type" value="{{ i.ctrl_type}}">
-                                            <option value="0">临停车控制</option>
-                                            <option value="1">入口不控制</option>
-                                            <option value="2">控制入车类型</option>
-                                            <option value="3">不控制只抓拍</option>
-                                            <option value="4">时间控制</option>
-                                            <option value="5">月租车控制</option>
-                                            <option value="6">卡票控制</option>
+                                <select data-placeholder="选择控制类型" class="form-control chosen-select" name="ctrl_type" >
+                                            <option value="">选择控制类型</option>
+                                            <option value="0" {% if i.ctrl_type == 0 %}selected{% endif %}>临停车控制</option>
+                                            <option value="1" {% if i.ctrl_type == 1 %}selected{% endif %}>入口不控制</option>
+                                            <option value="2" {% if i.ctrl_type == 2 %}selected{% endif %}>控制入车类型</option>
+                                            <option value="3" {% if i.ctrl_type == 3 %}selected{% endif %}>不控制只抓拍</option>
+                                            <option value="4" {% if i.ctrl_type == 4 %}selected{% endif %}>时间控制</option>
+                                            <option value="5" {% if i.ctrl_type == 5 %}selected{% endif %}>月租车控制</option>
+                                            <option value="6" {% if i.ctrl_type == 6 %}selected{% endif %}>卡票控制</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" >
+                                <select data-placeholder="选择所属车场" class="form-control chosen-select" name="parkinglot" >
+                                            <option value="">选择所属车场</option>
                                             {% for m in parkinglots %}
-                                            <option value="{{m.id}}">{{ m.name }} </option>
+                                            <option value="{{m.id}}" {% if m.id == i.parkinglot.id %}selected{% endif %}>{{ m.name }} </option>
                                             {% endfor %}
                                 </select>
                             </div>
@@ -149,9 +157,10 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属区域</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" name='zone' value='{{ i.zone}}'>
-                                    <option value="0">地面</option>
-                                    <option value="1">地库</option>
+                                <select data-placeholder="选择所属区域" class="form-control chosen-select" name='zone' value='{{ i.zone}}'>
+                                    <option value=""  >选择所属区域</option>
+                                    <option value="0" {% if i.zone == 0 %}selected{% endif %}>地面</option>
+                                    <option value="1" {% if i.zone == 1 %}selected{% endif %}>地库</option>
                                 </select>
                             </div>
                         </div>
@@ -164,9 +173,10 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">收费规则</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" name='charge_rule' value='{{ i.charge_rule}}'>
-                                    <option value="0">按出口所在区域收费</option>
-                                    <option value="1">按入口所在区域收费</option>
+                                <select data-placeholder="收费规则" class="form-control chosen-select" name='charge_rule' value='{{ i.charge_rule}}'>
+                                    <option value="">选择收费规则</option>
+                                    <option value="0" {% if i.charge_rule == 0 %}selected{% endif %}>按出口所在区域收费</option>
+                                    <option value="1" {% if i.charge_rule == 1 %}selected{% endif %}>按入口所在区域收费</option>
                                 </select>
                             </div>
                         </div>
@@ -190,7 +200,6 @@
             <span class="layui-layer-resize"></span></div>
        </div>
        {% endfor %}
-
 <!-- add model -->
        <div id='add_role_model' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
@@ -204,7 +213,8 @@
                        <div class="form-group">
                             <label class="col-sm-2 control-label">使用类型</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="使用类型" class="form-control chosen-select" name="use_type" >
+                                <select data-placeholder="选择使用类型" class="form-control chosen-select" name="use_type" >
+                                            <option value="">选择使用类型</option>
                                             <option value="0">停车场内</option>
                                             <option value="1">停车场入口</option>
                                             <option value="2">停车场出口</option>
@@ -214,7 +224,8 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">控制类型</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="控制类型" class="form-control chosen-select" name="ctrl_type" >
+                                <select data-placeholder="选择控制类型" class="form-control chosen-select" name="ctrl_type" >
+                                            <option value="">选择控制类型</option>
                                             <option value="0">临停车控制</option>
                                             <option value="1">入口不控制</option>
                                             <option value="2">控制入车类型</option>
@@ -228,8 +239,8 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" >
-                                            <option value="">选择停车场</option>
+                                <select data-placeholder="选择所属车场" class="form-control chosen-select" name="parkinglot" >
+                                            <option value="">选择所属车场</option>
                                             {% for m in parkinglots %}
                                             <option value="{{m.id}} ">{{ m.name }} </option>
                                             {% endfor %}
@@ -239,7 +250,8 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属区域</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" name='zone' >
+                                <select data-placeholder="选择所属区域" class="form-control chosen-select" name='zone' >
+                                    <option value="">选择所属区域</option>
                                     <option value="0">地面</option>
                                     <option value="1">地库</option>
                                 </select>
@@ -254,7 +266,8 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">收费规则</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control chosen-select" name='charge_rule' >
+                                <select data-placeholder="选择所属区域" class="form-control chosen-select" name='charge_rule' >
+                                    <option value="">选择所属区域</option>
                                     <option value="0">按出口所在区域收费</option>
                                     <option value="1">按入口所在区域收费</option>
                                 </select>
@@ -282,6 +295,16 @@
             <span class="layui-layer-resize"></span></div>
        </div>
     </div>
+<style type="text/css">
+    .ig{
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        background: rgba(0, 0, 0, 0.2);
+        z-index: 199999999
+    }
+</style>
 {% endblock %}
 
 {% block js %}
@@ -304,6 +327,14 @@
     function change(id){
         $('#update_model_'+id).show()
     }
+
+    function shCode(id){
+        $('#img_'+id).toggle()
+    }
+    $('.ig').click(function(){
+        $(this).toggle()
+    }
+    )
     $('.chosen-select').chosen();
     $('.chosen-select').next().css('width', '100%');
 

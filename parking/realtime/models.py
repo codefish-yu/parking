@@ -127,6 +127,5 @@ class PayDetail(models.Model):
     price = models.FloatField(default=0,verbose_name='应收费用',null=True)
     real_price = models.FloatField(default=0,verbose_name='实收费用')
 
-
  
 

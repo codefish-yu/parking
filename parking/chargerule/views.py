@@ -277,9 +277,13 @@ def coupon(request):
     if request.method == 'POST':
         action = request.POST.get('action', '')
         if action == 'add':
-            r = TicketRecord()            
-            _save_attr_(r, request)
+            id = request.POST.get('id','')
+            if id:
+                r = TicketRecord.objects.filter(id=id).first()
+            else:
+                r = TicketRecord()  
 
+            _save_attr_(r, request)
             company_id = request.POST.get('company_id', '')
             parkinglot_id = request.POST.get('parkinglot_id', '')
             if parkinglot_id:

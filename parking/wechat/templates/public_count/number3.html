@@ -40,7 +40,6 @@
 	$('#pay-btn').click(function(){
 		
 		myajax('/order/public/account/'+product_id+'/', {csrfmiddlewaretoken:'{{ csrf_token }}'}, (data)=>{
-			alert(data.appId)
 			pay(data)
 		})
 	})

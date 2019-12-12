@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import * 
 from parkinglot.models import *
-from administrator.decorators import page, _save_attr_,export_excel
+from administrator.decorators import page, _save_attr_,export_excel,get_price
 
 
 import json
@@ -354,7 +354,11 @@ def bill(request):
                 response['Content-Disposition'] = 'attachment;filename=bill.xls'
                 response.write(output.getvalue())
                 return response
-
+    # print(11111)
+    # te = InAndOut.objects.first()
+    # print(te.in_time)
+    # print(te.out_time)
+    # print(get_price(te))
 
     ctx['parkinglots'] = ParkingLot.objects.all()
     ctx['workers'] = Worker.objects.all()
