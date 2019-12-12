@@ -45,8 +45,6 @@
                             <div class="col-sm-6 m-b-xs">
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
-                                <!-- <button type="button" id="reload-btn" class="btn btn-primary " onclick="rel()" style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;刷新</button> -->
-                                <button type="button" id="Downcode" class="btn btn-primary "><i class="fa fa-check-circle-o"></i>&nbsp;下载绑定出入口二维码</button>
                             </div>
                             <div class="col-sm-3 m-b-xs"></div>
                         </div>
@@ -79,7 +77,11 @@
                                             <td>{{ i.get_zone_display }} </td>
                                             <td>{{i.monitor}} </td>
                                             <td>{{i.get_charge_rule_display}} </td>
-                                            <td><button type="button" id="update-btn" class="btn btn-primary " onclick="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button></td>
+                                            <td>
+                                                <button type="button" id="update-btn" class="btn btn-primary " onclick="change({{i.id}})" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                                <button type="button" onclick="shCode({{i.id}})" class="btn btn-primary viewcode"><i class="fa fa-check-circle-o"></i>&nbsp;查看二维码</button>
+                                            </td>
+
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
@@ -104,6 +106,9 @@
 
 <!-- update model -->
     {% for i in gates %}
+        <div id='img_{{i.id}}' class="ig">
+            <img {% if i.code %}src="{{i.code.url}}"{% endif %} style="margin: 8% 25% 25% 25%">
+        </div>
         <div id='update_model_{{ i.id }}' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
@@ -195,7 +200,6 @@
             <span class="layui-layer-resize"></span></div>
        </div>
        {% endfor %}
-
 <!-- add model -->
        <div id='add_role_model' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
@@ -291,6 +295,16 @@
             <span class="layui-layer-resize"></span></div>
        </div>
     </div>
+<style type="text/css">
+    .ig{
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        background: rgba(0, 0, 0, 0.2);
+        z-index: 199999999
+    }
+</style>
 {% endblock %}
 
 {% block js %}
@@ -313,6 +327,14 @@
     function change(id){
         $('#update_model_'+id).show()
     }
+
+    function shCode(id){
+        $('#img_'+id).toggle()
+    }
+    $('.ig').click(function(){
+        $(this).toggle()
+    }
+    )
     $('.chosen-select').chosen();
     $('.chosen-select').next().css('width', '100%');
 

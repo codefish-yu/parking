@@ -69,6 +69,8 @@ def _save_attr_(obj,request):
         if value:
             if str(type(field)) == "<class 'django.db.models.fields.related.ForeignKey'>":
                 pass
+            elif str(type(field)) == "<class 'django.db.models.fields.ImageField'>":
+                pass
             else:
                 obj.__setattr__(field_name, value.strip())
         else:

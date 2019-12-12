@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 from administrator.decorators import page, _save_attr_
+from meta.qrcode import make_qrcode
 '''停车场管理模块'''
 
 # 停车场管理
@@ -49,8 +50,17 @@ def gate(request):
 			if park:
 				r.parkinglot = ParkingLot.objects.filter(id=int(park)).first()
 				r.save()
-
 			_save_attr_(r, request)
+			t = request.POST.get('use_type','')
+			if t:
+				t=int(t)
+			if t == 1 or t==2:
+				url = 'http://parking.metatype.cn/wechat/parkin/'+str(r.parkinglot.id)+'/'+str(r.id)+'/'
+			elif t == 0:
+				url = 'http://parking.metatype.cn/wechat/parkin/'+str(r.parkinglot.id)+'/'
+			c_name = 'code_'+str(r.parkinglot.id)+'_'+str(r.id)+'_'+str(t)	
+			r.code = make_qrcode(url,c_name+'.png')
+			r.save()
 		elif action == 'update':
 			id = request.POST.get('id', '')
 			r = Gate.objects.filter(id=id).first()
@@ -70,8 +80,11 @@ def gate(request):
 		elif action == 'select':
 			use_type = request.POST.get('use_type')
 			if use_type:
-				gate = Gate.objects.filter(use_type=use_type).all()
+				gate = Gate.objects.filter(use_type=use_type,status=0).all()
 				ctx['tip'] = use_type
+
+		elif action == 'barcode':
+			pass
 
 	ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
 	ctx['gates'] = ctx['objects'] = gate 
