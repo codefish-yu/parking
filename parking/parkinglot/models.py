@@ -35,7 +35,6 @@ class Gate(models.Model):
 	charge_rule = models.IntegerField(choices=rules,verbose_name='收费规则',default=0)
 
 
-
 class Worker(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '车场员工'

@@ -23,6 +23,7 @@
 
 <script type="text/javascript">
 	var parkinglot_id = {{ parkinglot_id }}
+	var gate_id = {{ gate_id }}
 
 	var product_id = $(this).attr('product_id')
 
@@ -65,7 +66,7 @@
 	      function(res){
 		      if(res.err_msg == "get_brand_wcpay_request:ok" ){
 		      	var xx = setInterval(function(){
-			      	myajax('/wechat/leave/'+parkinglot_id+'/', 
+			      	myajax('/wechat/parkout/'+parkinglot_id+'/'+gate_id+'/', 
 			      		{
 			      			csrfmiddlewaretoken:'{{ csrf_token }}',
 			      		 	product_id: product_id,

@@ -3,7 +3,7 @@ from django.db import models
 
 from meta.models import User, Product
 from device.models import Camera
-from parkinglot.models import ParkingLot,Worker
+from parkinglot.models import ParkingLot, Worker, Gate
 
 
 class InAndOut(models.Model):
@@ -20,7 +20,9 @@ class InAndOut(models.Model):
     logo_out = models.CharField(max_length=200, verbose_name='logo')
 
     in_time = models.DateTimeField(null=True, verbose_name='入口识别时间')
-    out_time = models.DateTimeField(null=True, verbose_name='出口识别时间')
+    out_time = models.DateTimeField(null=True, verbose_name='出场时间(用户端点击出场)')
+    final_out_time = models.DateTimeField(null=True, verbose_name='实际出场时间')
+
     picture_in = models.ImageField(null=True, upload_to='car/%Y/%m/%d', verbose_name='车辆图片')
     closeup_pic_in = models.ImageField(null=True, upload_to='plate/%Y/%m/%d', verbose_name='车牌图片')
 
@@ -32,11 +34,15 @@ class InAndOut(models.Model):
     
     cam_id_in = models.CharField(max_length=100, null=True, verbose_name='camera_id(Mac地址)')
     camera_in = models.ForeignKey(Camera, related_name='camera_in', null=True, on_delete=models.SET_NULL, verbose_name='摄像头')
+    gate_in = models.ForeignKey(Gate, related_name='gate_in', null=True, on_delete=models.SET_NULL, verbose_name='入口')
     
     cam_id_out = models.CharField(max_length=100, null=True, verbose_name='camera_id(Mac地址)')
     camera_out = models.ForeignKey(Camera, related_name='camera_out', null=True, on_delete=models.SET_NULL, verbose_name='摄像头')
+    gate_out = models.ForeignKey(Gate, related_name='gate_out', null=True, on_delete=models.SET_NULL, verbose_name='出口')
     
     vdc_type = models.CharField(max_length=100, null=True, verbose_name='出入口类型')
+    enter_type = models.IntegerField(default=0, choices=[(0, '车牌识别'),(1, '扫码抬杆')], verbose_name='入场类型')
+    leave_type = models.IntegerField(default=0, choices=[(0, '车牌识别'),(1, '扫码抬杆')], verbose_name='出场类型')
    
     cam_ip_in = models.CharField(max_length=100, null=True, verbose_name='IP地址')
     plate_val_in = models.BooleanField(default=True, verbose_name='是否虚假车牌')
@@ -51,9 +57,9 @@ class InAndOut(models.Model):
     triger_type_out = models.CharField(max_length=100, null=True, verbose_name='触发类型')
 
     update_time = models.DateTimeField(auto_now_add=True, verbose_name='更新时间')
+    status = models.IntegerField(default=0, choices=[(0,'入场'),(1,'出场')], verbose_name='车辆状态')
 
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name='停车用户')
-
     bill = models.OneToOneField('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单',related_name='InAndOut')
     # params = {
     #     'type': 'online', 
@@ -86,6 +92,16 @@ class InAndOut(models.Model):
         return self.closeup_pic_out.url if self.closeup_pic_out else ''
 
 
+class OpeningOrder(models.Model):
+    class Meta:
+        verbose_name = verbose_name_plural = '开闸指令'
+
+    parkinglot = models.ForeignKey(ParkingLot, null=True, on_delete=models.CASCADE)
+    gate = models.ForeignKey(Gate, null=True, on_delete=models.CASCADE)
+    camera = models.ForeignKey(Camera, null=True, on_delete=models.CASCADE)
+    status = models.IntegerField(default=0, choices=[(0, '关闭'),(1, '打开'),(2, '需要打开')])
+
+
 class Bill(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '账单'
@@ -99,6 +115,8 @@ class Bill(models.Model):
     status = models.IntegerField(default=0, choices=[(0, '未支付'),(1, '已支付')])
     detail = models.ForeignKey('PayDetail',on_delete=models.SET_NULL,verbose_name='收费明细',related_name='detail',null=True,blank=True)
 
+    product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
+
 
 class PayDetail(models.Model):
     class Meta:
@@ -109,7 +127,6 @@ class PayDetail(models.Model):
     price = models.FloatField(default=0,verbose_name='应收费用',null=True)
     real_price = models.FloatField(default=0,verbose_name='实收费用')
 
-    product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
 
  
 

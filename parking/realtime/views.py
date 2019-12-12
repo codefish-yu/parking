@@ -57,8 +57,14 @@ def parkin(request):
     print(params)
     if 'type'in params and params['type'] == 'HeartBeat':
         print(params.keys())
-
-        pass
+        cam_id = params['cam_id']
+        camera = Camera.objects.filter(mac_address=camera_id).first()
+        if camera:
+            if camera.gate:
+                open_order = OpeningOrder.objects.filter(gate=camera.gate, status=2)
+                if open_order.exists():
+                    open_order.update(status=1)
+                    result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
         
     if 'type'in params and params['type'] == 'online':
         print(params.keys())
@@ -83,10 +89,10 @@ def parkin(request):
         else:  # 出场
             number = params['plate_num']
             print(number)
-            r = InAndOut.objects.filter(number=number).order_by('-in_time').first()
+            r = InAndOut.objects.filter(number=number, status=0).order_by('-in_time').first()
 
             if r:
-                r.out_time = datetime.datetime.fromtimestamp(int(params['start_time']))
+                r.final_out_time = datetime.datetime.fromtimestamp(int(params['start_time']))
                 r.plate_color_out = params['plate_color']
                 r.logo_out = params['car_logo']
                 r.park_id = params['park_id']
