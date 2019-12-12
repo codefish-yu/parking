@@ -29,7 +29,7 @@
                                 <form id='query_form' action='' method="post">
                                     {% csrf_token %}
                                     <div class="form-group">
-                                        <select data-placeholder="车辆类型" class="form-control chosen-select" id="car_type" name="car_type">
+                                        <select data-placeholder="选择车辆类型" class="form-control chosen-select" id="car_type" name="car_type">
                                             <option value="" {% if not c %}selected{% endif %} >选择车辆类型</option>
                                             <option value="0" {% if c == '0' %}selected{% endif %}>小型车</option>
                                             <option value="1" {% if c == '1' %}selected{% endif %}>中型车</option>
@@ -37,23 +37,23 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <select data-placeholder="使用类型" class="form-control chosen-select" id="use_type" name="use_type">
+                                        <select data-placeholder="选择使用类型" class="form-control chosen-select" id="use_type" name="use_type">
                                             <option value="" {% if not u %}selected{% endif %}>选择使用类型</option>
                                             <option value="0" {% if u == '0' %}selected{% endif %}>临停车</option>
                                             <option value="1" {% if u == '1' %}selected{% endif %}>月租车</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <select data-placeholder="所属车场" class="form-control chosen-select" id="parkinglot" name="parkinglot" onchange="getZ(this,0)">
-                                            <option value="" {% if not p %}selected{% endif %}>选择停车场 </option>
+                                        <select data-placeholder="选择所属车场" class="form-control chosen-select" id="parkinglot" name="parkinglot" onchange="getZ(this,0)">
+                                            <option value="" {% if not p %}selected{% endif %}>选择所属车场 </option>
                                             {% for m in parkinglots %}
                                             <option value="{{m.id}} " {% if p == m.id %}selected{% endif %}>{{m.name}} </option>
                                             {% endfor %}
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <select data-placeholder="所属区域" class="form-control " id="zone_0" name="zone" >
-                                            <option value="" selected>选择区域</option>
+                                        <select data-placeholder="选择所属区域" class="form-control " id="zone_0" name="zone" >
+                                            <option value="" selected>选择所属区域</option>
                                             <!-- {% for n in zones %}
                                             <option value="{{n.id}} ">{{n.zone_name}} </option>
                                             {% endfor %} -->
@@ -136,29 +136,31 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">车辆类型</label>
                             <div class="col-sm-4">
-                               <select data-placeholder="车辆类型" class="form-control chosen-select" name="car_type" value="{{ i.car_type}}">
-                                            <option value="0">小型车</option>
-                                            <option value="1">中型车</option>
-                                            <option value="2">大型车</option>
+                               <select data-placeholder="选择车辆类型" class="form-control chosen-select" name="car_type">
+                                            <option value="">选择车辆类型</option>
+                                            <option value="0"{% if i.car_type == 0%}selected{% endif %} >小型车</option>
+                                            <option value="1" {% if i.car_type == 1%}selected{% endif %}>中型车</option>
+                                            <option value="2" {% if i.car_type == 2%}selected{% endif %}>大型车</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">使用类型</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="使用类型" class="form-control chosen-select" name="use_type" value="{{ i.use_type}}">
-                                            <option value="0">临停车</option>
-                                            <option value="1">月租车</option>
+                                <select data-placeholder="选择使用类型" class="form-control chosen-select" name="use_type">
+                                            <option value="">选择使用类型</option>
+                                            <option value="0" {% if i.use_type == 0%}selected{% endif %}>临停车</option>
+                                            <option value="1" {% if i.use_type == 1%}selected{% endif %}>月租车</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" onchange="getZ(this,1,{{forloop.counter}})">
-                                            <option value="">选择停车场</option>
+                                <select data-placeholder="选择所属车场" class="form-control chosen-select" name="parkinglot" onchange="getZ(this,1,{{forloop.counter}})">
+                                            <option value="">选择所属车场</option>
                                             {% for m in parkinglots %}
-                                            <option value="{{m.id}}"  >{{ m.name }} </option>
+                                            <option value="{{m.id}}" {% if m.id == i.parkinglot.id %}selected{% endif %}>{{ m.name }} </option>
                                             {% endfor %}
                                             <!-- {% if m.id == i.parkinglot.id %}selected {% endif %} -->
                                 </select>
@@ -167,10 +169,11 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属区域</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" class="form-control " id='zone_1{{forloop.counter}}' name="zone" value="{{ i.zone }} ">
-                                            <!-- {% for n in zoness %}
+                                <select data-placeholder="选择所属区域" class="form-control " id='zone_1{{forloop.counter}}' name="zone" >
+                                            <option value="">选择所属区域</option>
+                                            {% for n in zones %}
                                             <option value="{{n.id}}" {% if n.id == i.zone.id %}selected {% endif %}>{{n.zone_name}} </option>
-                                            {% endfor %} -->
+                                            {% endfor %}
                                 </select>
                             </div>
                         </div>
@@ -209,7 +212,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">车辆类型</label>
                             <div class="col-sm-4">
-                               <select data-placeholder="车辆类型" class="form-control chosen-select" name="car_type" >
+                               <select data-placeholder="选择车辆类型" class="form-control chosen-select" name="car_type" >
                                             <option value="">选择车辆类型</option>
                                             <option value="0">小型车</option>
                                             <option value="1">中型车</option>
@@ -220,7 +223,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">使用类型</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="使用类型" class="form-control chosen-select" name="use_type" >
+                                <select data-placeholder="选择使用类型" class="form-control chosen-select" name="use_type" >
                                             <option value="">选择使用类型</option>
                                             <option value="0">临停车</option>
                                             <option value="1">月租车</option>
@@ -230,8 +233,8 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" onchange="getZ(this,2)">
-                                            <option value="">选择停车场</option>
+                                <select data-placeholder="选择所属车场" class="form-control chosen-select" name="parkinglot" onchange="getZ(this,2)">
+                                            <option value="">选择所属车场</option>
                                             {% for m in parkinglots %}
                                             <option value="{{m.id}} ">{{ m.name }} </option>
                                             {% endfor %}
@@ -241,8 +244,8 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属区域</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属区域" id="zone_2" class="form-control " name="zone" >
-                                            <option value="">选择区域</option>
+                                <select data-placeholder="选择所属区域" id="zone_2" class="form-control " name="zone" >
+                                            <option value="">选择所属区域</option>
                                             <!-- {% for n in zonesss %}
                                             <option value="{{n.id}} ">{{n.zone_name}} </option>
                                             {% endfor %} -->

@@ -99,9 +99,10 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属停车场</label>
                             <div class="col-sm-4">
-                               <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" >
+                               <select data-placeholder="选择所属车场" class="form-control chosen-select" name="parkinglot" >
+                                            <option value="">选择所属车场</option>
                                             {% for m in parkinglots %}
-                                            <option value="{{m.id}}">{{ m.name }} </option>
+                                            <option value="{{m.id}}"{% if m.id == i.parkinglot.id %}selected{% endif %} >{{ m.name }} </option>
                                             {% endfor %}
                                 </select>
                             </div>
@@ -152,8 +153,8 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">所属车场</label>
                             <div class="col-sm-4">
-                                <select data-placeholder="所属车场" class="form-control chosen-select" name="parkinglot" >
-                                            <option value="">选择停车场</option>
+                                <select data-placeholder="选择所属车场" class="form-control chosen-select" name="parkinglot" >
+                                            <option value="">选择所属车场</option>
                                             {% for m in parkinglots %}
                                             <option value="{{m.id}} ">{{ m.name }} </option>
                                             {% endfor %}

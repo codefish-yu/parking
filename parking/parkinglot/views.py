@@ -287,7 +287,7 @@ def place(request):
 			return JsonResponse({'data':tmp})
 
 				
-
+	ctx['zones'] = zone
 	ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
 	ctx['place'] = ctx['objects'] = place
 

@@ -106,7 +106,7 @@
                             </div>
                             <label class="col-sm-2 control-label">卡片类型</label>
                             <div class="col-sm-4">
-                                <select name='my_card' class="form-control required chosen-select">
+                                <select data-placeholder='选择卡片类型' name='my_card' class="form-control required chosen-select">
                                     <option value="">选择卡片类型</option>
                                     {% for n in cardtypes%}
                                     <option value="{{ n.id}}" {% if i.my_card.id == n.id%}selected{% endif %}>{{ n.name}} </option>
@@ -181,7 +181,7 @@
                             </div>
                             <label class="col-sm-2 control-label ">卡片类型</label>
                             <div class="col-sm-4">
-                                <select name='my_card' class="form-control required chosen-select">
+                                <select data-placeholder='选择卡片类型' name='my_card' class="form-control required chosen-select">
                                     <option value="">选择卡片类型</option>
                                     {% for n in cardtypes%}
                                     <option value="{{ n.id}}" >{{ n.name}} </option>
