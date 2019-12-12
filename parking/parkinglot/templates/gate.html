@@ -107,7 +107,7 @@
 <!-- update model -->
     {% for i in gates %}
         <div id='img_{{i.id}}' class="ig">
-            <img {% if i.code %}src="{{i.code.url}}"{% endif %} style="margin: 8% 25% 25% 25%">
+            <img {% if i.code %}src="{{i.code.url}}"{% endif %} style="margin: 8% 25% 25% 25%" width="300" height="300">
         </div>
         <div id='update_model_{{ i.id }}' class='model'>
         <div class="layui-layer-shade" id="layui-layer-shade6" times="6" style="z-index: 19891019; background-color: rgb(0, 0, 0); opacity: 0.3;"></div>
