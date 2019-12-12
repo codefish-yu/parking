@@ -55,10 +55,10 @@ def parkin(request):
 
     params = get_params(request)
     print(params)
-    if 'type'in params and params['type'] == 'HeartBeat':
+    if 'type'in params and params['type'] == 'heartbeat':
         print(params.keys())
         cam_id = params['cam_id']
-        camera = Camera.objects.filter(mac_address=camera_id).first()
+        camera = Camera.objects.filter(mac_address=cam_id).first()
         if camera:
             if camera.gate:
                 open_order = OpeningOrder.objects.filter(gate=camera.gate, status=2)
@@ -105,18 +105,18 @@ def parkin(request):
                 r.triger_type_out = params['triger_type']
                 r.vehicle_type_out = params['vehicle_type']
 
-            if r.bill and r.bill.status == 1:
-                print('sss')
-                result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
-            else:
-                b = Bill(
-                    billable=100, 
-                    billment=100, 
-                    bill_time=datetime.datetime.now(),
-                    status=0
-                )
-                b.save()
-                r.bill = b
+                if r.bill and r.bill.status == 1:
+                    print('sss')
+                    result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
+                else:
+                    b = Bill(
+                        billable=100, 
+                        billment=100, 
+                        bill_time=datetime.datetime.now(),
+                        status=0
+                    )
+                    b.save()
+                    r.bill = b
         
         park_id = params['park_id']
         parkinglot = ParkingLot.objects.filter(id=park_id)

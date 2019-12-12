@@ -95,6 +95,8 @@ urlpatterns = [
 
     # wechat
     path('wechat/leave/<int:parkinglot_id>/',wechat.leave),
+    path('wechat/parkin/<int:parkinglot_id>/<int:gate_id>/',wechat.parkin),
+    path('wechat/parkout/<int:parkinglot_id>/<int:gate_id>/',wechat.parkout),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

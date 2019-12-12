@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from meta import api
 from meta.models import Product, Order
 from meta.decorators import user_required
-from realtime.models import InAndOut, Bill
+from realtime.models import InAndOut, Bill, OpeningOrder
 
 
 import datetime
@@ -28,8 +28,8 @@ def parkin(request, user, parkinglot_id, gate_id):
             parkinglot_id=parkinglot_id, 
             in_time=datetime.datetime.now(),
         )
-
-    return render(request, 'public_count/in.html', ctx)
+    OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2)
+    return render(request, 'public_count/in.html')
 
 # def user_required(func):
 
@@ -59,12 +59,28 @@ def parkin(request, user, parkinglot_id, gate_id):
 @user_required
 def parkout(request, user, parkinglot_id, gate_id):
     '''卡口扫码出场'''
+    ctx = {'parkinglot_id': parkinglot_id, 'gate_id': gate_id}
+
+    if request.method == 'POST':
+        action = request.POST.get('action', '')
+        if action == 'payconfirm':
+            product_id = request.POST.get('product_id', '')
+            if product_id:
+                order = Order.objects.filter(product_id=product_id).order_by('-create_time').first()
+                if order:
+                    from meta.models import Payment
+                    if Payment.objects.filter(order=order).exists():
+                        Bill.objects.filter(product_id=int(product_id)).update(status=1, pay_type=1, pay_time=datetime.datetime.now())
+                        OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2)
+                        
+                        return JsonResponse({'success': True})
+            return JsonResponse({'success': False})
 
     r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, user=user, status=0).order_by('-in_time').first()
 
     if r:
         r.gate_out_id = gate_id
-        r.out_time = datetime.datetime.now(),
+        r.out_time = datetime.datetime.now()
         r.leave_type = 1
 
         r.save()
@@ -92,7 +108,7 @@ def parkout(request, user, parkinglot_id, gate_id):
             r.bill = bill
             r.save()
 
-            product = Product.objects.create(price=bill.payment*100, name='parking fee', company='jietingkeji', category='park')
+            product = Product.objects.create(price=bill.payment, name='parking fee', company='jietingkeji', category='park')
             
             bill.product = product
             bill.save()
@@ -101,21 +117,6 @@ def parkout(request, user, parkinglot_id, gate_id):
             ctx['product'] = product
 
             return render(request, 'public_count/scan_pay.html', ctx)
-
-    if request.method == 'POST':
-        action = request.POST.get('action', '')
-        if action == 'payconfirm':
-            product_id = request.POST.get('product_id', '')
-            if product_id:
-                order = Order.objects.filter(product_id=product_id).order_by('-create_time').first()
-                if order:
-                    from meta.models import Payment
-                    if Payment.objects.filter(order=order).exists():
-                        Bill.objects.filter(order=order).update(status=1, pay_type=1, pay_time=datetime.datetime.now())
-                        OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2)
-                        
-                        return JsonResponse({'success': True})
-            return JsonResponse({'success': False})
 
     return render(request, 'public_count/out.html', ctx)
 
@@ -170,7 +171,7 @@ def leave(request, user, parkinglot_id):
                 r.bill = bill
                 r.save()
 
-                product = Product.objects.create(price=bill.payment*100, name='parking fee', company='jietingkeji', category='park')
+                product = Product.objects.create(price=bill.payment, name='parking fee', company='jietingkeji', category='park')
                 
                 bill.product = product
                 bill.save()
@@ -187,7 +188,7 @@ def leave(request, user, parkinglot_id):
                 if order:
                     from meta.models import Payment
                     if Payment.objects.filter(order=order).exists():
-                        Bill.objects.filter(order=order).update(status=1, pay_type=1, pay_time=datetime.datetime.now())
+                        Bill.objects.filter(product_id=int(product_id)).update(status=1, pay_type=1, pay_time=datetime.datetime.now())
                         return JsonResponse({'success': True})
             return JsonResponse({'success': False})
     return render(request, 'public_count/number1.html', ctx)

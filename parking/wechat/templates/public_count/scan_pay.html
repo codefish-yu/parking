@@ -25,7 +25,7 @@
 	var parkinglot_id = {{ parkinglot_id }}
 	var gate_id = {{ gate_id }}
 
-	var product_id = $(this).attr('product_id')
+	var product_id = {{product.id}}
 
 	function myajax(url, data, callback, type){
             type = type || 'json'
