@@ -262,6 +262,7 @@
                         
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
+                                <input type="hidden" name="id" class="form-control" value='{{i.id}}'>
                                 <input type="hidden" name="action" class="form-control" value='add'>
 
                                 <button type="submit" class="btn btn-primary" style="display: inline-block;"><i class="fa fa-check"></i> 保存</button>&nbsp;
@@ -305,7 +306,7 @@
                             <label class="col-sm-1 control-label">商家</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="选择商家" class="form-control chosen-select" name="company_id" id='company_add' style="display: none;width: 100%">
-                                    <option value=''>选择商家</option>
+                                    <option value=''>请先选择停车场</option>
                                     {% for i in companies %}
                                         <option value="{{i.id}}">{{i.name}}</option>
                                     {% endfor %}
@@ -324,11 +325,11 @@
                                    <option value="3">满时券</option>
                                 </select>
                             </div>
-                            <label class="col-sm-1 control-label">选择券</label>
+                            <label class="col-sm-1 control-label">券</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="选择优惠券" class="form-control chosen-select" name="ticket_id" id='ticket_add'
                                 style="display: none;width: 100%">
-                                    <option value=''>选择券</option>
+                                    <option value=''>请先选择券类型</option>
                                 </select>
                             </div>
                         </div>

@@ -108,7 +108,6 @@ class PayDetail(models.Model):
     type = models.IntegerField(default=0,choices=[(0,'全部'),(1,'手动免费开闸'),(2,'异常出车'),(3,'现金支付')],verbose_name='收费类型')
     price = models.FloatField(default=0,verbose_name='应收费用',null=True)
     real_price = models.FloatField(default=0,verbose_name='实收费用')
-
     product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
 
  
