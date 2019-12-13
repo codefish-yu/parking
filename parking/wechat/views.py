@@ -138,13 +138,36 @@ def leave(request, user, parkinglot_id):
     
     ctx['parkinglot_id'] = parkinglot_id
 
-    r = InAndOut.objects.filter(parkinglot_id=int(parkinglot_id), user=user).order_by('in_time')
+    r = InAndOut.objects.filter(parkinglot_id=int(parkinglot_id), user=user, status=0).order_by('-in_time')
     if r.exists():
         r = r.first()
-        if r.bill and r.bill.status == 0:
-            ctx['record'] = r
-            return render(request, 'public_count/number3.html', ctx)
+        if r.bill:
+            if r.bill.status == 0:
+                ctx['record'] = r
+                return render(request, 'public_count/number3.html', ctx)
+            else:
+                return render(request, 'public_count/number4.html', ctx)
+        else:
+            bill = Bill(
+                payable=0.01, 
+                payment=0.01, 
+                pay_time=datetime.datetime.now(),
+                status=0
+            )
+            bill.save()
+            r.bill = bill
+            r.save()
 
+            product = Product.objects.create(price=bill.payment, name='parking fee', company='jietingkeji', category='park')
+            
+            bill.product = product
+            bill.save()
+            
+            ctx['record'] = r
+            ctx['product'] = product
+
+            return render(request, 'public_count/number3.html', ctx)
+            
     if request.method == 'POST':
         action = request.POST.get('action', '')
         print(action)

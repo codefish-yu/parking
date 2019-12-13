@@ -65,10 +65,10 @@ def parkin(request):
                 if open_order.exists():
                     r = open_order.first().in_and_out
                     if r.status == -1:
-                        r.status = 0   # 正式入场
+                        r.status = 0   # 根据扫码创建的指令, 正式入场
                         r.in_time = datetime.datetime.now()
                     elif r.status == 0:
-                        r.status = 1   # 正式离场 
+                        r.status = 1   # 根据扫码创建的指令, 正式离场 
                         r.final_out_time = datetime.datetime.now()
                     r.save()
 
@@ -79,7 +79,7 @@ def parkin(request):
     if 'type'in params and params['type'] == 'online':
         print(params.keys())
 
-        if params['vdc_type'] == 'in':  # 入场
+        if params['vdc_type'] == 'in':  # 直接入场, 车牌识别直接开闸
             r = InAndOut(
                 number=params['plate_num'],
                 in_time=datetime.datetime.fromtimestamp(int(params['start_time'])),
@@ -94,7 +94,7 @@ def parkin(request):
                 vdc_type=params['vdc_type'],
                 triger_type_in=params['triger_type'],
                 vehicle_type_in=params['vehicle_type'],
-                status=-1
+                status=0
             )
 
         else:  # 出场
@@ -118,6 +118,7 @@ def parkin(request):
 
                 if r.bill and r.bill.status == 1:
                     print('sss')
+                    r.status = 1
                     result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
                 else:
                     b = Bill(
@@ -150,8 +151,8 @@ def parkin(request):
           
         # 保存汽车出入时抓拍的全景图和车牌特写图
         try: 
-            picture =  base64.b64decode(params['picture'].replace('-', '+').replace('.', '=').replace('_','/'))
-            plate_pic =  base64.b64decode(params['closeup_pic'].replace('-', '+').replace('.', '=').replace('_','/'))
+            picture = base64.b64decode(params['picture'].replace('-', '+').replace('.', '=').replace('_','/'))
+            plate_pic = base64.b64decode(params['closeup_pic'].replace('-', '+').replace('.', '=').replace('_','/'))
 
             name = random_name()
 
