@@ -27,6 +27,7 @@ from company import views as com
 from wechat import views as wechat
 from chargerule import views as charge
 from realtime import views as realtime
+from account import views as ac
 
 
 urlpatterns = [
@@ -97,6 +98,12 @@ urlpatterns = [
     path('wechat/leave/<int:parkinglot_id>/',wechat.leave),
     path('wechat/parkin/<int:parkinglot_id>/<int:gate_id>/',wechat.parkin),
     path('wechat/parkout/<int:parkinglot_id>/<int:gate_id>/',wechat.parkout),
+
+    #account
+    path('account/spec_pass/',ac.spec_pass),
+    path('account/correct/',ac.correct),
+    path('account/home/',ac.home),
+    path('account/login/',ac.worker_login),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
