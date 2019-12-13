@@ -30,7 +30,11 @@ def parkin(request, user, parkinglot_id, gate_id):
             parkinglot_id=parkinglot_id, 
             in_time=datetime.datetime.now(),
         )
-    OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2, in_and_out=r)
+    if OpeningOrder.objects.filter(gate_id=gate_id).exists():
+        OpeningOrder.objects.filter(gate_id=gate_id).update(status=2,  in_and_out=r)
+    else:
+        OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2, in_and_out=r)
+    
     return render(request, 'public_count/in.html')
 
 # def user_required(func):
@@ -89,7 +93,10 @@ def parkout(request, user, parkinglot_id, gate_id):
 
         if r.bill: 
             if r.bill.status == 1:  # 已支付
-                OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, in_and_out=r, status=2)
+                if OpeningOrder.objects.filter(gate_id=gate_id).exists():
+                    OpeningOrder.objects.update(in_and_out=r, status=2)
+                else:
+                    OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, in_and_out=r, status=2)
             else: 
                # 未支付
                 bill = r.bill
