@@ -54,9 +54,8 @@ def parkin(request):
     # }
 
     params = get_params(request)
-    print(params)
+    print(params['cam_id'])
     if 'type'in params and params['type'] == 'heartbeat':
-        print(params.keys())
         cam_id = params['cam_id']
         camera = Camera.objects.filter(mac_address=cam_id).first()
         if camera:
@@ -76,9 +75,8 @@ def parkin(request):
 
                     result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
                     return JsonResponse(result)
-                    
+
     if 'type'in params and params['type'] == 'online':
-        print(params.keys())
 
         if params['vdc_type'] == 'in':  # 直接入场, 车牌识别直接开闸
             r = InAndOut(
