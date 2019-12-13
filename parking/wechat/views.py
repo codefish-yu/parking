@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from meta import api
 from meta.models import Product, Order
-from meta.decorators import user_required
+#from meta.decorators import user_required
 from realtime.models import InAndOut, Bill, OpeningOrder
 
 
@@ -14,7 +14,36 @@ import functools
 
 
 '''手机客户端 ''' 
+def user_required(func):
 
+    @functools.wraps(func)
+    def wrapper(request, *args, **kwargs):
+        from meta import api
+        
+        wrapper.__name__ = func.__name__
+
+        token = request.session['token'] if 'token' in request.session else ''
+        
+        if not token:
+            token = request.GET.get('token', '')
+            if token:
+                request.session['token'] = token
+
+        next_url = request.get_full_path()
+
+        if not token:
+            return redirect('/login/public/account/?next=' + next_url)
+
+        try:
+            user = api.check_token(token)
+        except APIError:
+            return redirect('/login/public/account/?next=' + next_url)
+
+        request.user = user
+        result = func(request, user=user, *args, **kwargs)
+        return result
+
+    return wrapper
 
 # 创建开闸指令
 def createOpenOrder(parkinglot_id, gate_id, in_and_out):
@@ -253,10 +282,3 @@ def parkout(request, user, parkinglot_id, gate_id=None):
 #                         return JsonResponse({'success': True})
 #             return JsonResponse({'success': False})
 #     return render(request, 'public_count/number1.html', ctx)
-
-
-
-
-
-
-
