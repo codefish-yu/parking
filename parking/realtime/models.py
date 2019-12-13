@@ -57,7 +57,7 @@ class InAndOut(models.Model):
     triger_type_out = models.CharField(max_length=100, null=True, verbose_name='触发类型')
 
     update_time = models.DateTimeField(auto_now_add=True, verbose_name='更新时间')
-    status = models.IntegerField(default=0, choices=[(0,'入场'),(1,'出场')], verbose_name='车辆状态')
+    status = models.IntegerField(default=0, choices=[(-1, '待入场'),(0,'入场'),(1,'出场')], verbose_name='车辆状态')
 
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name='停车用户')
     bill = models.OneToOneField('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单',related_name='InAndOut')

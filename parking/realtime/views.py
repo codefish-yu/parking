@@ -63,10 +63,16 @@ def parkin(request):
             if camera.gate:
                 open_order = OpeningOrder.objects.filter(gate=camera.gate, status=2)
                 if open_order.exists():
+                    r = open_order.first().in_and_out
+                    if r.status == -1:
+                        r.status = 0   # 正式入场
+                        r.in_time = datetime.datetime.now()
+                    elif r.status == 0:
+                        r.status = 1   # 正式离场 
+                        r.final_out_time = datetime.datetime.now()
+                    r.save()
+
                     open_order.update(status=1)
-                    open_order.in_and_out.status = 1
-                    open_order.in_and_out.final_out_time = datetime.datetime.now()
-                    open_order.in_and_out.save()
 
                     result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
         
