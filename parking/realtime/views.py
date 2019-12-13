@@ -74,6 +74,7 @@ def parkin(request):
                     open_order.update(status=1)
 
                     result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
+                    print(result)
                     return JsonResponse(result)
 
     if 'type'in params and params['type'] == 'online':
