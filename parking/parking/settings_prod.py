@@ -20,7 +20,7 @@ DATABASES = {
 
 
 STATIC_ROOT = '/var/parking/static/'
-MEDIA_ROOT = '/var/parking/media/'
+MEIDA_ROOT = '/var/parking/media/'
 
 
 WECHAT = {
