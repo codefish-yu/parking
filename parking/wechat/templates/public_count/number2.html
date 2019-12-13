@@ -9,7 +9,7 @@
 <body>
 	<form action="" method="post">
 		{% csrf_token %}
-		<span>车牌号: {{ car_number }}</span>
+		<span>车牌号: {{ car_number|default:'无牌-扫码入场' }}</span>
 		{% if record %}
 			<span>入场时间: {{ record.in_time|date:'Y-m-d H:i:s'}}</span>
 			<input type="hidden" name='action' value='leave' />

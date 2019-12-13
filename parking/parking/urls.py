@@ -95,9 +95,9 @@ urlpatterns = [
 
 
     # wechat
-    path('wechat/leave/<int:parkinglot_id>/',wechat.leave),
     path('wechat/parkin/<int:parkinglot_id>/<int:gate_id>/',wechat.parkin),
     path('wechat/parkout/<int:parkinglot_id>/<int:gate_id>/',wechat.parkout),
+    path('wechat/parkout/<int:parkinglot_id>/',wechat.parkout),
 
     #account
     path('account/spec_pass/',ac.spec_pass),

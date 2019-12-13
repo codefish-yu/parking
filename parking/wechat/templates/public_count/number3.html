@@ -64,7 +64,7 @@
 	      function(res){
 		      if(res.err_msg == "get_brand_wcpay_request:ok" ){
 		      	var xx = setInterval(function(){
-			      	myajax('/wechat/leave/'+parkinglot_id+'/', 
+			      	myajax('', 
 			      		{
 			      			csrfmiddlewaretoken:'{{ csrf_token }}',
 			      		 	product_id: product_id,
