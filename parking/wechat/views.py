@@ -23,6 +23,7 @@ def parkin(request, user, parkinglot_id, gate_id):
     r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, gate_in_id=gate_id, user=user, status=0).first()
     if not r:
         r = InAndOut.objects.create(
+            status=-1,
             user=user, 
             enter_type=1, 
             gate_in_id=gate_id,

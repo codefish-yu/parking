@@ -105,7 +105,7 @@
                                                 {% endif %}
                                             </td>
                                             <td>{{ i.number }}</td>
-                                            <td>{{ i.logo_in }}</td>
+                                            <td>{{ i.get_status_display }}</td>
                                             <td><img src='{{ i.plate_pic_in }}' class='model-btn' data-target='img_model_{{ i.id }}'></img></td>
                                             <td>{{ i.in_time|date:'Y-m-d H:i' }}</td>
                                             <td>{{ i.out_time|date:'Y-m-d H:i' }}</td>

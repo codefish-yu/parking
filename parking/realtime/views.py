@@ -94,6 +94,7 @@ def parkin(request):
                 vdc_type=params['vdc_type'],
                 triger_type_in=params['triger_type'],
                 vehicle_type_in=params['vehicle_type'],
+                status=-1
             )
 
         else:  # 出场
