@@ -72,6 +72,7 @@
 			      		}, (data)=>{
 						if(data.success){
 							clearInterval(xx)
+							$('body').html('<h4> 支付成功, 请在十五分钟内离场.</h4>')
 						}
 					})
 				},500)
