@@ -9,6 +9,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-	 <h4>支付成功, 请在15分钟内离场</h4>
+	 <h4>
+	 	{% if gate_id %} 支付成功, 请在15分钟内离场 
+	 	{% else %} 一路顺风
+	 	{% end %}
+	 </h4>
 </body>
 </html>

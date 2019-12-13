@@ -16,13 +16,19 @@ import functools
 '''手机客户端 ''' 
 
 
-# 创建卡闸指令
+# 创建开闸指令
 def createOpenOrder(parkinglot_id, gate_id, in_and_out):
+    in_and_out.final_out_time = datetime.datetime.now()
+    in_and_out.save()
+
     if OpeningOrder.objects.filter(gate_id=gate_id).exists():
-        OpeningOrder.objects.filter(gate_id=gate_id).update(status=2,  in_and_out=in_and_out)
+        order = OpeningOrder.objects.filter(gate_id=gate_id).first()
+        order.status = 2
+        order.in_and_out = in_and_out
+        order.save()
     else:
         OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2, in_and_out=in_and_out)
-    in_and_out.final_out_time = datetime.datetime.now()
+
 
 
 def createBill(in_and_out):
@@ -84,7 +90,7 @@ def parkout(request, user, parkinglot_id, gate_id=None):
                         bill.update(status=1, pay_type=1, pay_time=datetime.datetime.now())
                         
                         if gate_id:  # 如果此时在出口扫描支付, 则要立即创建开闸指令
-                            r = bill.first().inandout
+                            r = bill.first().InAndOut
                             createOpenOrder(parkinglot_id, gate_id, r)
 
                         return JsonResponse({'success': True})
@@ -95,7 +101,8 @@ def parkout(request, user, parkinglot_id, gate_id=None):
             ctx['car_number'] = car_number = request.POST.get('car_number', '')
              
             r = InAndOut.objects.filter(parkinglot_id=int(parkinglot_id), number=car_number, status=0).order_by('-in_time')
-            if r:
+            if r.exists():
+                r = r.first()
                 r.user = user
                 r.save()
                 ctx['record'] = r
@@ -144,8 +151,8 @@ def parkout(request, user, parkinglot_id, gate_id=None):
             else:   # 已支付
                 if gate_id: # 抬杆离场
                     createOpenOrder(parkinglot_id, gate_id, r)
-                else:  # 场内支付成功提示
-                    return render(request, 'public_count/number4.html', ctx)
+                # 场内支付成功提示
+                return render(request, 'public_count/number4.html', ctx)
 
         ctx['record'] = r
         return render(request, 'public_count/number2.html', ctx)

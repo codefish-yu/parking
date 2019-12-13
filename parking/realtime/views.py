@@ -76,6 +76,7 @@ def parkin(request):
 
                     result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
                     return JsonResponse(result)
+                    
     if 'type'in params and params['type'] == 'online':
         print(params.keys())
 
@@ -124,7 +125,7 @@ def parkin(request):
                     b = Bill(
                         billable=100, 
                         billment=100, 
-                        bill_time=datetime.datetime.now(),
+                        pay_time=datetime.datetime.now(),
                         status=0
                     )
                     b.save()
