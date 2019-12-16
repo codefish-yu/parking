@@ -14,6 +14,8 @@ import functools
 
 
 '''手机客户端 ''' 
+
+
 def user_required(func):
 
     @functools.wraps(func)
@@ -59,7 +61,7 @@ def createOpenOrder(parkinglot_id, gate_id, in_and_out):
         OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2, in_and_out=in_and_out)
 
 
-
+# 计费
 def createBill(in_and_out):
     pass
     #  根据出入场的时间in_time, out_time , number, 计算收费
