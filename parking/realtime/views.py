@@ -201,7 +201,7 @@ def in_out(request):
 
     ctx = {}
 
-    records = InAndOut.objects.select_related('user', 'camera', 'parkinglot')
+    records = InAndOut.objects.select_related('user', 'camera_in', 'camera_out', 'parkinglot')
 
     if request.method == 'POST':
         action = request.POST.get('action', '')
