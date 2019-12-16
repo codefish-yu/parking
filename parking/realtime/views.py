@@ -56,10 +56,10 @@ def parkin(request):
     params = get_params(request)
     print(params['cam_id'])
     
+    cam_id = params['cam_id']
     camera = Camera.objects.filter(mac_address=cam_id).first()
 
     if 'type'in params and params['type'] == 'heartbeat':
-        cam_id = params['cam_id']
         if camera:
             if camera.gate:
                 open_order = OpeningOrder.objects.filter(gate=camera.gate, status=2)
@@ -90,7 +90,7 @@ def parkin(request):
                 plate_color_in=params['plate_color'],
                 logo_in=params['car_logo'],
                 park_id=params['park_id'],
-                cam_id_in=params['cam_id'],
+                cam_id_in=cam_id,
                 cam_ip_in=params['cam_ip'],
                 plate_val_in=True if params['plate_val'] == 'true' else False,
                 confidence_in=params['confidence'],
@@ -114,7 +114,7 @@ def parkin(request):
                 r.plate_color_out = params['plate_color']
                 r.logo_out = params['car_logo']
                 r.park_id = params['park_id']
-                r.cam_id_out = params['cam_id']
+                r.cam_id_out = cam_id
                 r.cam_ip_out = params['cam_ip']
                 r.plate_val_out = True if params['plate_val'] == 'true' else False
                 r.confidence_out = params['confidence']

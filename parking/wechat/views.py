@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from meta import api
 from meta.models import Product, Order
+from device.models import Camera
 #from meta.decorators import user_required
 from realtime.models import InAndOut, Bill, OpeningOrder
 
