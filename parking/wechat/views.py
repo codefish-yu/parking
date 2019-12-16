@@ -83,16 +83,19 @@ def createBill(in_and_out):
 def parkin(request, user, parkinglot_id, gate_id):
     '''卡口扫码入场'''
 
-    r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, gate_in_id=gate_id, user=user, status__lte=0).first()
+    camera = Camera.objects.filter(gate_id=gate_id).first()
+
+    r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, camera_in=camera, user=user, status__lte=0).first()
     if not r:
         r = InAndOut.objects.create(
             status=-1, # -1  等待开闸入场
             user=user, 
             enter_type=1, 
-            gate_in_id=gate_id,
+            camera_in=camera,
             parkinglot_id=parkinglot_id, 
             in_time=datetime.datetime.now(),
         )
+
     createOpenOrder(parkinglot_id, gate_id, r)
 
     ctx = {'r': r}
@@ -150,7 +153,9 @@ def parkout(request, user, parkinglot_id, gate_id=None):
             if r:
                 # 计算费用
                 r = r.first()
-
+                if gate_id:
+                    camera = Camera.objects.filter(gate_id=gate_id).first()
+                    r.camera_out = camera
                 r.out_time = datetime.datetime.now()
                 r.leave_type = 1
                
@@ -171,7 +176,10 @@ def parkout(request, user, parkinglot_id, gate_id=None):
             if r.bill.status == 0: # 未支付
                 r.out_time = datetime.datetime.now()
                 r.leave_type = 1
-               
+                if gate_id:
+                    camera = Camera.objects.filter(gate_id=gate_id).first()
+                    r.camera_out = camera
+
                 r.save()
                 bill = createBill(r)
 

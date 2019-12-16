@@ -55,9 +55,11 @@ def parkin(request):
 
     params = get_params(request)
     print(params['cam_id'])
+    
+    camera = Camera.objects.filter(mac_address=cam_id).first()
+
     if 'type'in params and params['type'] == 'heartbeat':
         cam_id = params['cam_id']
-        camera = Camera.objects.filter(mac_address=cam_id).first()
         if camera:
             if camera.gate:
                 open_order = OpeningOrder.objects.filter(gate=camera.gate, status=2)
@@ -96,8 +98,11 @@ def parkin(request):
                 vdc_type=params['vdc_type'],
                 triger_type_in=params['triger_type'],
                 vehicle_type_in=params['vehicle_type'],
-                status=0
+                status=0,
+                camera_in=camera,
+                parkinglot = camera.parkinglot
             )
+
 
         else:  # 出场
             number = params['plate_num']
@@ -117,6 +122,7 @@ def parkin(request):
                 r.vdc_type = params['vdc_type']
                 r.triger_type_out = params['triger_type']
                 r.vehicle_type_out = params['vehicle_type']
+                r.camera_out = camera
 
                 if r.bill and r.bill.status == 1:
                     print('sss')
@@ -131,26 +137,7 @@ def parkin(request):
                     )
                     b.save()
                     r.bill = b
-        
-        park_id = params['park_id']
-        parkinglot = ParkingLot.objects.filter(id=park_id)
-        if parkinglot.exists():
-            r.parkinglot = parkinglot.first()
-            
-        camera_id = params['cam_id']
-        camera = Camera.objects.filter(mac_address=camera_id)
-        if camera.exists():
-                         
-            if params['vdc_type'] == 'in':
-                r.camera_in = camera.first()
-                r.cam_id_in = camera_id
-            else:
-                r.camera_out = camera.first()
-                r.cam_id_out = camera_id
 
-            if not r.parkinglot and r.camera_in.parkinglot:
-                r.parkinglot = r.camera_in.parkinglot
-          
         # 保存汽车出入时抓拍的全景图和车牌特写图
         try: 
             picture = base64.b64decode(params['picture'].replace('-', '+').replace('.', '=').replace('_','/'))
@@ -214,7 +201,7 @@ def in_out(request):
 
     ctx = {}
 
-    records = InAndOut.objects.all()
+    records = InAndOut.objects.select_related('user', 'camera', 'parkinglot')
 
     if request.method == 'POST':
         action = request.POST.get('action', '')
