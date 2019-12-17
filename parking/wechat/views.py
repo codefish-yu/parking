@@ -5,7 +5,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from meta import api
 from meta.models import Product, Order
-from meta.decorators import user_required
+from device.models import Camera
+#from meta.decorators import user_required
 from realtime.models import InAndOut, Bill, OpeningOrder
 
 
@@ -15,6 +16,37 @@ import functools
 
 '''手机客户端 ''' 
 
+
+def user_required(func):
+
+    @functools.wraps(func)
+    def wrapper(request, *args, **kwargs):
+        from meta import api
+        
+        wrapper.__name__ = func.__name__
+
+        token = request.session['token'] if 'token' in request.session else ''
+        
+        if not token:
+            token = request.GET.get('token', '')
+            if token:
+                request.session['token'] = token
+
+        next_url = request.get_full_path()
+
+        if not token:
+            return redirect('/login/public/account/?next=' + next_url)
+
+        try:
+            user = api.check_token(token)
+        except APIError:
+            return redirect('/login/public/account/?next=' + next_url)
+
+        request.user = user
+        result = func(request, user=user, *args, **kwargs)
+        return result
+
+    return wrapper
 
 # 创建开闸指令
 def createOpenOrder(parkinglot_id, gate_id, in_and_out):
@@ -30,7 +62,7 @@ def createOpenOrder(parkinglot_id, gate_id, in_and_out):
         OpeningOrder.objects.create(parkinglot_id=parkinglot_id, gate_id=gate_id, status=2, in_and_out=in_and_out)
 
 
-
+# 计费
 def createBill(in_and_out):
     pass
     #  根据出入场的时间in_time, out_time , number, 计算收费
@@ -52,16 +84,19 @@ def createBill(in_and_out):
 def parkin(request, user, parkinglot_id, gate_id):
     '''卡口扫码入场'''
 
-    r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, gate_in_id=gate_id, user=user, status__lte=0).first()
+    camera = Camera.objects.filter(gate_id=gate_id).first()
+
+    r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, camera_in=camera, user=user, status__lte=0).first()
     if not r:
         r = InAndOut.objects.create(
             status=-1, # -1  等待开闸入场
             user=user, 
             enter_type=1, 
-            gate_in_id=gate_id,
+            camera_in=camera,
             parkinglot_id=parkinglot_id, 
             in_time=datetime.datetime.now(),
         )
+
     createOpenOrder(parkinglot_id, gate_id, r)
 
     ctx = {'r': r}
@@ -119,7 +154,9 @@ def parkout(request, user, parkinglot_id, gate_id=None):
             if r:
                 # 计算费用
                 r = r.first()
-
+                if gate_id:
+                    camera = Camera.objects.filter(gate_id=gate_id).first()
+                    r.camera_out = camera
                 r.out_time = datetime.datetime.now()
                 r.leave_type = 1
                
@@ -140,7 +177,10 @@ def parkout(request, user, parkinglot_id, gate_id=None):
             if r.bill.status == 0: # 未支付
                 r.out_time = datetime.datetime.now()
                 r.leave_type = 1
-               
+                if gate_id:
+                    camera = Camera.objects.filter(gate_id=gate_id).first()
+                    r.camera_out = camera
+
                 r.save()
                 bill = createBill(r)
 
@@ -253,10 +293,3 @@ def parkout(request, user, parkinglot_id, gate_id=None):
 #                         return JsonResponse({'success': True})
 #             return JsonResponse({'success': False})
 #     return render(request, 'public_count/number1.html', ctx)
-
-
-
-
-
-
-
