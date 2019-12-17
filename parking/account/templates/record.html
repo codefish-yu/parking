@@ -3,13 +3,13 @@
 <div id='total'>
 	{% include 'header.html' %}
 	<div id='onl'>
-		<span>只看特放</span>
+		<span id='spec'>{% if tip == 0 %}只看特放{% else %}查看全部{% endif %}</span>
 	</div>
 	{% for i in records %}
 	<div class="item">
 		<div class="le">
 			<div class="num">{{ i.number}} </div>
-			<div class="ti">{{i.out_time | date:'Y-m-d hh:mm:ss'}} ¥9.00</div>
+			<div class="ti">{{i.out_time | date:'Y-m-d H:m:s'}} ¥9.00</div>
 		</div>
 		<div class="ri">已支付</div>
 	</div>
@@ -17,6 +17,11 @@
 	{% include 'bottom.html' %}
 	
 </div>
+<form method="post" action="" id="status-form">
+	{% csrf_token%}
+	<input type="hidden" name="action" value="change">
+	<input type="hidden" name="status" value="{{tip}}">
+</form>
 <style type="text/css">
 	#total{
 		width: 100%;
@@ -55,4 +60,11 @@
 		color:gray;
 	}
 </style>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$('#spec').click(()=>(
+		$('#status-form').submit()
+	))
+	
+</script>
 {% endblock %}

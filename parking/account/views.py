@@ -70,7 +70,20 @@ def worker_login(request):
 def record(request):
 	ctx = {}
 	records = InAndOut.objects.order_by('-update_time').all()
-	
+	tip = 0
+
+	if request.method == 'POST':
+		action = request.POST.get('action','')
+		if action == 'change':
+			status = request.POST.get('status','')
+			if not int(status):
+				records = records.filter(is_spec=1).all()
+				tip = 1
+			else:
+				records = InAndOut.objects.order_by('-update_time').all()
+				tip = 0
+
+	ctx['tip'] =tip
 	ctx['records'] = records
 	return render(request,'record.html',ctx)
 
