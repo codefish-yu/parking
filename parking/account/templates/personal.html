@@ -3,7 +3,66 @@
 
 
 <div>
-	
+	<div id='fir'>
+		<img id='pic' src="/media/qrcode/code_3_9_0.png">
+		<div id='na'>姓名</div>
+	</div>
+	<div class="basic">
+		<div class="tit">上岗时间</div>
+		<div class="pro">2019-12-12 08:00</div>
+	</div>
+	<div class="basic">
+		<div class="tit">值班时长</div>
+		<div class="pro">1小时20分钟</div>
+	</div>
+	<div class="basic">
+		<div class="tit">特放车辆</div>
+		<div class="pro">12辆</div>
+	</div>
+	<div id='bt'>退出账号</div>
+	{% include 'bottom.html'%}
 </div>
+<style type="text/css">
+	#bt{
+		position: absolute;
+		bottom: 80px;
+		width: 60%;
+		background-color: blue;
+		color: white;
+		margin-left: 20%;
+		text-align: center;
+		height: 30px;
+		padding-top: 10px
+	}
+	.tit{
+		color: gray;
+		margin-bottom: 2%;
+		margin-left: 15px
+	}
+	#fir{
+		width: 100%;
+    	height: 160px;
+    	text-align: center;
+    	margin-top: 9%
+	}
+	#pic{
+		width: 100px;
+		height: 100px
+	}
+	#na{
+
+	}
+	.pro{
+		margin-bottom: 2%;
+		margin-left: 15px
+	}
+
+</style>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$('#bt').click(()=>(
+		console.log(1111)
+	))
+</script>
 
 {% endblock %}
