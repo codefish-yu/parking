@@ -317,30 +317,28 @@ def place(request):
 def calendar(request):
 	ctx = {}
 
-	year = datetime.datetime.now().year - 1
+	year = datetime.datetime.now().year
 
 	if request.method == 'POST':
 		action = request.POST.get('action')
 		if action == 'save':
 			ctx['year'] = year = request.POST.get('year', '')
-			workdays = request.POST.get('workdays', '')
-			nonworkdays = request.POST.get('nonworkdays', '')
+			workdays = request.POST.getlist('workdays', [])
+			nonworkdays = request.POST.getlist('nonworkdays', [])
 
 			records = []
-			
+			print(workdays)
 			Calendar.objects.filter(year=2019).delete()
 
 			if workdays:
-				days = workdays.split(';')
-				for i in days:
+				for i in workdays:
 					r = Calendar(day=i, ifwork=True, year=year)
 					records.append(r)
 				if records:
 					Calendar.objects.bulk_create(records)
 			records = []
 			if nonworkdays:
-				days = nonworkdays.split(';')
-				for i in days:
+				for i in nonworkdays:
 					r = Calendar(day=i, ifwork=False, year=year)
 					records.append(r)
 				if records:
@@ -357,8 +355,12 @@ def calendar(request):
 		nonworkdays.append(i.day)
 
 	ctx['year'] = year
+	# ctx['workdays'] = ['2019-01-06', '2019-01-07']
 	ctx['workdays'] = workdays
+	print(workdays)
+	# ctx['nonworkdays'] = ['2019-01-16', '2019-01-17']
 	ctx['nonworkdays'] = nonworkdays
+	print(nonworkdays)
 
 	return render(request, 'calendar.html', ctx)
 

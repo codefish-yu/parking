@@ -458,7 +458,21 @@
             addRagepickerClassBetweenDays('jqyc-range-choosen-between');
         }
     }
+    function create_id_by_date(year, month, day){
+        var id = year
+        if(month<10){
+            id = id + '-0'+ month
+        }else{
+            id = id + '-'+ month
+        }
 
+        if(day<10){
+            id = id + '-0'+ day
+        }else{
+            id = id + '-'+ day
+        }
+        return id
+    }
     function jqycGetMonthHTMLStringWithData(firstDay, month, year, days = 31) {
 
         if (firstDay == 0) {
@@ -484,7 +498,7 @@
                     workday = 'nonworkday'
                 }
 
-                var id = year + '-' + month + '-' + d
+                var id = create_id_by_date(year, month, d)
 
                 monthHTMLString = monthHTMLString +
                     '<td id="'+id+'" class="jqyc-not-empty-td jqyc-td '+ workday+' jqyc-day-' + d

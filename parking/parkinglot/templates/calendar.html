@@ -31,18 +31,55 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div>
-        <form action='' method="post">
-            <input type='hidden' name='workday' />
-            <input type='hidden' name='nonworkday' />
-            <select data-placeholder="应用到车场" class="form-control chosen-select" name="use_type">
-                <option value="">应用到车场</option>
-            </select>
-        </form>
-    </div>
-    <div class="calendar"></div>
-</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <ol class="col-lg-5 breadcrumb">
+                            <li>停车场管理</li>
+                            <li>日历管理</li>
+                        </ol>
+                        <div class="ibox-tools">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#" onclick="location.reload()"><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
+                                </li>
+                            </ul>
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" id="searchForm">
+                        <div class="form-inline ">
+                            <div class="form-inline">
+                                <form id='query_form' action='' method="post">
+                                    {% csrf_token %}
+                                    <input type='hidden' name='year' value="{{year}}" />
+                                    <input type='hidden' name='action' value="save" />
+
+                                    {% for i in workdays %}
+                                    <input type='hidden' name='workdays' value="{{i}}" />
+                                    {% endfor %}
+                                    {% for i in nonworkdays %}
+                                    <input type='hidden' name='nonworkdays' value="{{i}}" />
+                                    {% endfor %}
+                                    <button type="submit" class=" btn btn-primary model-btn"  >保存</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                         <div class="calendar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
 {% endblock %}
 
 {% block js %}
@@ -76,22 +113,34 @@
     $('table').on( 'click','.workday', function(){
         $(this).removeClass('workday')
         $(this).addClass('nonworkday')
+        var id = $(this).attr('id')
+
+        $('form').find('input[name=workdays][value='+id+']').remove()
+        $('form').append('<input type="hidden" name="nonworkdays" value="'+id+'" />')
     })
     $('table').on('click','.nonworkday',function(){
         $(this).removeClass('nonworkday')
         $(this).addClass('workday')
+        var id = $(this).attr('id')
+
+        $('form').find('input[name=nonworkdays][value='+id+']').remove()
+        $('form').append('<input type="hidden" name="workdays" value="'+id+'" />')
     })
 </script>
 
 {% for i in workdays %}
 <script type="text/javascript">
-    
+    var id = '{{i}}'
+    $('#'+id).removeClass('nonworkday')
+    $('#'+id).addClass('workday')
 </script>
 {% endfor %}
 
 {% for i in nonworkdays %}
 <script type="text/javascript">
-    
+    var id = '{{i}}'
+    $('#'+id).removeClass('workday')
+    $('#'+id).addClass('nonworkday')
 </script>
 {% endfor %}
 

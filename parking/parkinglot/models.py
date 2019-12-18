@@ -77,7 +77,7 @@ class Calendar(models.Model):
 	class Meta:
 		verbose_name = verbose_name_plural = '自定义工作日、非工作日(默认是按周内周末划分)'
 
-	parkinglot = models.ForeignKey(ParkingLot, on_delete=models.CASCADE)
+	parkinglot = models.ForeignKey(ParkingLot, null=True, on_delete=models.CASCADE)
 	day = models.DateField(verbose_name='自定义日期')
 	ifwork = models.BooleanField(verbose_name='是否工作日')
 	year = models.IntegerField(verbose_name='年份')
