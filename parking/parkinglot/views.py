@@ -59,10 +59,12 @@ def gate(request):
 			t = request.POST.get('use_type','')
 			if t:
 				t=int(t)
-			if t == 1 or t==2:
+			if t == 1:
 				url = 'http://parking.metatype.cn/wechat/parkin/'+str(r.parkinglot.id)+'/'+str(r.id)+'/'
+			elif t==2:
+				url = 'http://parking.metatype.cn/wechat/parkout/'+str(r.parkinglot.id)+'/'+str(r.id)+'/'
 			elif t == 0:
-				url = 'http://parking.metatype.cn/wechat/parkin/'+str(r.parkinglot.id)+'/'
+				url = 'http://parking.metatype.cn/wechat/parkout/'+str(r.parkinglot.id)+'/'
 			c_name = 'code_'+str(r.parkinglot.id)+'_'+str(r.id)+'_'+str(t)	
 			r.code = make_qrcode(url,c_name+'.png')
 			r.save()

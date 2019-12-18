@@ -61,6 +61,8 @@ class InAndOut(models.Model):
 
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name='停车用户')
     bill = models.OneToOneField('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单',related_name='InAndOut')
+    is_spec = models.IntegerField(default=0,choices=[(0,'正常'),(1,'特殊')])
+    remark = models.CharField(max_length=30,null=True, verbose_name='备注信息')
     # params = {
     #     'type': 'online', 
     #     'mode': '5', 

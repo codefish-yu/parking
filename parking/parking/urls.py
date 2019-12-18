@@ -107,6 +107,8 @@ urlpatterns = [
     path('account/correct/',ac.correct),
     path('account/home/',ac.home),
     path('account/login/',ac.worker_login),
+    path('account/record/',ac.record),
+    path('account/personal/',ac.personal)
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
