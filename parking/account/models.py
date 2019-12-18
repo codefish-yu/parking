@@ -1,6 +1,8 @@
 from django.db import models
 from realtime.models import InAndOut 
 from meta.models import *
+from meta.models import User
+
 
 # Create your models here.
 
@@ -16,6 +18,8 @@ class WorkRecord(models.Model):
 	time = models.DateTimeField(null=True,verbose_name='上岗时间')
 	duration = models.FloatField(default=0,verbose_name='值班时长')
 	spec_num = models.IntegerField(default=0,verbose_name='特放车辆')
+	worker = models.ForeignKey(User,on_delete=models.SET_NULL,verbose_name='员工',null=True)
+
 			
 	
 		

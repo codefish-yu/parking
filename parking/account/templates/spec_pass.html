@@ -3,7 +3,9 @@
 {% block content %}
 <div id='total'>
 	{% include 'header.html' %}
-	<div id='con'>
+	{% if record %}
+	<div class='con'>
+
 		<img src="{% if tip == 0 %}{{ record.picture_in.url}}{% else %}{{ record.picture_in.url}}{% endif %}" id='im'>
 		<div>
 			<div class="number">{{ record.number}}</div>
@@ -12,8 +14,9 @@
 				<div>临停车</div>
 				{% elif type == 1%}
 				<div>月租车</div>
-				{% endif %}
 				<div>显示月租有效期</div>
+				{% endif %}
+				
 			</div>
 			
 			
@@ -55,13 +58,21 @@
 		 {% csrf_token %}
 		<input type="hidden" name="action" value="check">
 	</form>
+	{% else %}
+	<div class="con non">记录为空</div>
+	{% endif %}
 	{% include 'bottom.html' %}
 </div>
 <div id='pass'>
+	<form method="post" action="" id='pass-form'>
+		<input type="hidden" name="action" value="pass">
+		<input type="hidden" name="remark">
+		<input type="hidden" name="id" value="{{record.id}}">
+	</form>
 	<div id='p_con'>
-		<div id='canc'>x</div>
+		<div id='canc'><img src="/static/img/Cancel.svg"> </div>
 		<div id='mark'>特放备注</div>
-		<div>
+		<div id='s_con'>
 			<div class="car">
 				<div class="c_item">押钞车</div>
 				<div class="c_item">老干部</div>
@@ -74,23 +85,66 @@
 				<div class="c_item">危险品车</div>
 				<div class="c_item">残疾证</div>
 			</div>
-			<div id='voic'>voice</div>
+			<div id='voic'><img src="/static/img/voice.svg"> </div>
 			<div id='conf'>确认</div>
 		</div>
 	</div>
 </div>
 <style type="text/css">
+	.non{
+		text-align: center;
+	}
+	#conf{
+		text-align: center;
+		width: 60%;
+		margin-left: 20%;
+		color: white;
+		background-color: #3366CC;
+		height: 12%;
+		padding-top: 5%
+	}
+	#voic{
+		text-align: center;
+		width: 100%;
+		margin: 10% 0 5% 0;
+
+	}
+	#voic img{
+		width: 70px;
+		height: 70px
+	}
+	.car{
+		width: 100%;
+		text-align: center;
+		padding-top: 7%
+	}
+	.c_item{
+		display: inline-block;
+		width: 35%;
+		border: 1px solid gray;
+		background-color: white
+	}
+	#s_con{
+		background-color: white;
+		height: 80%
+	}
 	#mark{
 		text-align: center;
-		background-color: blue;
-		color: white
+		background-color:  #3366CC;
+		color: white;
+		height: 10%;
+		padding-top: 3%
 	}
 	#canc{
 		text-align: right;
+		height: 10%
+	}
+	#canc img{
+		width: 10%
 	}
 	#p_con{
 		width: 60%;
-    	height: 300px;
+    	height: 400px;
     	margin: 20% 0 0 15%;
 	}
 	.price{
@@ -130,7 +184,7 @@
 		font-size: 15px;
 		text-align: center;
 		width: 29%;
-		background-color: #3F51B5;
+		background-color:#3366CC;
 		margin: 0% 8%;
 		color:white;
 		height: 33px;
@@ -140,7 +194,7 @@
 		margin-bottom: 10px;
 		color: gray;
 	}
-	#con{
+	.con{
 		margin-top: 50px
 	}
 	#total{
@@ -161,14 +215,37 @@
 {% block js %}
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
-	$('#pas').click(()=>(
-		$('#pass').toggle()
-		
+	function setColor(){
+		for(let a =0;a<$('.c_item').length;a++){
+			$('.c_item').eq(a).css('background-color','white')
+		}
+	}
+	$(document).ready(()=>(
+		$('.non').css('height',window.innerHeight-100)
 	))
-
+	$('#conf').click(()=>(
+		$('#pass-form').submit()
+	))
+	$('#pas').click(()=>(
+		$('#pass').toggle()	
+	))
+	$('#canc img').click(()=>(
+		setColor(),
+		$('#pass-form input[name=remark]').val(''),
+		$('#pass').toggle()	
+	))
 	$('#que').click(() => (
 		window.location.href='/account/record/'
 	))
+	$('.c_item').click(function(){
+		if($(this).css('background-color') == "rgb(0, 0, 255)"){
+			$(this).css('background-color','white')
+		}else{
+			setColor();
+			$('#pass-form input[name=remark]').val($(this).text());
+			$(this).css('background-color','blue')
+		}
+	})
 	// var inter = setInterval(check,50);
 	// function check(){
 	// 	$('#info_form').submit()
