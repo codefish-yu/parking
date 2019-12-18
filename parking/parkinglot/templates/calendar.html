@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="http://cdn.bootstrapmb.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <!-- Javascripts -->
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/popper.min.js"></script>
+    <!-- Project Files -->
+    <link rel="stylesheet" href="/static/css/jquery.bootstrap.year.calendar.css">
+    <script src="/static/js/jquery.bootstrap.year.calendar.js"></script>
+    <!--Title-->
+    <title>车场日历</title>
+    <style type="text/css">
+        .workday{
+            color:black;
+        }
+        .nonworkday{
+            background: #f7caca;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+{% extends 'iframe.html' %}
+{% block css %}
+    <link rel="stylesheet" href="/static/css/jquery.bootstrap.year.calendar.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div>
+        <form action='' method="post">
+            <input type='hidden' name='workday' />
+            <input type='hidden' name='nonworkday' />
+            <select data-placeholder="应用到车场" class="form-control chosen-select" name="use_type">
+                <option value="">应用到车场</option>
+            </select>
+        </form>
+    </div>
+    <div class="calendar"></div>
+</div>
+{% endblock %}
+
+{% block js %}
+
+<script src="/static/js/popper.min.js"></script>
+<script src="/static/js/jquery.bootstrap.year.calendar.js"></script>
+
+
+<script>
+    var year = parseInt({{year}})
+
+    $('.calendar').calendar({'startYear': year});
+
+    // $('.calendar').on('jqyc.changeYearToPrevious', function (event) {
+    //     var currentYear = $(this).find('.jqyc-change-year').data('year');
+    //     console.log(currentYear);
+    // });
+
+    // $('.calendar').on('jqyc.changeYearToNext', function (event) {
+    //     var currentYear = $(this).find('.jqyc-next-year').data('year');
+    //     console.log(currentYear);
+    // });
+
+    // $('.calendar').on('jqyc.dayChoose', function (event) {
+    //     var choosenYear = $(this).data('year');
+    //     var choosenMonth = $(this).data('month');
+    //     var choosenDay = $(this).data('day-of-month');
+    //     var date = new Date(choosenYear, choosenMonth, choosenDay);
+    //     console.log(date);
+    // });
+    $('table').on( 'click','.workday', function(){
+        $(this).removeClass('workday')
+        $(this).addClass('nonworkday')
+    })
+    $('table').on('click','.nonworkday',function(){
+        $(this).removeClass('nonworkday')
+        $(this).addClass('workday')
+    })
+</script>
+
+{% for i in workdays %}
+<script type="text/javascript">
+    
+</script>
+{% endfor %}
+
+{% for i in nonworkdays %}
+<script type="text/javascript">
+    
+</script>
+{% endfor %}
+
+{% endblock %}

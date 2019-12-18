@@ -54,6 +54,8 @@ urlpatterns = [
 
     # car 
     path('car/inner_car/', car.inner_car),  
+    
+
     # parkinglot
 
     path('parkinglot/parking_lot/',park.parking_lot),
@@ -61,6 +63,7 @@ urlpatterns = [
     path('parkinglot/worker/', park.worker),
     path('parkinglot/zone/',park.zone),
     path('parkinglot/place/',park.place),
+    path('parkinglot/calendar/',park.calendar),
 
 
 

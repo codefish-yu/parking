@@ -4,8 +4,13 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from .models import *
-from administrator.decorators import page, _save_attr_
 from meta.qrcode import make_qrcode
+from administrator.decorators import page, _save_attr_
+
+
+import datetime
+
+
 '''停车场管理模块'''
 
 # 停车场管理
@@ -307,7 +312,53 @@ def place(request):
 	return (ctx,'place.html')
 
 
+def calendar(request):
+	ctx = {}
 
+	year = datetime.datetime.now().year - 1
+
+	if request.method == 'POST':
+		action = request.POST.get('action')
+		if action == 'save':
+			ctx['year'] = year = request.POST.get('year', '')
+			workdays = request.POST.get('workdays', '')
+			nonworkdays = request.POST.get('nonworkdays', '')
+
+			records = []
+			
+			Calendar.objects.filter(year=2019).delete()
+
+			if workdays:
+				days = workdays.split(';')
+				for i in days:
+					r = Calendar(day=i, ifwork=True, year=year)
+					records.append(r)
+				if records:
+					Calendar.objects.bulk_create(records)
+			records = []
+			if nonworkdays:
+				days = nonworkdays.split(';')
+				for i in days:
+					r = Calendar(day=i, ifwork=False, year=year)
+					records.append(r)
+				if records:
+					Calendar.objects.bulk_create(records)
+
+	days = Calendar.objects.filter(year=year, ifwork=True)
+	workdays = []
+	for i in days:
+		workdays.append(i.day)
+	
+	days = Calendar.objects.filter(year=year, ifwork=False)
+	nonworkdays = []
+	for i in days:
+		nonworkdays.append(i.day)
+
+	ctx['year'] = year
+	ctx['workdays'] = workdays
+	ctx['nonworkdays'] = nonworkdays
+
+	return render(request, 'calendar.html', ctx)
 
 
 
