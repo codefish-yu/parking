@@ -16,7 +16,6 @@ class ParkingLot(models.Model):
     place_num = models.IntegerField(default=0,verbose_name='车位数')
 
 
-
 class Gate(models.Model):
 	class meta:
 		verbose_name = verbose_name_plural = '进出口管理'
@@ -34,6 +33,7 @@ class Gate(models.Model):
 	monitor = models.CharField(max_length=30,blank=True,verbose_name='所属监控')
 	charge_rule = models.IntegerField(choices=rules,verbose_name='收费规则',default=0)
 	code = models.ImageField(null=True,upload_to='qrcode/',verbose_name='二维码')
+
 
 class Worker(models.Model):
     class Meta:
@@ -62,18 +62,26 @@ class Zone(models.Model):
 	place_num = models.IntegerField(default=0,null=True, verbose_name='泊位数')
 
 
-
-
 class Place(models.Model):
 	class Meta:
 		verbose_name = verbose_name_plural = '泊位管理'
-
 
 	status = models.IntegerField(default=0)
 	car_type = models.IntegerField(null=True, choices=[(0,'小型车'),(1,'中型车'),(2,'大型车')], verbose_name='车辆类型')
 	use_type = models.IntegerField(verbose_name='使用类型',choices=[(0,'临停车'),(1,'月租车')] ,default=0,null=True)
 	parkinglot = models.ForeignKey('ParkingLot',null=True,on_delete=models.CASCADE,verbose_name='所属车场')
 	zone = models.ForeignKey('Zone',null=True,on_delete=models.CASCADE,verbose_name='所属区域')
+
+
+class Calendar(models.Model):
+	class Meta:
+		verbose_name = verbose_name_plural = '自定义工作日、非工作日(默认是按周内周末划分)'
+
+	parkinglot = models.ForeignKey(ParkingLot, null=True, on_delete=models.CASCADE)
+	day = models.DateField(verbose_name='自定义日期')
+	ifwork = models.BooleanField(verbose_name='是否工作日')
+	year = models.IntegerField(verbose_name='年份')
+
 
 
 
