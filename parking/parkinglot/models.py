@@ -1,4 +1,5 @@
 from django.db import models
+from meta.models import User
 
 # Create your models here.
 
@@ -47,6 +48,7 @@ class Worker(models.Model):
     is_delete = models.IntegerField(choices=[(0, '否'),(1, '是')], default=0, verbose_name='是否删除')
     forbidden = models.IntegerField(choices=[(0, '启用'),(1, '禁用')], default=0,  verbose_name='是否禁用')
     parkinglot = models.ForeignKey(ParkingLot, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='所属车场')
+    user = models.ForeignKey(User,verbose_name='员工微信',null=True,on_delete=models.SET_NULL,blank=True)
 
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True)

@@ -4,20 +4,20 @@
 
 <div>
 	<div id='fir'>
-		<img id='pic' src="/media/qrcode/code_3_9_0.png">
-		<div id='na'>姓名</div>
+		<img id='pic' src="{{wuser.picture.url}}">
+		<div id='na'>{{record.user.name}} </div>
 	</div>
 	<div class="basic">
 		<div class="tit">上岗时间</div>
-		<div class="pro">2019-12-12 08:00</div>
+		<div class="pro">{{record.time |date:'Y-M-d H:m:s'}} </div>
 	</div>
 	<div class="basic">
 		<div class="tit">值班时长</div>
-		<div class="pro">1小时20分钟</div>
+		<div class="pro">{{record.duration}} </div>
 	</div>
 	<div class="basic">
 		<div class="tit">特放车辆</div>
-		<div class="pro">12辆</div>
+		<div class="pro">{{record.spec_num}} </div>
 	</div>
 	<div id='bt'>退出账号</div>
 	{% include 'bottom.html'%}

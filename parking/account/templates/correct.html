@@ -5,7 +5,7 @@
 	{% include 'header.html' %}
 	
 	<div class='con'>
-		<img src="{% if tip == 0 %}{{ record.picture_in.url}}{% else %}{{ record.picture_in.url}}{% endif %}" id='im'>
+		<img src="{{ record.picture.url}}" id='im'>
 		<div id='form-con'>
 			<form method="post" action="" id='corr-form'>
 				<input type="text" name="num_1" class="inp"  oninput="toNext(1)">

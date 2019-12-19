@@ -6,7 +6,7 @@
 	{% if record %}
 	<div class='con'>
 
-		<img src="{% if tip == 0 %}{{ record.picture_in.url}}{% else %}{{ record.picture_in.url}}{% endif %}" id='im'>
+		<img src="{% if p == 0 %}{{ record.picture_out.url}}{% else %}{{ record.picture_in.url}}{% endif %}" id='im'>
 		<div>
 			<div class="number">{{ record.number}}</div>
 			<div class="ty">
@@ -23,7 +23,7 @@
 		</div>
 		<div>
 			<div class="item">计费时长:</div>
-			<div class="item"></div>
+			<div class="item">{{record.get_duration}}</div>
 		</div>
 		<div>
 			<div class="item">入场时间:</div>
@@ -42,12 +42,17 @@
 			{% endif %}
 		</div>
 		<div>
-			<div class="price">¥0</div>
+			<div class="price">¥{{record.get_price}}</div>
 			
 		</div>
 		<div>
+			{% if not record.in_time %}
 			<div class="item">需核实入场时间</div>
+			{% elif record.get_price == 0%}
 			<div class="item">无需缴费</div>
+			{% elif record.bill.status == 1%}
+			<div class="item">已线上缴费：¥{{record.get_price}} </div>
+			{% endif %}
 		</div>
 	</div>
 	<div class="bt">
@@ -214,7 +219,66 @@
 {% endblock %}
 {% block js %}
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="/static/js/Recorderjs/dist/recorder.js"></script>
 <script type="text/javascript">
+	var audio_context;
+  	var recorder;
+
+
+	function startUserMedia(){
+		var input = audio_context.createMediaStreamSource(stream);
+    	console.log('Media stream created.');
+		recorder = new Recorder(input);
+    	console.log('Recorder initialised.');
+
+	}
+
+
+	function startRecord(button){
+		recorder && recorder.record();
+	    button.disabled = true;
+	    button.nextElementSibling.disabled = false;
+	    console.log('Recording...');
+	}
+
+	function stopRecording(button) {
+	    recorder && recorder.stop();
+	    button.disabled = true;
+	    button.previousElementSibling.disabled = false;
+	    console.log('Stopped recording.');
+	    
+	    // create WAV download link using audio data blob
+	    createDownloadLink();
+	    
+	    recorder.clear();
+	}
+
+	function createDownloadLink() {
+	    recorder && recorder.exportWAV(function(blob) {
+	     	console.log(blob)
+	    });
+	}
+
+
+	window.onload = function init() {
+	    try {
+	      // webkit shim
+	      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+	      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+	      window.URL = window.URL || window.webkitURL;
+	      
+	      audio_context = new AudioContext;
+	      console.log('Audio context set up.');
+	      console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+	    } catch (e) {
+	      console.log('No web audio support in this browser!');
+	    }
+	    
+	    navigator.getUserMedia({audio: true}, startUserMedia, function(e) {
+	      console.log('No live audio input: ' + e);
+	    });
+	};
+
 	function setColor(){
 		for(let a =0;a<$('.c_item').length;a++){
 			$('.c_item').eq(a).css('background-color','white')

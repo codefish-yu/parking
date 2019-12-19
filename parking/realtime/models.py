@@ -63,6 +63,7 @@ class InAndOut(models.Model):
     bill = models.OneToOneField('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单',related_name='InAndOut')
     is_spec = models.IntegerField(default=0,choices=[(0,'正常'),(1,'特殊')])
     remark = models.CharField(max_length=30,null=True, verbose_name='备注信息')
+    exception = models.IntegerField(default=0,choices=[(0,'正常'),(1,'异常')])
     # params = {
     #     'type': 'online', 
     #     'mode': '5', 
@@ -92,6 +93,11 @@ class InAndOut(models.Model):
 
     def plate_pic_out(self):
         return self.closeup_pic_out.url if self.closeup_pic_out else ''
+
+    def get_price(self):
+        return 2
+    def get_duration(self):
+        return 2
 
 
 class OpeningOrder(models.Model):
@@ -132,4 +138,27 @@ class PayDetail(models.Model):
     real_price = models.FloatField(default=0,verbose_name='实收费用')
 
  
+class ExceptRecord(models.Model):
+    class Meta:
+        verbose_name=verbose_name_plural='异常记录'
+
+
+    picture = models.ImageField(null=True, upload_to='car/%Y/%m/%d', verbose_name='车辆图片')
+    closeup_pic = models.ImageField(null=True, upload_to='plate/%Y/%m/%d', verbose_name='车牌图片')
+    cam_id = models.CharField(max_length=100, null=True, verbose_name='camera_id(Mac地址)')
+    camera = models.ForeignKey(Camera, related_name='except_camera', null=True, on_delete=models.SET_NULL, verbose_name='摄像头')
+    gate = models.ForeignKey(Gate, related_name='except_gate', null=True, on_delete=models.SET_NULL, verbose_name='口')
+    direction = models.IntegerField(default=0,verbose_name='方向',choices=[(0,'出'),(1,'入')])
+    plate_color = models.CharField(max_length=100, null=True,verbose_name='车牌颜色')
+    logo = models.CharField(max_length=200, null=True,verbose_name='logo')
+    park_id = models.CharField(max_length=100, null=True,verbose_name='park_id')
+    cam_ip = models.CharField(max_length=100, null=True, verbose_name='IP地址')
+    plate_val = models.BooleanField(default=True, verbose_name='是否虚假车牌')
+    confidence = models.FloatField(null=True, verbose_name='置信度')
+    color = models.CharField(max_length=100, null=True,verbose_name='车辆颜色')
+    vdc_type = models.CharField(max_length=100, null=True, verbose_name='出入口类型')
+    triger_type = models.CharField(max_length=100, null=True, verbose_name='触发类型')
+    vehicle_type = models.CharField(max_length=100, null=True,verbose_name='车辆类型')
+    time = models.DateTimeField(null=True, verbose_name='识别时间')
+
 
