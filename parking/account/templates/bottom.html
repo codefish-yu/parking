@@ -1,0 +1,31 @@
+<div id='bottom'>
+	<div id='park'>停车场</div>
+	<div id='my'>账号</div>
+</div>
+<style type="text/css">
+	#bottom{
+		position: absolute;
+		/*margin-top: calc(100%-100px);*/
+		font-size: 18px;
+		height: 50px;
+		bottom: 0;
+		width: 100%;
+		background-color: rgba(195, 182, 176, 0.13);
+		
+	}
+	#bottom div{
+		display: inline-block;
+		width: 49%;
+		text-align: center;
+		padding-top: 3%
+	}
+</style>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$('#my').click(()=>(
+		window.location.href='/account/personal/'
+	))
+	$('#park').click(()=>(
+		window.location.href='/account/spec_pass/'
+	))
+</script>

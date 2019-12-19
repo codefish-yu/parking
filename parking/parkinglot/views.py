@@ -4,8 +4,13 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from .models import *
-from administrator.decorators import page, _save_attr_
 from meta.qrcode import make_qrcode
+from administrator.decorators import page, _save_attr_
+
+
+import datetime
+
+
 '''停车场管理模块'''
 
 # 停车场管理
@@ -54,10 +59,12 @@ def gate(request):
 			t = request.POST.get('use_type','')
 			if t:
 				t=int(t)
-			if t == 1 or t==2:
+			if t == 1:
 				url = 'http://parking.metatype.cn/wechat/parkin/'+str(r.parkinglot.id)+'/'+str(r.id)+'/'
+			elif t==2:
+				url = 'http://parking.metatype.cn/wechat/parkout/'+str(r.parkinglot.id)+'/'+str(r.id)+'/'
 			elif t == 0:
-				url = 'http://parking.metatype.cn/wechat/parkin/'+str(r.parkinglot.id)+'/'
+				url = 'http://parking.metatype.cn/wechat/parkout/'+str(r.parkinglot.id)+'/'
 			c_name = 'code_'+str(r.parkinglot.id)+'_'+str(r.id)+'_'+str(t)	
 			r.code = make_qrcode(url,c_name+'.png')
 			r.save()
@@ -307,7 +314,55 @@ def place(request):
 	return (ctx,'place.html')
 
 
+def calendar(request):
+	ctx = {}
 
+	year = datetime.datetime.now().year
+
+	if request.method == 'POST':
+		action = request.POST.get('action')
+		if action == 'save':
+			ctx['year'] = year = request.POST.get('year', '')
+			workdays = request.POST.getlist('workdays', [])
+			nonworkdays = request.POST.getlist('nonworkdays', [])
+
+			records = []
+			print(workdays)
+			Calendar.objects.filter(year=2019).delete()
+
+			if workdays:
+				for i in workdays:
+					r = Calendar(day=i, ifwork=True, year=year)
+					records.append(r)
+				if records:
+					Calendar.objects.bulk_create(records)
+			records = []
+			if nonworkdays:
+				for i in nonworkdays:
+					r = Calendar(day=i, ifwork=False, year=year)
+					records.append(r)
+				if records:
+					Calendar.objects.bulk_create(records)
+
+	days = Calendar.objects.filter(year=year, ifwork=True)
+	workdays = []
+	for i in days:
+		workdays.append(i.day)
+	
+	days = Calendar.objects.filter(year=year, ifwork=False)
+	nonworkdays = []
+	for i in days:
+		nonworkdays.append(i.day)
+
+	ctx['year'] = year
+	# ctx['workdays'] = ['2019-01-06', '2019-01-07']
+	ctx['workdays'] = workdays
+	print(workdays)
+	# ctx['nonworkdays'] = ['2019-01-16', '2019-01-17']
+	ctx['nonworkdays'] = nonworkdays
+	print(nonworkdays)
+
+	return render(request, 'calendar.html', ctx)
 
 
 

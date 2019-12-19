@@ -54,6 +54,8 @@ urlpatterns = [
 
     # car 
     path('car/inner_car/', car.inner_car),  
+    
+
     # parkinglot
 
     path('parkinglot/parking_lot/',park.parking_lot),
@@ -61,6 +63,7 @@ urlpatterns = [
     path('parkinglot/worker/', park.worker),
     path('parkinglot/zone/',park.zone),
     path('parkinglot/place/',park.place),
+    path('parkinglot/calendar/',park.calendar),
 
 
 
@@ -104,6 +107,8 @@ urlpatterns = [
     path('account/correct/',ac.correct),
     path('account/home/',ac.home),
     path('account/login/',ac.worker_login),
+    path('account/record/',ac.record),
+    path('account/personal/',ac.personal)
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

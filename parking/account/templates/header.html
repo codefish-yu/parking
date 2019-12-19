@@ -1,0 +1,44 @@
+<div id='head'>
+	<div >
+		<span id='in_p' {% if p == 1 %}class="active"{% endif %}>入场</span>
+	</div>
+	
+	<div >
+		<span id='out_p' {% if p == 0 %}class="active"{% endif %}>出场</span>
+	</div>
+	<form method="post" action="" id='in-form'>
+		<input type="hidden" name="action" value="in">
+	</form>
+	<form method="post" action="" id='out-form'>
+		<input type="hidden" name="action" value="out">
+	</form>
+</div>
+<style type="text/css">
+	#head{
+		position: absolute;
+		top: 0;
+		font-size: 18px;
+		height: 50px;
+		width: 100%;
+	}
+	#head div{
+		display: inline-block;
+		width: 49%;
+		text-align: center;
+		padding-top: 3%;
+	}
+	.active{
+		border-bottom: 1px solid blue;
+		padding-bottom: 10px;
+		color: blue
+	}
+</style>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$('#in_p').click(()=>(
+		$('#in-form').submit()
+	))
+	$('#out_p').click(()=>(
+		$('#out-form').submit()
+	))
+</script>

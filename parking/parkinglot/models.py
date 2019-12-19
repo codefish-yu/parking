@@ -1,4 +1,5 @@
 from django.db import models
+from meta.models import User
 
 # Create your models here.
 
@@ -14,7 +15,6 @@ class ParkingLot(models.Model):
     name = models.CharField(max_length=30,verbose_name='停车场名称')
     zone_num = models.IntegerField(default=0,verbose_name='区域数')
     place_num = models.IntegerField(default=0,verbose_name='车位数')
-
 
 
 class Gate(models.Model):
@@ -35,6 +35,7 @@ class Gate(models.Model):
 	charge_rule = models.IntegerField(choices=rules,verbose_name='收费规则',default=0)
 	code = models.ImageField(null=True,upload_to='qrcode/',verbose_name='二维码')
 
+
 class Worker(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = '车场员工'
@@ -47,6 +48,7 @@ class Worker(models.Model):
     is_delete = models.IntegerField(choices=[(0, '否'),(1, '是')], default=0, verbose_name='是否删除')
     forbidden = models.IntegerField(choices=[(0, '启用'),(1, '禁用')], default=0,  verbose_name='是否禁用')
     parkinglot = models.ForeignKey(ParkingLot, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='所属车场')
+    user = models.ForeignKey(User,verbose_name='员工微信',null=True,on_delete=models.SET_NULL,blank=True)
 
     create_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     update_time = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -62,18 +64,26 @@ class Zone(models.Model):
 	place_num = models.IntegerField(default=0,null=True, verbose_name='泊位数')
 
 
-
-
 class Place(models.Model):
 	class Meta:
 		verbose_name = verbose_name_plural = '泊位管理'
-
 
 	status = models.IntegerField(default=0)
 	car_type = models.IntegerField(null=True, choices=[(0,'小型车'),(1,'中型车'),(2,'大型车')], verbose_name='车辆类型')
 	use_type = models.IntegerField(verbose_name='使用类型',choices=[(0,'临停车'),(1,'月租车')] ,default=0,null=True)
 	parkinglot = models.ForeignKey('ParkingLot',null=True,on_delete=models.CASCADE,verbose_name='所属车场')
 	zone = models.ForeignKey('Zone',null=True,on_delete=models.CASCADE,verbose_name='所属区域')
+
+
+class Calendar(models.Model):
+	class Meta:
+		verbose_name = verbose_name_plural = '自定义工作日、非工作日(默认是按周内周末划分)'
+
+	parkinglot = models.ForeignKey(ParkingLot, null=True, on_delete=models.CASCADE)
+	day = models.DateField(verbose_name='自定义日期')
+	ifwork = models.BooleanField(verbose_name='是否工作日')
+	year = models.IntegerField(verbose_name='年份')
+
 
 
 
