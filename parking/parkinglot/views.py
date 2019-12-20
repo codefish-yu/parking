@@ -325,10 +325,11 @@ def calendar(request):
 			ctx['year'] = year = request.POST.get('year', '')
 			workdays = request.POST.getlist('workdays', [])
 			nonworkdays = request.POST.getlist('nonworkdays', [])
-
+			year = int(year)
+			
 			records = []
 			print(workdays)
-			Calendar.objects.filter(year=2019).delete()
+			Calendar.objects.filter(year=year).delete()
 
 			if workdays:
 				for i in workdays:
@@ -344,15 +345,18 @@ def calendar(request):
 				if records:
 					Calendar.objects.bulk_create(records)
 
+		if action == 'change_year':
+			ctx['year'] = year = request.POST.get('year', '')
+
 	days = Calendar.objects.filter(year=year, ifwork=True)
 	workdays = []
 	for i in days:
-		workdays.append(i.day)
+		workdays.append(i.day.strftime('%Y-%m-%d'))
 	
 	days = Calendar.objects.filter(year=year, ifwork=False)
 	nonworkdays = []
 	for i in days:
-		nonworkdays.append(i.day)
+		nonworkdays.append(i.day.strftime('%Y-%m-%d'))
 
 	ctx['year'] = year
 	# ctx['workdays'] = ['2019-01-06', '2019-01-07']

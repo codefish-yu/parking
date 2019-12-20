@@ -1,0 +1,240 @@
+{% extends 'iframe.html' %}
+{% block content %}
+<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <ol class="col-lg-5 breadcrumb">
+                            <li>计费规则设置</li>
+                            <li>模拟计费</li>
+                        </ol>
+                        <div class="ibox-tools">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user">
+                                <li>
+                                    <a href="#" onclick="location.reload()"><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
+                                </li>
+                            </ul>
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                   
+                    <div class="ibox-content">
+                        <div class='form-inline'>
+                            <form id='query_form' action='' method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">车   牌 </label>
+                                    <div class="col-md-4">
+                                        <input type="text" name="car_number" class="form-control required" value="{{ car_number }}">
+                                    </div>
+                                    <label class="col-md-2 control-label">所属车场</label>
+                                    <div class="col-md-4">
+                                        <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='company_add' name="parkinglot_id" style="display: none;width: 100%">
+                                            <option value=''>选择停车场</option>
+                                            {% for i in parkinglots %}
+                                                <option value='{{i.id}}'
+                                                {% if i.id == parkinglot_id %}selected{% endif %}
+                                                >{{i.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">开始时间</label>
+                                    <div class="col-md-4">
+                                        <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="in_time" id='in_time'>
+                                    </div>
+                                    <label class="col-md-2 control-label">结束时间</label>
+                                    <div class="col-md-4">
+                                        <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="out_time" id="out_time">
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">优惠券类型&nbsp;&nbsp;&nbsp;</label>
+                                    <div class="col-md-4">
+                                        <select data-placeholder="优惠券类型" class="form-control chosen-select" child-id='ticket_add' name="ticket_type" style="display: none;width: 100%">
+                                           <option value=''>优惠券类型</option>
+                                           <option value="0">打折券</option>
+                                           <option value="1">代金券</option>
+                                           <option value="2">抵扣券</option>
+                                           <option value="3">满时券</option>
+                                        </select>
+                                    </div>
+                                    <label class="col-md-1"></label>
+                                    <label class="col-md-1">券</label>
+                                    <div class="col-md-4">
+                                        <select data-placeholder="选择券" class="form-control chosen-select" name="ticket" id='ticket_add'
+                                        style="display: none;width: 100%">
+                                            <option value=''>选择券</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <br>
+                                <div id='coupons' class="form-group" style="width: 100%">
+                                </div>
+                                <br>  <br>   
+                                <div class="form-group">
+                                    <input type='hidden' name='action' value='charge' />
+                                    <button class="btn btn-primary search-btn" type="submit">
+                                        <i class="fa fa-search"></i> 计 算 
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                        {% if payment %}
+                        <div>
+                            <h4> 计算结果 :</h4>
+                            <p>车牌: <span>{{ car_number }}</span></p>
+                            <p>车场: <span>{{ parkinglot.name }}</span></p>
+                            {% if baserule %}
+                            <p>车场基本规则:</p>
+                            <p>免费时间: {{ baserule.free_time }} 分钟,
+                               起步计费: {{ baserule.min_price }} 元, 
+                               封顶时间: {{ baserule.day_max }} 小时, 
+                               小时单价: {{ baserule.per_hour }} 元/小时</p>
+                            {% endif %}
+                            {% if card %}
+                                <p>卡: <span>{{ card.my_card.name }}</span></p>
+                                <p>有效期: <span>{{ card.valid_start }} ~ {{ card.valid_end }}</span></p>
+                            {% else %}
+                                <p>无卡</p>
+                            {% endif %}
+
+                            <p>计费开始: {{ in_time }},  计费结束: {{ out_time }}</p>
+                            <p>优惠券: 
+                                {% for i in coupons %}
+                                    {{ i.name }} 、 
+                                {% endfor %}
+                            </p>
+                            <p>应收 : <span>{{ payment }} 元</span></p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block js %}
+ <script>
+    $('.chosen-select').chosen();
+    $('.chosen-select').next().css('width', '200px');
+    
+    var all_tickets = {{ all_tickets | safe }};
+
+
+    var in_time = { elem: "#in_time", format: "YYYY-MM-DD hh:mm:ss", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
+        laydate(in_time)
+
+     var out_time = { elem: "#out_time", format: "YYYY-MM-DD hh:mm:ss", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
+        laydate(out_time)
+
+    initValidator('#add_form','');
+    function initValidator(name,id){
+        $(name).bootstrapValidator({
+
+　　　　　　 message: 'This value is not valid',
+        　 feedbackIcons: {
+            　　　　　　　　valid: 'glyphicon glyphicon-ok',
+            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+        　　　　　　　　   },
+
+            fields: {
+                per_hour: {
+                    validators: {
+                        notEmpty: {
+                            message: '小时费不能为空'
+                        },
+                        regexp: {
+                            regexp: /^[-+]?[0-9]*\.?[0-9]+$/,
+                            message: '请输入整数或浮点数'
+                        }
+                    },    
+                },
+                day_max: {
+                    validators: {
+                        notEmpty: {
+                            message: '单日最大费用时段不能为空'
+                        },
+                        stringLength: {
+                            min: 0,
+                            max: 24,
+                            message: '时间应在0到24小时内'
+                        },
+                        regexp: {
+                            regexp: /^[-+]?[0-9]*\.?[0-9]+$/,
+                            message: '请输入整数或浮点数'
+                        },
+                    }
+                },
+                min_price: {
+                    validators: {
+                        notEmpty: {
+                            message: '最短计价时间不能为空'
+                        },
+                        regexp: {
+                            regexp: /^[0-9]+$/,
+                            message: '请输入整数'
+                        }
+                    }
+                },
+                free_time: {
+                    validators: {
+                        notEmpty: {
+                            message: '免费时间不能为空'
+                        },
+                        regexp: {
+                            regexp: /^[0-9]+$/,
+                            message: '请输入整数'
+                        }
+                    }
+                }
+
+            }
+        })
+    }
+
+
+    $('select[name=ticket_type]').on('change', function(){
+        console.info(typeof($(this).val()))
+        var tickets = all_tickets[parseInt($(this).val())]
+        var child_id = $(this).attr('child-id')
+        console.info(child_id)
+        console.info($('#'+child_id))
+        $('#coupons').html('')
+
+        $('#'+child_id).empty()
+        $('#'+child_id).chosen("destroy")
+        $('#'+child_id).append('<option value="" >选择券</option>')
+        if(tickets){
+            tickets.map((v,i)=>{
+                $('#'+child_id).append('<option value="'+v.id+'"> '+v.name+' </option>')
+            })
+        }
+        
+        $('#'+child_id).chosen({'width': '200px'});
+    })
+    
+    $('select[name=ticket]').on('change',function(){
+        $('#coupons').append(
+            '<input name="coupons" value="'+$(this).val()+'" type="hidden" />' +
+            '<span> '+ $(this).find("option:selected").text()+' </span> 、'
+            )
+    })
+
+</script>
+
+{% endblock %}

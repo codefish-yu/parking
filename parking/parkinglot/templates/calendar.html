@@ -55,7 +55,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="ibox-content" id="searchForm">
+                    <div class="ibox-content" style="padding-top: 5px;padding-bottom: 5px;border:none">
                         <div class="form-inline ">
                             <div class="form-inline">
                                 <form id='query_form' action='' method="post">
@@ -70,12 +70,18 @@
                                     <input type='hidden' name='nonworkdays' value="{{i}}" />
                                     {% endfor %}
                                     <button type="submit" class=" btn btn-primary model-btn"  >保存</button>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div class="ibox-content">
                          <div class="calendar"></div>
                     </div>
+                    <form id='change_year_form' action='' method="post">
+                        {% csrf_token %}
+                        <input type='hidden' name='year' />
+                        <input type='hidden' name='action' value="change_year" />
+                    </form>
                 </div>
             </div>
         </div>
