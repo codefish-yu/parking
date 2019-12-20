@@ -42,20 +42,10 @@
                             <li>日历管理</li>
                         </ol>
                         <div class="ibox-tools">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                <i class="fa fa-wrench"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-user">
-                                <li>
-                                    <a href="#" onclick="location.reload()"><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
-                                </li>
-                            </ul>
-                            <a class="collapse-link">
-                                <i class="fa fa-chevron-up"></i>
-                            </a>
+                            <a onclick="window.location.href=window.location.href; "><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
                         </div>
                     </div>
-                    <div class="ibox-content" id="searchForm">
+                    <div class="ibox-content" style="padding-top: 5px;padding-bottom: 5px;border:none">
                         <div class="form-inline ">
                             <div class="form-inline">
                                 <form id='query_form' action='' method="post">
@@ -70,12 +60,18 @@
                                     <input type='hidden' name='nonworkdays' value="{{i}}" />
                                     {% endfor %}
                                     <button type="submit" class=" btn btn-primary model-btn"  >保存</button>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div class="ibox-content">
                          <div class="calendar"></div>
                     </div>
+                    <form id='change_year_form' action='' method="post">
+                        {% csrf_token %}
+                        <input type='hidden' name='year' />
+                        <input type='hidden' name='action' value="change_year" />
+                    </form>
                 </div>
             </div>
         </div>

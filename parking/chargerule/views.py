@@ -374,13 +374,13 @@ def card(request):
     ctx ={}
     cards = Card.objects.filter(status=0).all()
     def correct_obj(request,r):
-        owner_id = request.POST.get('owner', '')
+        # owner_id = request.POST.get('owner', '')
         card_id = request.POST.get('my_card', '')
         suit = request.POST.getlist('suit',[])
-        if owner_id:
-            p = AdminUser.objects.filter(id=owner_id).first()
-            if p: 
-                r.owner = p
+        # if owner_id:
+        #     p = AdminUser.objects.filter(id=owner_id).first()
+        #     if p: 
+        #         r.owner = p
 
         if card_id:
             p = CardType.objects.filter(id=card_id).first()
@@ -459,7 +459,39 @@ def card(request):
     return (ctx, 'card.html')
 
 
+def chargedemo(request):
+    ctx = {}
+    if request.method == 'POST':
+        action = request.POST.get('action', '')
+        if action == 'charge':
+            from .charge import compute
 
+            ctx['coupons'] = coupons = request.POST.getlist('coupons', '')
+            ctx['in_time'] = in_time = request.POST.get('in_time', '')
+            ctx['out_time'] = out_time = request.POST.get('out_time', '')
+            ctx['car_number'] = car_number = request.POST.get('car_number', '')
+            ctx['parkinglot_id'] = parkinglot_id = int(request.POST.get('parkinglot_id', ''))
+
+            ctx['parkinglot'] = parkinglot = ParkingLot.objects.get(id=parkinglot_id)
+            ctx['baserule'] = baserule = BaseRule.objects.filter(parkinglot=parkinglot).first()
+            ctx['coupons'] = coupons = Coupons.objects.filter(id__in=coupons)
+            ctx['card'] = card = Card.objects.filter(car_number=car_number).first()
+
+            in_time = datetime.datetime.strptime(in_time, '%Y-%m-%d %H:%M:%S')
+            out_time = datetime.datetime.strptime(out_time, '%Y-%m-%d %H:%M:%S')
+            ctx['payment'] = compute(parkinglot, in_time, out_time, coupons, card)
+            print(ctx)
+    ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
+    
+    all_tickets = {}
+    all_tickets['0'] = [{'id': _.id, 'name': _.name} for _ in Coupons.objects.filter(is_delete=0, type=0).order_by('-update_time')]
+    all_tickets['1'] = [{'id': _.id, 'name': _.name} for _ in Coupons.objects.filter(is_delete=0, type=1).order_by('-update_time')]
+    all_tickets['2'] = [{'id': _.id, 'name': _.name} for _ in Coupons.objects.filter(is_delete=0, type=2).order_by('-update_time')]
+    all_tickets['3'] = [{'id': _.id, 'name': _.name} for _ in Coupons.objects.filter(is_delete=0, type=3).order_by('-update_time')]
+
+    ctx['all_tickets'] = all_tickets
+
+    return render(request, 'charge_demo.html', ctx)
 
 
 

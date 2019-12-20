@@ -383,10 +383,10 @@ def bill(request):
                 response.write(output.getvalue())
                 return response
     # print(11111)
-    # te = InAndOut.objects.first()
-    # print(te.in_time)
-    # print(te.out_time)
-    # print(get_price(te))
+    te = InAndOut.objects.first()
+    print(te.in_time)
+    print(te.out_time)
+    print(get_price(te))
 
     ctx['parkinglots'] = ParkingLot.objects.all()
     ctx['workers'] = Worker.objects.all()

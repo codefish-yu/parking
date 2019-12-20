@@ -190,8 +190,6 @@ class BaseRule(models.Model):
     class Meta:
         verbose_name =verbose_name_plural ='基础规则'
 
-
-
     status = models.IntegerField(default=0)
     parkinglot = models.ForeignKey(ParkingLot,on_delete=models.SET_NULL, null=True)
     per_hour = models.FloatField(default=0,verbose_name='小时费')

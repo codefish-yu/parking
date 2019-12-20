@@ -82,23 +82,28 @@
             function showPreviousYear() {
                 var currentYear = parseInt($(this).parent().parent().data('currentYear'));
                 settings.startYear = settings.startYear - 1;
-                createWholeCalendar(settings, $calendar);
-                $calendar.find('.jqyc-prev-year').on("click", showPreviousYear);
-                $calendar.find('.jqyc-next-year').on("click", showNextYear);
-                $calendar.find('.jqyc-not-empty-td').on("click", triggerDayChoose);
-                $calendar.trigger('jqyc.changeYearToPrevious');
-                $(this).parent().parent().data('currentYear', currentYear);
+                $('#change_year_form').find('input[name=year]').val(settings.startYear)
+                $('#change_year_form').submit()
+
+                // createWholeCalendar(settings, $calendar);
+                // $calendar.find('.jqyc-prev-year').on("click", showPreviousYear);
+                // $calendar.find('.jqyc-next-year').on("click", showNextYear);
+                // $calendar.find('.jqyc-not-empty-td').on("click", triggerDayChoose);
+                // $calendar.trigger('jqyc.changeYearToPrevious');
+                // $(this).parent().parent().data('currentYear', currentYear);
             }
 
             function showNextYear() {
                 var currentYear = parseInt($(this).parent().parent().data('currentYear'));
                 settings.startYear = settings.startYear + 1;
-                createWholeCalendar(settings, $calendar);
-                $calendar.find('.jqyc-prev-year').on("click", showPreviousYear);
-                $calendar.find('.jqyc-next-year').on("click", showNextYear);
-                $calendar.find('.jqyc-not-empty-td').on("click", triggerDayChoose);
-                $calendar.trigger('jqyc.changeYearToNext');
-                $(this).parent().parent().data('currentYear', currentYear);
+                $('#change_year_form').find('input[name=year]').val(settings.startYear)
+                $('#change_year_form').submit()
+                // createWholeCalendar(settings, $calendar);
+                // $calendar.find('.jqyc-prev-year').on("click", showPreviousYear);
+                // $calendar.find('.jqyc-next-year').on("click", showNextYear);
+                // $calendar.find('.jqyc-not-empty-td').on("click", triggerDayChoose);
+                // $calendar.trigger('jqyc.changeYearToNext');
+                // $(this).parent().parent().data('currentYear', currentYear);
             }
 
             function triggerDayChoose() {
