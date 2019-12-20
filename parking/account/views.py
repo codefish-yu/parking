@@ -151,12 +151,12 @@ def correct(request):
 
 		elif action == 'in':
 			p=1
-			record = ExceptRecord.order_by.filter(direction=p).first()
+			record = ExceptRecord.objects.filter(direction=p).first()
 			
 
 		elif action == 'out':
 			p = 0
-			record = ExceptRecord.order_by.filter(direction=p).first()
+			record = ExceptRecord.objects.filter(direction=p).first()
 
 
 	ctx['p'] = p
@@ -231,7 +231,7 @@ def record(request):
 				else:
 					records = records.filter(out_time__lte=end).all()
 
-		
+	ctx['ex'] =len(ExceptRecord.objects.filter(status=0).all())	
 	ctx['p'] = p
 	ctx['tip'] =tip
 	ctx['records'] = records

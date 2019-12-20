@@ -160,5 +160,6 @@ class ExceptRecord(models.Model):
     triger_type = models.CharField(max_length=100, null=True, verbose_name='触发类型')
     vehicle_type = models.CharField(max_length=100, null=True,verbose_name='车辆类型')
     time = models.DateTimeField(null=True, verbose_name='识别时间')
+    status = models.IntegerField(default=0,verbose_name='状态',choices=[(0,'待处理'),(1,'已处理')])
 
 

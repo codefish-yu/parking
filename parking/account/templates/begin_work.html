@@ -3,10 +3,31 @@
 {% block content%}
 <p>上岗</p>
 <form method="post" action="">
-	<input type="" name="parkinglot">
-	<input type="" name="gate">
-	<input type="hidden" name="action" value="login">
-	
-	<input type="submit" value="登录">
+	<input type="" name="parkinglot" placeholder="请选择车场">
+	<input type="" name="gate" placeholder="请选择值班口">
+	<input type="hidden" name="action" value="login" >
 </form>
+<div>登录</div>
+<style type="text/css">
+	form{
+		margin-top: 8%;
+	}
+	input{
+		width: 90%;
+		border:0px;
+		border-bottom: 1px solid gray;
+		height: 30px;
+		margin-left: 5%
+	}
+	div{
+		width: 70%;
+		background-color: gray;
+		text-align: center;
+		margin: 25% 0% 0% 15%;
+	}	
+	p{
+		font-size: 20px;
+		margin: 10% 0 0 5%
+	}
+</style>
 {% endblock %}
