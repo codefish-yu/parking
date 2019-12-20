@@ -20,7 +20,25 @@ import datetime
 
 @csrf_exempt
 def parkin(request):
-    
+
+    def wri(file,con):
+        with open(file, 'wb') as f:
+                f.write(con)
+                f.close()
+    def decode(f):
+        return base64.b64decode(f.replace('-', '+').replace('.', '=').replace('_','/'))
+
+    def save_pic(p1,p2):
+        picture = decode(p1)
+        plate_pic = decode(p2)
+        name = random_name()
+        car = '/Users/dsc/Githome/parking/parking/media/car/' + name + '.jpg'
+        plate = '/Users/dsc/Githome/parking/parking/media/plate/' + name + '.jpg'
+        wri(car,picture)
+        wri(plate,plate_pic)
+
+        return name
+        
     result = {
             'error_num': 0,
             'error_str': 'error info',
@@ -54,7 +72,7 @@ def parkin(request):
     # }
 
     params = get_params(request)
-    print(params['cam_id'])
+    print(params)
     
     cam_id = params['cam_id']
     camera = Camera.objects.filter(mac_address=cam_id).first()
@@ -140,28 +158,37 @@ def parkin(request):
 
         # 保存汽车出入时抓拍的全景图和车牌特写图
         try: 
-            picture = base64.b64decode(params['picture'].replace('-', '+').replace('.', '=').replace('_','/'))
-            plate_pic = base64.b64decode(params['closeup_pic'].replace('-', '+').replace('.', '=').replace('_','/'))
+            name = save_pic(params['picture'],params['closeup_pic'])
 
-            name = random_name()
-
-            car = '/Users/dsc/Githome/parking/parking/media/car/' + name + '.jpg'
-            plate = '/Users/dsc/Githome/parking/parking/media/plate/' + name + '.jpg'
-
-            with open(car, 'wb') as f:
-                f.write(picture)
-                f.close()
-
-            with open(plate, 'wb') as f:
-                f.write(plate_pic)
-                f.close()
-
-            if params['vdc_type'] == 'in':
-                r.picture_in = 'car/' + name + '.jpg'
-                r.closeup_pic_in = 'plate/' + name + '.jpg'
+            if r:
+                if params['vdc_type'] == 'in':
+                    r.picture_in = 'car/' + name + '.jpg'
+                    r.closeup_pic_in = 'plate/' + name + '.jpg'
+                else:
+                    r.picture_out = 'car/' + name + '.jpg'
+                    r.closeup_pic_out = 'plate/' + name + '.jpg'
             else:
-                r.picture_out = 'car/' + name + '.jpg'
-                r.closeup_pic_out = 'plate/' + name + '.jpg'
+                r = ExceptRecord()
+                r.time = datetime.datetime.fromtimestamp(int(params['start_time']))
+                r.plate_color = params['plate_color']
+                r.logo = params['car_logo']
+                r.park_id = params['park_id']
+                r.cam_id = cam_id
+                r.cam_ip = params['cam_ip']
+                r.plate_val = True if params['plate_val'] == 'true' else False
+                r.confidence = params['confidence']
+                r.color = params['car_color']
+                r.vdc_type = params['vdc_type']
+                r.triger_type = params['triger_type']
+                r.vehicle_type = params['vehicle_type']
+                r.camera = camera
+                r.picture = 'car/' + name + '.jpg'
+                r.closeup_pic = 'plate/' + name + '.jpg'
+
+                if params['vdc_type'] == 'in':
+                    r.direction = 1
+                else:
+                    r.direction = 0
 
         except Exception as e:
             print(e)

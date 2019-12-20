@@ -3,17 +3,30 @@
 <div id='total'>
 	{% include 'header.html' %}
 	<div id='onl'>
-		<span id='spec'>{% if tip == 0 %}只看特放{% else %}查看全部{% endif %}</span>
-	</div>
-	{% for i in records %}
-	<div class="item">
-		<div class="le">
-			<div class="num">{{ i.number}} </div>
-			<div class="ti">{{i.out_time | date:'Y-m-d H:m:s'}} ¥9.00</div>
+		<div id='sel'>
+			<form method="post" action="" id='sel-form'>
+				<input type="date" name="start" class="tim layer-date laydate-icon" placeholder="起"{% if start %}value="{{start}}"{% endif %} >～
+				<input type="date" name="end" class="tim layer-date laydate-icon" placeholder="止" {% if end %}value="{{end}}"{% endif %}>
+				<input type="hidden" name="action" value="select">
+			</form>
 		</div>
-		<div class="ri">已支付</div>
+		<div id='spec'>{% if tip == 0 %}只看特放{% else %}查看全部{% endif %}</div>
 	</div>
-	{% endfor %}
+	<div id='to'>
+		{% for i in records %}
+		<div class="item">
+			<div class="le">
+				<div class="num">{{ i.number}} </div>
+				<div class="ti">{{i.out_time | date:'Y-m-d H:m:s'}} ¥9.00</div>
+			</div>
+			<div class="ri">
+				<div>
+					已支付
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
 	{% include 'bottom.html' %}
 	
 </div>
@@ -23,6 +36,29 @@
 	<input type="hidden" name="status" value="{{tip}}">
 </form>
 <style type="text/css">
+	.tim{
+		width: 43%;
+		border:1px solid gray;
+		text-align: center;
+		font-size: 13px!important
+	}
+	#sel{
+		text-align: left;
+    	width: 60%;
+		display: inline-block;
+	}
+	#sel form{
+		margin-left: -25%;
+	}
+	#spec{
+		display: inline-block;
+		background-color: skyblue;
+		border:1px solid blue;
+	}
+	#to{
+		width: 100%;
+		overflow-y: scroll;
+	}
 	#total{
 		width: 100%;
 		height: 100%;
@@ -36,10 +72,6 @@
 		height: 30px;
     	padding: 10px 10px 0px 0px;
 	}
-	#onl span{
-		background-color: skyblue;
-		border:1px solid blue;
-	}
 	.le{
 		display: inline-block;
 		width:78%
@@ -49,22 +81,48 @@
 		width: 20%;
 		color: gray;
 		text-align: center;
+		height: 100%
 
 	}
 	.item{
-		padding: 10px 0px 5px 15px;
+		padding: 8px 0px 5px 15px;
 		border-bottom: 1px solid rgba(158, 158, 158, 0.5);
-		height: 55px
+		height: 50px
 	}
 	.ti{
 		color:gray;
 	}
 </style>
+<script src="/static/js/laydate.js"></script>
+<link href="/static/css/laydate.css" rel="stylesheet">
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
+	// function ren(id ,t=0){
+ //        laydate.render({
+ //          elem: id,
+ //          // type: 'time',
+ //          format: 'yyyy-MM-dd'
+ //        });
+ //        if(t == 0){
+ //            $(id).val('');
+ //        }
+        
+ //    };
+ //    ren('#sel-form input[name=start]');
+ //    ren('#sel-form input[name=end]')
+	$(document).ready(()=>(
+		$('#to').css('height',window.innerHeight-130+'')
+	));
 	$('#spec').click(()=>(
 		$('#status-form').submit()
-	))
+	));
+	function sub(){
+		console.log(1111)
+		$('#sel-form').submit()
+	}
+	$('#sel-form input[name=start]').change(sub);
+	$('#sel-form input[name=end]').change(sub)
+
 	
 </script>
 {% endblock %}
