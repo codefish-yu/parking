@@ -374,13 +374,13 @@ def card(request):
     ctx ={}
     cards = Card.objects.filter(status=0).all()
     def correct_obj(request,r):
-        owner_id = request.POST.get('owner', '')
+        # owner_id = request.POST.get('owner', '')
         card_id = request.POST.get('my_card', '')
         suit = request.POST.getlist('suit',[])
-        if owner_id:
-            p = AdminUser.objects.filter(id=owner_id).first()
-            if p: 
-                r.owner = p
+        # if owner_id:
+        #     p = AdminUser.objects.filter(id=owner_id).first()
+        #     if p: 
+        #         r.owner = p
 
         if card_id:
             p = CardType.objects.filter(id=card_id).first()
@@ -480,7 +480,7 @@ def chargedemo(request):
             in_time = datetime.datetime.strptime(in_time, '%Y-%m-%d %H:%M:%S')
             out_time = datetime.datetime.strptime(out_time, '%Y-%m-%d %H:%M:%S')
             ctx['payment'] = compute(parkinglot, in_time, out_time, coupons, card)
-
+            print(ctx)
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
     
     all_tickets = {}

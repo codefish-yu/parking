@@ -10,23 +10,13 @@
                             <li>模拟计费</li>
                         </ol>
                         <div class="ibox-tools">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                <i class="fa fa-wrench"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-user">
-                                <li>
-                                    <a href="#" onclick="location.reload()"><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
-                                </li>
-                            </ul>
-                            <a class="collapse-link">
-                                <i class="fa fa-chevron-up"></i>
-                            </a>
+                            <a onclick="window.location.href=window.location.href; "><i class="fa fa-refresh animated rotateIn"></i>&nbsp; 重新载入</a>
                         </div>
                     </div>
                    
                     <div class="ibox-content">
-                        <div class='form-inline'>
-                            <form id='query_form' action='' method="post">
+                        <form id='query_form' action='' method="post">
+                            <div class='form-inline col-md-8'>
                                 {% csrf_token %}
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">车   牌 </label>
@@ -50,11 +40,13 @@
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">开始时间</label>
                                     <div class="col-md-4">
-                                        <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="in_time" id='in_time'>
+                                        <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="in_time" id='in_time'
+                                        value="{{in_time}}" 
+                                        >
                                     </div>
                                     <label class="col-md-2 control-label">结束时间</label>
                                     <div class="col-md-4">
-                                        <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="out_time" id="out_time">
+                                        <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="out_time" id="out_time" value="{{out_time}}">
                                     </div>
                                 </div>
                                 <br>
@@ -83,41 +75,58 @@
                                 <div id='coupons' class="form-group" style="width: 100%">
                                 </div>
                                 <br>  <br>   
+                            </div>
+                            <div class='col-md-4'>
                                 <div class="form-group">
                                     <input type='hidden' name='action' value='charge' />
                                     <button class="btn btn-primary search-btn" type="submit">
                                         <i class="fa fa-search"></i> 计 算 
                                     </button>
                                 </div>
+                            </div>
+                        </form>
 
-                            </form>
-                        </div>
                         {% if payment %}
-                        <div>
-                            <h4> 计算结果 :</h4>
+                        <div style="width: 500px;height:300px;float: left;">
                             <p>车牌: <span>{{ car_number }}</span></p>
                             <p>车场: <span>{{ parkinglot.name }}</span></p>
                             {% if baserule %}
-                            <p>车场基本规则:</p>
-                            <p>免费时间: {{ baserule.free_time }} 分钟,
-                               起步计费: {{ baserule.min_price }} 元, 
+                            <p>车场基本规则:
+                            免费时间: {{ baserule.free_time }} 分钟,
+                               起步计费: {{ baserule.min_price }} 分钟, 
                                封顶时间: {{ baserule.day_max }} 小时, 
-                               小时单价: {{ baserule.per_hour }} 元/小时</p>
+                               小时单价: {{ baserule.per_hour }} 元/小时 
                             {% endif %}
+                            </p>
                             {% if card %}
-                                <p>卡: <span>{{ card.my_card.name }}</span></p>
+                                <p>卡:{{ card.my_card.name }}, 
+                                    工作日: {{ card.my_card.work }},
+                                    非工作日: {{ card.my_card.relax }},
+                                <p>周一: {{ card.my_card.free }},</p>
+                                <p>周二: {{ card.my_card.free_tu }},</p>
+                                <p>周三: {{ card.my_card.free_we }},</p>
+                                <p>周四: {{ card.my_card.free_th }},</p>
+                                <p>周五: {{ card.my_card.free_fr }},</p>
+                                <p>周六: {{ card.my_card.free_sa }},</p>
+                                <p>周日: {{ card.my_card.free_su }},</p>
+                                </p>
                                 <p>有效期: <span>{{ card.valid_start }} ~ {{ card.valid_end }}</span></p>
                             {% else %}
                                 <p>无卡</p>
                             {% endif %}
-
-                            <p>计费开始: {{ in_time }},  计费结束: {{ out_time }}</p>
                             <p>优惠券: 
                                 {% for i in coupons %}
                                     {{ i.name }} 、 
                                 {% endfor %}
                             </p>
-                            <p>应收 : <span>{{ payment }} 元</span></p>
+                            
+                        </div>
+                         <div style="width: 500px;height:300px;float: right;">
+                            <h4>计算结果: </h4>
+                            <p>计费开始: {{ in_time }},  计费结束: {{ out_time }}</p>
+                            <p>应收 : <span>{{ payment.0 }} 元</span>,
+                                实收 : <span>{{ payment.1 }} 元</span>
+                            </p>
                         </div>
                         {% endif %}
                     </div>

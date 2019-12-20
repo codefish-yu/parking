@@ -1,5 +1,6 @@
 from .models import *
 from chargerule.models import *
+from parkinglot.models import Calendar
 
 
 import re
@@ -243,7 +244,7 @@ def get_hours(start, end):
 
 
 # get_if_work获取今天是否是工作日
-def get_if_work(day):
+def get_if_work(day, parkinglot):
     ifwork = True  # 判断是否工作日
     weekday = day.weekday()
 
@@ -266,14 +267,9 @@ def str_2_float(hour):
 
 
 # date_2_float日期中的时间转成小数
-def date_2_float(start=None, end=None):
-    if start:
-        end = start + datetime.timedelta(days=1)
-        end = datetime.datetime(end.year, end.month, end.day, 0, 0, 0)
-        return get_hours(start, end)
-    if end:
-        start = datetime.datetime(end.year, end.month, end.day, 0, 0, 0)
-        return get_hours(start, end)
+def date_2_float(e):
+    s = datetime.datetime(e.year, e.month, e.day, 0, 0, 0)
+    return get_hours(s, e)
 
 
 # get_valid_hours根据国家规定的封顶时间,计算有效计费时长
@@ -294,38 +290,47 @@ def get_valid_hours(start, end, day_max=8):
 def get_valid_hours_perday(areas, start=None, end=None):
     hours = 0
     if start and end: # 同一天
-        hours = date_2_float(end=end) - date_2_float(start=start)
+        print(start, end)
+        hours = date_2_float(end) - date_2_float(start)
+        end = date_2_float(end)
+        start = date_2_float(start)
+        print('sss',start, end, areas)
         for i in areas:
-            s = str_2_float(i.start)
-            e = str_2_float(i.end)
-
-            if end < e and start > s:
-                hours += (e - s)
-            if start < s and end > s:
-                hours += (end - s)
-            if end > e and start < e:
-                hours += (e - start)
+            s = str_2_float(i['start'])
+            e = str_2_float(i['end'])
+            if start < s and end > e:
+                hours -= e - s
+                print(1)
+            elif start <= s and end >= s:
+                print(2)
+                hours -= e - s
+            elif start >= e and end >= e:
+                print(3)
+                hours -= e - start
+            elif start >= s and end <= e:
+                print(4)
+                hours = 0
+                break
+            print(start,end,i,s,e, hours)
 
     elif start:
-        hours = date_2_float(start=start)
-        clock = 24 - hours
-
+        clock = date_2_float(start)
+        hours = 24 - clock
         for i in areas:
-            s = str_2_float(i.start)
-            e = str_2_float(i.end)
+            s = str_2_float(i['start'])
+            e = str_2_float(i['end'])
 
             if s > clock:
                 hours = hours - (e -s)
             elif e > clock:
-                hours = hours - (e - (24 - clock))
+                hours = hours - (e - clock)
 
     else:
-        hours = date_2_float(end=end)
+        hours = date_2_float(end)
         clock = hours
-
         for i in areas:
-            s = str_2_float(i.start)
-            e = str_2_float(i.end)
+            s = str_2_float(i['start'])
+            e = str_2_float(i['end'])
 
             if e < clock:
                 hours = hours - (e -s)
@@ -334,27 +339,33 @@ def get_valid_hours_perday(areas, start=None, end=None):
     print('areas: ', areas)
     print('start: %s, end: %s' % (start, end))
     print(hours)
-    return hours
+    return hours if hours > 0 else 0
 
 
 # get_valid_hours_per24 计算每一个非自然日的有效时长
 def get_valid_hours_per24(start, end, parkinglot, card):
-
-    def getareas(week_day, card):
+    
+    def getareas1(ifwork, card):
+        work = json.loads(card.work.replace('\'','\"')) if card.work else []
+        relax = json.loads(card.relax.replace('\'','\"')) if card.relax else []
+        return work if ifwork else relax
+    def getareas2(week_day, card): # 获取时段 如: [{"start": "22:00", "end": "24:00"}]
         if week_day == 0:
-            return card.free
+            areas = card.free
         if week_day == 1:
-            return card.free_tu
+            areas = card.free_tu
         if week_day == 2:
-            return card.free_we
+            areas = card.free_we
         if week_day == 3:
-            return card.free_th
+            areas = card.free_th
         if week_day == 4:
-            return card.free_fr
+            areas = card.free_fr
         if week_day == 5:
-            return card.free_sa
+            areas = card.free_sa
         if week_day == 6:
-            return card.free_su
+            areas = card.free_su 
+        print(areas)
+        return json.loads(areas.replace('\'', '\"')) if areas else []
 
     hours = 0
 
@@ -363,21 +374,23 @@ def get_valid_hours_per24(start, end, parkinglot, card):
      
     start_weekday = start_day.weekday()
     end_weekday = end_day.weekday()
-    ifwork1 = get_if_work(start_day)
-    ifwork2 = get_if_work(end_day)
-     
+    ifwork1 = get_if_work(start_day, parkinglot)
+    ifwork2 = get_if_work(end_day, parkinglot)
+    
     if card.diff_type == 0:
-        areas1 = json.loads(card.work) if ifwork1 else json.loads(card.relax)
-        areas2 = json.loads(card.work) if ifwork2 else json.loads(card.relax)
+        areas1 = getareas1(ifwork1, card)
+        areas2 = getareas2(ifwork1, card)
     else:
-        areas1 = json.loads(getareas(start_weekday, card))
-        areas2 = json.loads(getareas(end_weekday, card))
+        areas1 = getareas2(start_weekday, card)
+        areas2 = getareas2(end_weekday, card)
 
     if start_day == end_day:
         return get_valid_hours_perday(areas1, start, end)
     else:
         hours1 = get_valid_hours_perday(areas1, start=start)
-        hours1 = get_valid_hours_perday(areas2, end=end)
+        print(hours1)
+        hours2 = get_valid_hours_perday(areas2, end=end)
+        print(hours2)
         return hours1 + hours2
 
 
@@ -391,10 +404,13 @@ def get_by_card(start, end, parkinglot, card, day_max):
         _end = start + datetime.timedelta(days=1)
         if _end > end:
             h = get_valid_hours_per24(start, end, parkinglot, card)
+            print(start, end, h)
             hours += h if h < day_max else day_max
             break
         else:
             h = get_valid_hours_per24(start, _end, parkinglot, card)
+            print(start, _end, h)
+           
             hours += h if h < day_max else day_max
             start = _end
     return hours
@@ -419,21 +435,22 @@ def compute(parkinglot, start, end, coupons, card):
         if start > card.valid_end or end < card.valid_start:
             hours = get_valid_hours(start, end)
         elif start < card.valid_start and end < card.valid_end:
-            hours = get_by_card(card.valid_start, end, parkinglot, card, day_max) + get_valid_hours(start, card,valid_start, day_max)
+            hours = get_by_card(card.valid_start, end, parkinglot, card.my_card, day_max) + get_valid_hours(start, card,valid_start, day_max)
         elif start > card.valid_start and end > card.valid_end:
-            hours = get_by_card(start, card.valid_end, parkinglot, card, day_max) + get_valid_hours(card.valid_end, end, day_max)
+            hours = get_by_card(start, card.valid_end, parkinglot, card.my_card, day_max) + get_valid_hours(card.valid_end, end, day_max)
         else:
-            hours = get_by_card(start, end, parkinglot, card, day_max)
-
+            hours = get_by_card(start, end, parkinglot, card.my_card, day_max)
+        
         hours = math.ceil(hours) if hours > free_time/60 else 0
-        payable = payment = hours * per_hour if hours * per_hour > min_price else min_price
+
+        payable = payment = hours * per_hour if hours == 0 or hours * per_hour > min_price else min_price
 
     else:
         hours = get_valid_hours(start, end, day_max)
 
         hours = math.ceil(hours) if hours > free_time/60 else 0
 
-        payable = payment = hours * per_hour if hours * per_hour > min_price else min_price
+        payable = payment = hours * per_hour if hours == 0 or hours * per_hour > min_price else min_price
 
         if coupons: # 有券
         
@@ -455,14 +472,14 @@ def compute(parkinglot, start, end, coupons, card):
                 elif coupon.type == 3:
                     if coupon.hours4 and coupon.hours4 <= hours:
                         payment = payment - coupon.hours4 * per_hour + coupon.money4
-                    if coupon.hours3 and coupon.hours3 <= hours:
+                    elif coupon.hours3 and coupon.hours3 <= hours:
                         payment = payment - coupon.hours3 * per_hour + coupon.money3
-                    if coupon.hours2 and coupon.hours2 <= hours:
+                    elif coupon.hours2 and coupon.hours2 <= hours:
                         payment = payment - coupon.hours2 * per_hour + coupon.money2
-                    if coupon.hours1 and coupon.hours1 <= hours:
+                    elif coupon.hours1 and coupon.hours1 <= hours:
                         payment = payment - coupon.hours1 * per_hour + coupon.money1
 
-        return payable, payment 
+    return payable, payment 
         
 # 计价
 def charge(in_and_out, coupons):
