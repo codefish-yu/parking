@@ -194,6 +194,9 @@ def record(request):
 		action = request.POST.get('action','')
 		if action == 'change':
 			status = request.POST.get('status','')
+			p = request.POST.get('ps','')
+			if p:
+				p = int(p)
 			if not int(status):
 				records = records.filter(is_spec=1).all()
 				tip = 1
