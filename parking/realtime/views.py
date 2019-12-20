@@ -72,7 +72,7 @@ def parkin(request):
     # }
 
     params = get_params(request)
-    print(params['cam_id'])
+    print(params)
     
     cam_id = params['cam_id']
     camera = Camera.objects.filter(mac_address=cam_id).first()
