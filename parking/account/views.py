@@ -57,7 +57,7 @@ def user_required(func):
 # @user_required
 def spec_pass(request):
 	ctx ={}
-	
+	user = User.objects.first()
 	records = InAndOut.objects.order_by('-update_time').all()
 	record = records.first()
 	p = 0
@@ -93,6 +93,21 @@ def spec_pass(request):
 			record = InAndOut.objects.filter(id=r_id).first()
 			record.remark = remark
 			record.save()
+
+			# 操作员放行记录
+			r = SpecRecord()
+			r.tollman = user
+			r.record = record
+			r.save()
+
+			# 修改放行参数
+			chek = SpecRecord.objects.filter(tollman=user,record__is_spec=1).all()
+			re = WorkRecord.objects.filter(worker=user).order_by('-time').first()
+			re.spec_num = len(chek)
+			re.save()
+
+
+
 
 		elif action == 'in':
 			records = records.filter(out_time=None).all()
@@ -232,10 +247,12 @@ def record(request):
 	ctx['records'] = records
 	return render(request,'record.html',ctx)
 
-@user_required
-def personal(request,user):
+# @user_required
+def personal(request):
 	ctx = {}
-	workrecord = WorkRecord.objects.filter(user=user).first()
+	
+	user = User.objects.first()
+	workrecord = WorkRecord.objects.filter(worker=user).first()
 
 	ctx['record'] = workrecord	
 	ctx['wuser'] = WechatUser.objects.filter(user=user).first()
