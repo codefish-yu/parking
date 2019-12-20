@@ -48,6 +48,7 @@
 		<div>
 			{% if not record.in_time %}
 			<div class="item">需核实入场时间</div>
+			<div id='phone'><img src="/static/img/phone.svg"></div>
 			{% elif record.get_price == 0%}
 			<div class="item">无需缴费</div>
 			{% elif record.bill.status == 1%}
@@ -96,6 +97,19 @@
 	</div>
 </div>
 <style type="text/css">
+	#phone{
+		text-align: center;
+    	margin: -30% 10% 0 65%;
+    	border-radius: 50%;
+    	background-color: rgba(51, 102, 204, 0.5);
+    	width: 30%;
+    	height: 30%;
+	}
+	#phone img{
+		width: 70%;
+		height: 70%;
+		padding: 10%
+	}
 	.non{
 		text-align: center;
 	}

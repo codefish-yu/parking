@@ -8,19 +8,28 @@
 		<div id='na'>{{record.worker.name}} </div>
 	</div>
 	<div class="basic">
+		<div class="tit">上岗车场</div>
+		<div class="pro">{{parkinglot}} </div>
+	</div>
+	<div class="basic">
 		<div class="tit">上岗时间</div>
-		<div class="pro">{{record.time |date:'Y-M-d H:m:s'}} </div>
+		<div class="pro">{{record.time |date:'Y-m-d H:m:s'}} </div>
 	</div>
 	<div class="basic">
 		<div class="tit">值班时长</div>
-		<div class="pro">{{record.duration}}小时</div>
+		<div class="pro">{{record.duration |floatformat:2}}小时</div>
 	</div>
 	<div class="basic">
 		<div class="tit">特放车辆</div>
 		<div class="pro">{{record.spec_num}}辆</div>
 	</div>
-	<div id='bt'>退出账号</div>
-	{% include 'bottom.html'%}
+	<div id='bt'>
+		退出账号
+		<form method="post" action="">
+			<input type="hidden" name="action" value="offline">
+		</form>
+	</div>
+	{% include 'bottom.html' with menu='my' %}
 </div>
 <style type="text/css">
 	#bt{
@@ -54,14 +63,14 @@
 	}
 	.pro{
 		margin-bottom: 2%;
-		margin-left: 15px
+		margin-left: 5%
 	}
 
 </style>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
 	$('#bt').click(()=>(
-		console.log(1111)
+		$('#bt form').submit()
 	))
 </script>
 

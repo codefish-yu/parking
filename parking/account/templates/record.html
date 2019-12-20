@@ -1,7 +1,24 @@
 {% extends 'home.html' %}
 {% block content%}
 <div id='total'>
-	{% include 'header.html' %}
+	<div id='head'>
+		<div >
+			<span id='in_p' {% if p == 1 %}class="active"{% endif %}>入场</span>
+		</div>
+		
+		<div >
+			<span id='out_p' {% if p == 0 %}class="active"{% endif %}>出场</span>
+		</div>
+		<div >
+			<span id='ex_p' {% if p == 2 %}class="active"{% endif %}>异常</span>
+		</div>
+		<form method="post" action="" >
+			<input type="hidden" name="action" value="in">
+		</form>
+		<form method="post" action="" >
+			<input type="hidden" name="action" value="">
+		</form>
+	</div>
 	<div id='onl'>
 		<div id='sel'>
 			<form method="post" action="" id='sel-form'>
@@ -36,6 +53,24 @@
 	<input type="hidden" name="status" value="{{tip}}">
 </form>
 <style type="text/css">
+	#head{
+		position: absolute;
+		top: 0;
+		font-size: 18px;
+		height: 50px;
+		width: 100%;
+	}
+	#head div{
+		display: inline-block;
+		width: 32%;
+		text-align: center;
+		padding-top: 3%;
+	}
+	.active{
+		border-bottom: 1px solid blue;
+		padding-bottom: 10px;
+		color: blue
+	}
 	.tim{
 		width: 43%;
 		border:1px solid gray;
@@ -97,19 +132,20 @@
 <link href="/static/css/laydate.css" rel="stylesheet">
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
-	// function ren(id ,t=0){
- //        laydate.render({
- //          elem: id,
- //          // type: 'time',
- //          format: 'yyyy-MM-dd'
- //        });
- //        if(t == 0){
- //            $(id).val('');
- //        }
-        
- //    };
- //    ren('#sel-form input[name=start]');
- //    ren('#sel-form input[name=end]')
+	function su(v){
+		$('#head input').value(v);
+		$('#head form').submit()
+	}
+	$('#in_p').click(()=>(
+		su('in')
+	));
+	$('#out_p').click(()=>(
+		su('out')
+	));
+	$('#ex_p').click(()=>(
+		su('ex')
+	))
+
 	$(document).ready(()=>(
 		$('#to').css('height',window.innerHeight-130+'')
 	));

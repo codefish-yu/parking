@@ -10,15 +10,6 @@ from meta import api
 import functools
 
 # Create your views here.
-def begin_work(user):
-	today = datetime.datetime.now()
-	rs = WorkRecord.objects.order_by('-time').first()
-	if today.day != rs.time.day:
-		r = WorkRecord()
-		r.worker = user
-		r.time = datetime.datetime.now()
-		r.save()
-
 
 def user_required(func):
 
@@ -46,7 +37,6 @@ def user_required(func):
             return redirect('/login/public/account/?next=' + next_url)
 
         request.user = user
-        begin_work(user)
         result = func(request, user=user, *args, **kwargs)
         return result
 
@@ -105,9 +95,6 @@ def spec_pass(request):
 			re = WorkRecord.objects.filter(worker=user).order_by('-time').first()
 			re.spec_num = len(chek)
 			re.save()
-
-
-
 
 		elif action == 'in':
 			records = records.filter(out_time=None).all()
@@ -215,12 +202,15 @@ def record(request):
 				tip = 0
 
 		elif action == 'in':
-			records = records.filter(out_time=None).all()
+			records = InAndOut.objects.filter(out_time=None).order_by('-update_time').all()
 			p=1
 
 		elif action == 'out':
 			records = InAndOut.objects.order_by('-update_time').all()
 			p = 0
+		elif action == 'ex':
+			records = []
+			p=2
 
 		elif action == 'select':
 			start = request.POST.get('start','')
@@ -248,15 +238,73 @@ def record(request):
 	return render(request,'record.html',ctx)
 
 # @user_required
+@csrf_exempt
 def personal(request):
 	ctx = {}
+
+	def get_time(time):
+		return time.hour+time.minute/60
+
+	def get_duration(r):
+		now = datetime.datetime.now()
+		if not r.offline:
+			r.duration = get_time(now)-get_time(r.time)
+		else:
+			r.duration += get_time(now)-get_time(r.offline)
+
+		r.offline = now
+		r.save()
 	
 	user = User.objects.first()
+	worker = Worker.objects.filter(user=user).first()
 	workrecord = WorkRecord.objects.filter(worker=user).first()
+	get_duration(workrecord)
 
+
+	if request.method == 'POST':
+		action =request.POST.get('action','')
+		if action == 'offline':
+
+			get_duration(workrecord)
+			return redirect('/account/begin_work')
+
+	ctx['parkinglot']=worker.parkinglot.name
 	ctx['record'] = workrecord	
 	ctx['wuser'] = WechatUser.objects.filter(user=user).first()
 	return render(request,'personal.html',ctx)
+
+@csrf_exempt
+def begin_work(request):
+	ctx = {}
+	user = User.objects.first()
+
+	def set_work(user,p,g):
+		today = datetime.datetime.now()
+		rs = WorkRecord.objects.order_by('-time').first()
+		p = ParkingLot.objects.filter(id=int(p)).first()
+		g = Gate.objects.filter(id=int(g)).first()
+		if today.day != rs.time.day:
+			r = WorkRecord()
+			r.worker = user
+			r.time = datetime.datetime.now()
+			r.parkinglot = p
+			r.gate = g
+		else:
+			r = WorkRecord.objects.filter(worker=user).order_by('-time').first()
+			r.offline = datetime.datetime.now()
+
+		r.save()
+
+	if request.method == 'POST':
+		action = request.POST.get('action','')
+		if action == 'login':
+			parkinglot = request.POST.get('parkinglot','')
+			gate = request.POST.get('gate','')
+			set_work(user,parkinglot,gate)
+
+
+
+	return render(request,'begin_work.html',ctx)
 
 
 
