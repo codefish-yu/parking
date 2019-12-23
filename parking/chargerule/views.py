@@ -413,6 +413,7 @@ def card(request):
             ids = request.POST.getlist('ids', '')
             u = Card.objects.filter(id__in=ids).all()
             for item in u:
+                item.status = -1
                 item.save()
 
         elif action == 'validate':
