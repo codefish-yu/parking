@@ -100,9 +100,9 @@ def spec_pass(request):
 
 			# 修改放行参数
 			chek = SpecRecord.objects.filter(tollman=user,record__is_spec=1).all()
-			re = WorkRecord.objects.filter(worker=user).order_by('-time').first()
-			re.spec_num = len(chek)
-			re.save()
+			r = WorkRecord.objects.filter(worker=user).order_by('-time').first()
+			r.spec_num = len(chek)
+			r.save()
 
 		elif action == 'in':
 			records = records.filter(out_time=None).all()
