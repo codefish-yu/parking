@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>杰停停车</title>
+	<meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+    <script src="https://a.alipayobjects.com/amui/zepto/1.1.3/zepto.js"></script>
+    <script src="https://a.alipayobjects.com/g/h5-lib/alipayjsapi/3.0.6/alipayjsapi.min.js"></script>
+    <link class="J-cdn-antui" rel="stylesheet" href="https://gw.alipayobjects.com/as/g/antui/antui/10.1.32/dpl/antui-all.css">
+</head>
+<body>
+{% block content %}
+
+{% endblock %}
+	<style type="text/css">
+		.J_demoContainer{
+			position: fixed;
+			bottom: 0px;
+			width: 100%;
+			height:60px !important;
+		}
+		.tab-icon{
+			height: 60%;
+			padding-top:12px;
+		}
+		.tab-icon img{
+			width: 20px;
+			.active{
+				color: #3366CC;
+			}
+		}
+		.tab-word {
+			height: 40%; 
+	  		font-family: PingFangSC-Medium;
+			font-size: 10px;
+			color: #929292;
+			letter-spacing: 0.12px;
+			text-align: center;
+			padding-top: 18px;
+		}
+	</style>
+		<div class="J_demoContainer">
+			<div class="am-tab" role="tablist" style="height: 100%">
+			  <div class="am-tab-item" style='line-height: 0px !important;height: 100%'>
+			  	<div class='tab-icon'>
+			  		{% if menu == 'park' %}
+				  	<img src='/static/wechat/user/img/park1.png' />
+				  	<div class='tab-word active'>停车
+					</div>
+					{% else %}
+					<img src='/static/wechat/user/img/park0.png' />
+				  	<div class='tab-word'>停车
+					</div>
+					{% endif %}
+				 </div>
+			  </div>
+
+			  <div class="am-tab-item" style='line-height: 0px !important;height: 100%'>
+			  	<div class='tab-icon'>
+					{% if menu == 'pay' %}
+				  	<img src='/static/wechat/user/img/pay1.png' />
+				  	<div class='tab-word active'>收费
+					</div>
+					{% else %}
+					<img src='/static/wechat/user/img/pay0.png' />
+				  	<div class='tab-word'>收费
+					</div>
+					{% endif %}
+				 </div>
+			  </div>
+
+			  <div class="am-tab-item" style='line-height: 0px !important;height: 100%'>
+			  	<div class='tab-icon'>
+					{% if menu == 'mine' %}
+				  	<img src='/static/wechat/user/img/user1.png' />
+				  	<div class='tab-word active'>我的
+					</div>
+					{% else %}
+					<img src='/static/wechat/user/img/user0.png' />
+				  	<div class='tab-word'>我的
+					</div>
+					{% endif %}
+				 </div>
+			  </div>
+			  
+			</div>
+		</div>
+</body>
+
+{% block js %}
+
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+
+{% endblock %}
+
+</html>

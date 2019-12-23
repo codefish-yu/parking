@@ -416,6 +416,17 @@ def get_by_card(start, end, parkinglot, card, day_max):
     return hours
 
 
+def hours2price(hours, free_time, min_price, day_max, per_hour):
+    if hours <= free_time:
+        return 0
+    if hours <= min_price / 60:
+        return per_hour * min_price / 60
+    if hours > day_max:
+        return day_max * per_hour
+
+    return math.ceil(hours * 2) / 2 * per_hour
+
+
 '''
 计算费用, 有卡则用卡不能用券, 用券时可叠加同种券, 不能叠加不同种类的券
 @author dusc
@@ -435,24 +446,20 @@ def compute(parkinglot, start, end, coupons, card):
         if start > card.valid_end or end < card.valid_start:
             hours = get_valid_hours(start, end)
         elif start < card.valid_start and end < card.valid_end:
-            hours = get_by_card(card.valid_start, end, parkinglot, card.my_card, day_max) + get_valid_hours(start, card,valid_start, day_max)
+            hours = get_by_card(card.valid_start, end, parkinglot, card.my_card, day_max) + get_valid_hours(start, card.valid_start, day_max)
         elif start > card.valid_start and end > card.valid_end:
             hours = get_by_card(start, card.valid_end, parkinglot, card.my_card, day_max) + get_valid_hours(card.valid_end, end, day_max)
         else:
             hours = get_by_card(start, end, parkinglot, card.my_card, day_max)
         
-        hours = math.ceil(hours) if hours > free_time/60 else 0
-
-        payable = payment = hours * per_hour if hours == 0 or hours * per_hour > min_price else min_price
+        payable = payment = hours2price(hours)
 
     else:
         hours = get_valid_hours(start, end, day_max)
 
-        hours = math.ceil(hours) if hours > free_time/60 else 0
+        payable = payment = hours2price(hours)
 
-        payable = payment = hours * per_hour if hours == 0 or hours * per_hour > min_price else min_price
-
-        if coupons: # 有券
+        if coupons: # 有券, 只能同时用一种券, 可叠加多张
         
             for coupon in coupons:
                 if coupon.type == 0:
@@ -462,22 +469,27 @@ def compute(parkinglot, start, end, coupons, card):
                     payment = payment - coupon.money
 
                 elif coupon.type == 2: 
-                    if hours <= coupon.hours:
-                        payment = coupon.money
-                        hours = 0
-                    else:
-                        payment = coupon.money + (hours - coupon.hours) * per_hour
-                        hours = hours - coupon.hours
+                    if hours > 0:
+                        if hours <= coupon.hours:
+                            payment = coupon.money
+                            hours = 0
+                        else:
+                            hours = hours - coupon.hours
+                            payment = payment - coupon.hours * per_hour + coupon.money
 
                 elif coupon.type == 3:
                     if coupon.hours4 and coupon.hours4 <= hours:
                         payment = payment - coupon.hours4 * per_hour + coupon.money4
+                        hours -= coupon.hours4
                     elif coupon.hours3 and coupon.hours3 <= hours:
                         payment = payment - coupon.hours3 * per_hour + coupon.money3
+                        hours -= coupon.hours3
                     elif coupon.hours2 and coupon.hours2 <= hours:
                         payment = payment - coupon.hours2 * per_hour + coupon.money2
+                        hours -= coupon.hours2
                     elif coupon.hours1 and coupon.hours1 <= hours:
                         payment = payment - coupon.hours1 * per_hour + coupon.money1
+                        hours -= coupon.hours1
 
     return payable, payment 
         
