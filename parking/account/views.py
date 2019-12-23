@@ -1,8 +1,10 @@
 from django.shortcuts import render,redirect
 from administrator.decorators import *
+from parkinglot.models import *
 from realtime.models import *
 import datetime
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from chargerule.models import *
 from account.models import *
 from meta.models import User,WechatUser
@@ -281,6 +283,17 @@ def begin_work(request):
 	ctx = {}
 	user = User.objects.first()
 
+	def serialize(obj):
+		list = []
+		for i in obj:
+			d = {
+				"id":i.id,
+				"name":i.name
+			}
+			list.append(d)
+		return list
+
+
 	def set_work(user,p,g):
 		today = datetime.datetime.now()
 		rs = WorkRecord.objects.order_by('-time').first()
@@ -304,9 +317,14 @@ def begin_work(request):
 			parkinglot = request.POST.get('parkinglot','')
 			gate = request.POST.get('gate','')
 			set_work(user,parkinglot,gate)
+		elif action == 'gate':
+			p_id = request.POST.get('parkinglot','')
+			gates = Gate.objects.filter(parkinglot__id=p_id).all()
+
+			return JsonResponse({'data':serialize(gates) })
 
 
-
+	ctx['parkinglots'] = ParkingLot.objects.all()
 	return render(request,'begin_work.html',ctx)
 
 
