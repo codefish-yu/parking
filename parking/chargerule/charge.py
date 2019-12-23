@@ -294,7 +294,7 @@ def get_valid_hours_perday(areas, start=None, end=None):
         hours = date_2_float(end) - date_2_float(start)
         end = date_2_float(end)
         start = date_2_float(start)
-        print('sss',start, end, areas)
+        print('sss',start, end, hours)
         for i in areas:
             s = str_2_float(i['start'])
             e = str_2_float(i['end'])
@@ -304,7 +304,7 @@ def get_valid_hours_perday(areas, start=None, end=None):
             elif start <= s and end >= s:
                 print(2)
                 hours -= e - s
-            elif start >= e and end >= e:
+            elif start <= e and end >= e:
                 print(3)
                 hours -= e - start
             elif start >= s and end <= e:
@@ -336,9 +336,7 @@ def get_valid_hours_perday(areas, start=None, end=None):
                 hours = hours - (e -s)
             elif s < clock:
                 hours = hours - (clock -s)
-    print('areas: ', areas)
-    print('start: %s, end: %s' % (start, end))
-    print(hours)
+    print('获取在自然日内的错峰时长:', areas, start, end, hours)
     return hours if hours > 0 else 0
 
 
@@ -379,7 +377,7 @@ def get_valid_hours_per24(start, end, parkinglot, card):
     
     if card.diff_type == 0:
         areas1 = getareas1(ifwork1, card)
-        areas2 = getareas2(ifwork1, card)
+        areas2 = getareas1(ifwork2, card)
     else:
         areas1 = getareas2(start_weekday, card)
         areas2 = getareas2(end_weekday, card)
@@ -388,9 +386,7 @@ def get_valid_hours_per24(start, end, parkinglot, card):
         return get_valid_hours_perday(areas1, start, end)
     else:
         hours1 = get_valid_hours_perday(areas1, start=start)
-        print(hours1)
         hours2 = get_valid_hours_perday(areas2, end=end)
-        print(hours2)
         return hours1 + hours2
 
 
@@ -404,12 +400,12 @@ def get_by_card(start, end, parkinglot, card, day_max):
         _end = start + datetime.timedelta(days=1)
         if _end > end:
             h = get_valid_hours_per24(start, end, parkinglot, card)
-            print(start, end, h)
+            print('sssxxx',start, end, h)
             hours += h if h < day_max else day_max
             break
         else:
             h = get_valid_hours_per24(start, _end, parkinglot, card)
-            print(start, _end, h)
+            print('xxxxxxxx',start, _end, h)
            
             hours += h if h < day_max else day_max
             start = _end
@@ -449,14 +445,14 @@ def compute(parkinglot, start, end, coupons, card):
             hours = get_by_card(start, card.valid_end, parkinglot, card.my_card, day_max) + get_valid_hours(card.valid_end, end, day_max)
         else:
             hours = get_by_card(start, end, parkinglot, card.my_card, day_max)
+        print(hours , 'xxxx')
         
-        payable = payment = hours2price(hours, baseRule)
+        payable = payment = math.ceil(hours * 2) / 2 * baseRule.per_hour
 
     else:
         hours = get_valid_hours(start, end, day_max)
 
         payable = payment = hours2price(hours,baseRule)
-        print(hours, payable, 'xxxx')
         if coupons: # 有券, 只能同时用一种券, 可叠加多张
         
             for coupon in coupons:
