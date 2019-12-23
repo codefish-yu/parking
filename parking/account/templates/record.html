@@ -40,7 +40,11 @@
 			</div>
 			<div class="ri">
 				<div>
-					已支付
+					{% if p == 2%}
+					{{i.get_status_display}}
+					{% else %}
+					{{i.bill.get_status_display}}
+					{% endif %}
 				</div>
 			</div>
 		</div>

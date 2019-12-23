@@ -241,6 +241,7 @@ def record(request):
 	ctx['tip'] =tip
 	ctx['records'] = records
 	return render(request,'record.html',ctx)
+	
 
 # @user_required
 @csrf_exempt
@@ -277,6 +278,7 @@ def personal(request):
 	ctx['record'] = workrecord	
 	ctx['wuser'] = WechatUser.objects.filter(user=user).first()
 	return render(request,'personal.html',ctx)
+
 
 @csrf_exempt
 def begin_work(request):
@@ -317,11 +319,14 @@ def begin_work(request):
 			parkinglot = request.POST.get('parkinglot','')
 			gate = request.POST.get('gate','')
 			set_work(user,parkinglot,gate)
+
+			return redirect('/account/spec_pass/')
+
 		elif action == 'gate':
 			p_id = request.POST.get('parkinglot','')
-			gates = Gate.objects.filter(parkinglot__id=p_id).all()
+			gates = Gate.objects.filter(parkinglot__id=p_id,status=0).all()
 
-			return JsonResponse({'data':serialize(gates) })
+			return JsonResponse({'data':serialize(gates)})
 
 
 	ctx['parkinglots'] = ParkingLot.objects.all()

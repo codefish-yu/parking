@@ -126,6 +126,7 @@ def parkout(request, user, parkinglot_id, gate_id=None):
                         
                         if gate_id:  # 如果此时在出口扫描支付, 则要立即创建开闸指令
                             r = bill.first().InAndOut
+                            bill.update(status=2)
                             createOpenOrder(parkinglot_id, gate_id, r)
 
                         return JsonResponse({'success': True})

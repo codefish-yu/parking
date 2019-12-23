@@ -51,6 +51,7 @@
 		margin: 10% 0 0 5%
 	}
 </style>
+<script src="/static/js/jquery.min.js"></script>
 <script type="text/javascript">
 	function get_gate(obj){
 		$.ajax({
@@ -67,5 +68,8 @@
 			}
 		})
 	} 
+	$('#log').click(()=>(
+		$('#login-form').submit()
+	))
 </script>
 {% endblock %}
