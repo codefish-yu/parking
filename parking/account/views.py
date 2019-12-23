@@ -83,10 +83,6 @@ def spec_pass(request):
 			r_id = request.POST.get('id','')
 			remark = request.POST.get('remark','')
 			audio = request.FILES.get('audio','')
-			print(11111)
-			print(audio)
-			if audio:
-				print(audio)
 			record = InAndOut.objects.filter(id=r_id).first()
 			record.remark = remark
 			record.save()
@@ -101,8 +97,9 @@ def spec_pass(request):
 			# 修改放行参数
 			chek = SpecRecord.objects.filter(tollman=user,record__is_spec=1).all()
 			re = WorkRecord.objects.filter(worker=user).order_by('-time').first()
-			re.spec_num = len(chek)
-			re.save()
+			if re:
+				re.spec_num = len(chek)
+				re.save()
 
 		elif action == 'in':
 			records = records.filter(out_time=None).all()

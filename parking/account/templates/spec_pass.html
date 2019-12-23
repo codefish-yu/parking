@@ -102,6 +102,7 @@
 				<div class="c_item">残疾证</div>
 			</div>
 			<button id='voic'><img src="/static/img/voice.svg"></button>
+			<!-- <audio src="/static/test.wav" controls></audio> -->
 			<button id='stopAudio'><img src="/static/img/stop.svg"></button>
 			<div id='conf'>确认</div>
 		</div>
@@ -330,11 +331,11 @@
 		    recorder && recorder.exportWAV(function(blob) {
 		     	console.log(blob);
 		     	
-		     	$('#pass input[name=audio]').val(blob)
+		     	$('#pass input[name=audio]')[0].files.append(blob)
 		    });
 		    // var blob = new File([$('#voic')],'test.wav');
 		    // console.log(blob);
-		    // $('#pass input[name=audio]').val(blob)
+		    // $('#pass input[name=audio]')[0].files.append(blob)
 		}
 
 		function stopRecording(button) {

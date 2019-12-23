@@ -413,16 +413,15 @@ def card(request):
             ids = request.POST.getlist('ids', '')
             u = Card.objects.filter(id__in=ids).all()
             for item in u:
-                item.status = -1
                 item.save()
 
         elif action == 'validate':
             owner = request.POST.get('owner', '')
             id = request.POST.get('id','')
             if id:
-                r = Card.objects.filter(owner=owner.strip()).exclude(id=int(id))
+                r = Card.objects.filter(owner=owner.strip()).exclude(id=int(id),status=0)
             else:   
-                r = Card.objects.filter(owner=owner.strip())
+                r = Card.objects.filter(owner=owner.strip(),status=0)
 
             if r.exists():
                     return JsonResponse({'valid': False})
