@@ -5,15 +5,15 @@
 <form method="post" action="" id='login-form'>
 	<!-- <input type="" name="parkinglot" placeholder="请选择车场">
 	<input type="" name="gate" placeholder="请选择值班口"> -->
-	<select name="parkinglot" data-placeholder="请选择车场" onchange="get_gate(this)">
-		<option value="">请选择车场</option>
+	<select name="parkinglot" data-placeholder=选择车场" onchange="get_gate(this)">
+		<option value="">选择车场</option>
 		{% for i in parkinglots%}
 		<option value="{{i.id}}">{{i.name}}</option>
 		{% endfor %}
 		
 	</select>
-	<select name="gate" data-placeholder="请选择值班口">
-		<option value="">请选择值班口</option>
+	<select name="gate" data-placeholder="选择值班口" disabled>
+		<option value="">选择值班口</option>
 
 		
 	</select>
@@ -51,9 +51,20 @@
 		margin: 10% 0 0 5%
 	}
 </style>
+{% endblock %}
+{% block js%}
 <script src="/static/js/jquery.min.js"></script>
 <script type="text/javascript">
+	
 	function get_gate(obj){
+		var id = $(obj).val();
+		if(id == ''){
+			$('#login-form select[name=gate]').attr('disabled','disabled');
+			return	
+		}else{
+			$('#login-form select[name=gate]').removeAttr('disabled')
+		}
+
 		$.ajax({
 			url:'',
 			type:'post',
@@ -62,14 +73,26 @@
 				'parkinglot':$(obj).val()
 			},
 			success:function(e){
+				$('#login-form select[name=gate]').empty();
+				$('#login-form select[name=gate]').append('<option value="">选择值班口</option>');
 				for(var i=0;i<e.data.length;i++){
 					$('#login-form select[name=gate]').append('<option value="'+e.data[i].id+'">'+e.data[i].name+'</option>');
 				}
 			}
 		})
 	} 
-	$('#log').click(()=>(
-		$('#login-form').submit()
-	))
+	$('#log').click(function(){
+		if($('#login-form select[name=gate]').attr('disabled') == 'disabled'){
+			alert('车场车场不能为空')
+		}else{
+			if($('#login-form select[name=gate]').val() == ''){
+				alert('值班口不能为空')
+			}else{
+				$('#login-form').submit()
+			}
+			
+		}
+		
+	})
 </script>
-{% endblock %}
+{% endblock%}

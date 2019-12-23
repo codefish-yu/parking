@@ -224,12 +224,12 @@
 	.number{
 		display: inline-block;
 		font-size: 50px;
-		width: 46%;
+		width: 66%;
 		padding-left: 2%
 	}
 	.ty{
 		display: inline-block;
-		width: 49%;
+		width: 26%;
 		text-align: right;
 	}
 	.bt{
@@ -274,11 +274,11 @@
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/static/js/Recorderjs/dist/recorder.js"></script>
 <script type="text/javascript">
-	
+	var audio_context;
+	var recorder;
 	//录音
 	{
-		var audio_context;
-		var recorder;
+		
 	  	function start(){
 	  		$('#voic').hide();
 	  		$('#stopAudio').show();
