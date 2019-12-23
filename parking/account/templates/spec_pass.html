@@ -6,7 +6,7 @@
 	{% if record %}
 	<div class='con'>
 
-		<img src="{% if p == 0 %}{{ record.picture_out.url}}{% else %}{{ record.picture_in.url}}{% endif %}" id='im'>
+		<img src="{% if p == 0 %}{% if record.picture_out %}{{ record.picture_out.url}}{% endif %}{% else %}{% if record.picture_in %}{{ record.picture_in.url}}{% endif %}{% endif %}" id='im'>
 		<div>
 			<div class="number">{{ record.number}}</div>
 			<div class="ty">
