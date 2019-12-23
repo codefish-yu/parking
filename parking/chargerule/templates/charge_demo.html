@@ -244,11 +244,10 @@
     
     $('select[name=ticket]').on('change',function(){
         $('#coupons').append(
-            '<input name="coupons" value="'+$(this).val()+'" type="hidden" />' +
-            '<span> '+ $(this).find("option:selected").text()+' </span> 、'
+            '<span><input name="coupons" value="'+$(this).val()+'" type="hidden" />' +
+            '<span> '+ $(this).find("option:selected").text()+' </span><span>❌</span </span>、'
             )
     })
-
 </script>
 
 {% endblock %}

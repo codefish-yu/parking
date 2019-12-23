@@ -1,19 +1,153 @@
 <!-- 有车牌的车辆 -->
 
 
-<!DOCTYPE html>
-<html>
 
-<head>
-	<title>欢迎入场</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-	<form action='' method="post">
+{% extends 'public_count/base/base.html' %}
+
+{% block content %}
+
+<style type="text/css">
+	.car_number{
+		height: 38px;
+		width: 100%;
+		padding-top: 8px;
+		padding-bottom: 8px;
+		padding-left: 5%;
+		background: #3366CC;
+		
+	}
+	.car_number input{
+		width: 8%;
+		height: 32px;
+		margin-left: 0.5%; 
+		margin-right: 0.5%; 
+		text-align: center; 
+	}
+
+	/*.car_number input:hover{
+		border:1px solid red;
+	}*/
+	.car_number .circle{
+		width: 5px;
+	    height: 5px;
+	    border-radius: 50%;
+	    border: 0px;
+	}
+	.confirm_div{
+		margin-top: 40px;
+		text-align: center;
+	}
+	.confirm_div .confirm{
+		background: #3366CC;
+		box-shadow: 0 2px 4px 0 rgba(51,102,204,0.50);
+		font-family: PingFangSC-Medium;
+		font-size: 17px;
+		color: #FFFFFF;
+		letter-spacing: 0.29px;
+		text-align: center;
+		width: 50%;
+	    height: 50px;
+	    border: 0px;
+	    color: white;
+	    border-radius: 25px;
+	}
+	.confirm_div .no_card{
+		font-family: PingFangSC-Medium;
+		font-size: 12px;
+		color: #666666;
+		letter-spacing: 0.2px;
+		text-align: center;
+		margin-top: 15px;
+	}
+	.parkinglot{
+		font-family: PingFangSC-Medium;
+		font-size: 16px;
+		color: #000000;
+		margin: 20px;
+	}
+</style>
+<form action='' method="post">
+
+	<div class='title'>绑定车牌</div>
+
 		{% csrf_token %}
 		<input type='hidden' name='action' value='record' />
-		<input type='text' name='car_number' placeholder="请输入您的车牌号" />
-		<input type='submit' value='确定' />
-	</form>
-</body>
-</html>
+		<input type='hidden' name='car_number' />
+		
+		<div class='car_number'>
+			<input type='text' name='number1' maxlength="1" />
+			<input type='text' name='number2' maxlength="1" />
+			<input type='text' class="circle" maxlength="1" />
+			<input type='text' name='number3' maxlength="1" />
+			<input type='text' name='number4' maxlength="1" />
+			<input type='text' name='number5' maxlength="1" />
+			<input type='text' name='number6' maxlength="1" />
+			<input type='text' name='number7' maxlength="1" />
+			<input type='text' placeholder='+' name='number8' maxlength="1" />
+			<!-- <div class='btn' ><div>+</div><div>新能源</div></div> -->
+		</div>
+	<div class='parkinglot'>
+		<div>当前车场</div>
+		<div>{{ parkinglot.name }} </div>
+	</div>
+	<div class='confirm_div'>
+		<button class='confirm' type='button'>绑定车牌</button>
+		<div class='no_card'> 我是无牌车 </div>
+	</div>
+</from>
+
+{% endblock %}
+{% block js %}
+	<script type="text/javascript">
+		function get_number(){
+			var number = $('input[name=number1]').val() +
+			$('input[name=number2]').val() +
+			$('input[name=number3]').val() +
+			$('input[name=number4]').val() +
+			$('input[name=number5]').val() +
+			$('input[name=number6]').val() +
+			$('input[name=number7]').val() 
+			if($('input[name=number8]').val()){
+				number = number +$('input[name=number7]').val()
+			}
+			return number
+		}
+		$('.car_number input').keydown(function(event){
+			console.info(event)
+			if(event.code == 'Backspace'){
+				if($(this).val() == ''){
+					if($(this).prev().attr('name')){
+						$(this).prev().focus()
+					}else{
+						$(this).prev().prev().focus()
+					}
+				}
+			}
+		})
+		$('.car_number input').keyup(function(event){
+		 
+			if($(this).attr('name') != 'number1') $(this).val($(this).val().toLocaleUpperCase())
+			if($(this).val().length != 1) return 
+			if($(this).next().attr('name')){
+				$(this).next().focus()
+			}else{
+				$(this).next().next().focus()
+			}
+		})
+
+		$('.confirm').click(function(){
+ 			for(var i=1;i<8;i++){
+ 				var val = $('input[name=number'+i+']').val()
+ 				if(!val){
+ 					$('input[name=number'+i+']').focus()
+ 					return
+ 				}
+ 			}
+ 			$('input[name=car_number]').val(get_number())
+ 			console.info(get_number())
+ 			// $('form').submit
+		})
+	</script>
+{% endblock %}
+ 
+
