@@ -88,33 +88,38 @@
 
                         {% if payment %}
                         <div style="width: 500px;height:300px;float: left;">
-                            <p>车牌: <span>{{ car_number }}</span></p>
-                            <p>车场: <span>{{ parkinglot.name }}</span></p>
+                            <h4>车辆详情 : </h4>
+                            <p>车牌 : <span>{{ car_number }}</span></p>
+                            <p>车场 : <span>{{ parkinglot.name }}</span></p>
                             {% if baserule %}
-                            <p>车场基本规则:
-                            免费时间: {{ baserule.free_time }} 分钟,
-                               起步计费: {{ baserule.min_price }} 分钟, 
-                               封顶时间: {{ baserule.day_max }} 小时, 
-                               小时单价: {{ baserule.per_hour }} 元/小时 
+                            <p>车场基本规则 :
+                            免费时间 : {{ baserule.free_time }} 分钟,
+                               起步计费 : {{ baserule.min_price }} 分钟, 
+                               封顶时间 : {{ baserule.day_max }} 小时, 
+                               小时单价 : {{ baserule.per_hour }} 元/小时 
                             {% endif %}
                             </p>
                             {% if card %}
-                                <p>卡:{{ card.my_card.name }}, 
+                                <p>卡 :  {{ card.my_card.name }}, 
+                                    {% if card.my_card.diff_type == 0 %}
                                     工作日: {{ card.my_card.work }},
-                                    非工作日: {{ card.my_card.relax }},
-                                <p>周一: {{ card.my_card.free }},</p>
-                                <p>周二: {{ card.my_card.free_tu }},</p>
-                                <p>周三: {{ card.my_card.free_we }},</p>
-                                <p>周四: {{ card.my_card.free_th }},</p>
-                                <p>周五: {{ card.my_card.free_fr }},</p>
-                                <p>周六: {{ card.my_card.free_sa }},</p>
-                                <p>周日: {{ card.my_card.free_su }},</p>
+                                    非工作日: {{ card.my_card.relax }}
+                                    {% endif %}
                                 </p>
-                                <p>有效期: <span>{{ card.valid_start }} ~ {{ card.valid_end }}</span></p>
+                                {% if card.my_card.diff_type == 1 %}
+                                <p>周一 : {{ card.my_card.free }},</p>
+                                <p>周二 : {{ card.my_card.free_tu }},</p>
+                                <p>周三 : {{ card.my_card.free_we }},</p>
+                                <p>周四 : {{ card.my_card.free_th }},</p>
+                                <p>周五 : {{ card.my_card.free_fr }},</p>
+                                <p>周六 : {{ card.my_card.free_sa }},</p>
+                                <p>周日 : {{ card.my_card.free_su }},</p>
+                                {% endif %}
+                                <p>有效期 :  <span>{{ card.valid_start }} ~ {{ card.valid_end }}</span></p>
                             {% else %}
                                 <p>无卡</p>
                             {% endif %}
-                            <p>优惠券: 
+                            <p>优惠券 :  
                                 {% for i in coupons %}
                                     {{ i.name }} 、 
                                 {% endfor %}
@@ -122,8 +127,8 @@
                             
                         </div>
                          <div style="width: 500px;height:300px;float: right;">
-                            <h4>计算结果: </h4>
-                            <p>计费开始: {{ in_time }},  计费结束: {{ out_time }}</p>
+                            <h4>计算结果 : </h4>
+                            <p>计费开始 : {{ in_time }},  计费结束 : {{ out_time }}</p>
                             <p>应收 : <span>{{ payment.0 }} 元</span>,
                                 实收 : <span>{{ payment.1 }} 元</span>
                             </p>

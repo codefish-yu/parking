@@ -480,7 +480,7 @@ def chargedemo(request):
             in_time = datetime.datetime.strptime(in_time, '%Y-%m-%d %H:%M:%S')
             out_time = datetime.datetime.strptime(out_time, '%Y-%m-%d %H:%M:%S')
             ctx['payment'] = compute(parkinglot, in_time, out_time, coupons, card)
-            print(ctx)
+            
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
     
     all_tickets = {}
