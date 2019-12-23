@@ -1,12 +1,29 @@
-<div id='bottom'>
-	<div id='park'>停车场</div>
-	<div id='my'>账号</div>
+<div id='bottom' >
+	{% if menu != 'my'%}
+	<div id='park'class="act">
+		<img src="/static/img/parking.png"><br>
+		停车场
+	</div>
+	<div id='my'>
+		<img src="/static/img/person.png"><br>
+		账号
+	</div>
+	{% else %}
+	<div id='park'>
+		<img src="/static/img/parking1.png"><br>
+		停车场
+	</div>
+	<div id='my'class="act">
+		<img src="/static/img/person1.png"><br>
+		停车场
+	</div>
+	{% endif %}
 </div>
 <style type="text/css">
 	#bottom{
 		position: absolute;
 		/*margin-top: calc(100%-100px);*/
-		font-size: 18px;
+		font-size: 10px;
 		height: 50px;
 		bottom: 0;
 		width: 100%;
@@ -17,8 +34,15 @@
 		display: inline-block;
 		width: 49%;
 		text-align: center;
-		padding-top: 3%
+		padding-top: 2%
 	}
+	#bottom img{
+		width: 10%;
+	}
+	.act{
+		color: blue
+	}
+
 </style>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">

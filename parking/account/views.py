@@ -1,8 +1,10 @@
 from django.shortcuts import render,redirect
 from administrator.decorators import *
+from parkinglot.models import *
 from realtime.models import *
 import datetime
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from chargerule.models import *
 from account.models import *
 from meta.models import User,WechatUser
@@ -10,15 +12,6 @@ from meta import api
 import functools
 
 # Create your views here.
-def begin_work(user):
-	today = datetime.datetime.now()
-	rs = WorkRecord.objects.order_by('-time').first()
-	if today.day != rs.time.day:
-		r = WorkRecord()
-		r.worker = user
-		r.time = datetime.datetime.now()
-		r.save()
-
 
 def user_required(func):
 
@@ -46,7 +39,6 @@ def user_required(func):
             return redirect('/login/public/account/?next=' + next_url)
 
         request.user = user
-        begin_work(user)
         result = func(request, user=user, *args, **kwargs)
         return result
 
@@ -106,9 +98,6 @@ def spec_pass(request):
 			re.spec_num = len(chek)
 			re.save()
 
-
-
-
 		elif action == 'in':
 			records = records.filter(out_time=None).all()
 			record = records.first()
@@ -164,12 +153,12 @@ def correct(request):
 
 		elif action == 'in':
 			p=1
-			record = ExceptRecord.order_by.filter(direction=p).first()
+			record = ExceptRecord.objects.filter(direction=p).first()
 			
 
 		elif action == 'out':
 			p = 0
-			record = ExceptRecord.order_by.filter(direction=p).first()
+			record = ExceptRecord.objects.filter(direction=p).first()
 
 
 	ctx['p'] = p
@@ -207,6 +196,9 @@ def record(request):
 		action = request.POST.get('action','')
 		if action == 'change':
 			status = request.POST.get('status','')
+			p = request.POST.get('ps','')
+			if p:
+				p = int(p)
 			if not int(status):
 				records = records.filter(is_spec=1).all()
 				tip = 1
@@ -215,12 +207,15 @@ def record(request):
 				tip = 0
 
 		elif action == 'in':
-			records = records.filter(out_time=None).all()
+			records = InAndOut.objects.filter(out_time=None).order_by('-update_time').all()
 			p=1
 
 		elif action == 'out':
 			records = InAndOut.objects.order_by('-update_time').all()
 			p = 0
+		elif action == 'ex':
+			records = []
+			p=2
 
 		elif action == 'select':
 			start = request.POST.get('start','')
@@ -241,22 +236,96 @@ def record(request):
 				else:
 					records = records.filter(out_time__lte=end).all()
 
-		
+	ctx['ex'] =len(ExceptRecord.objects.filter(status=0).all())	
 	ctx['p'] = p
 	ctx['tip'] =tip
 	ctx['records'] = records
 	return render(request,'record.html',ctx)
 
 # @user_required
+@csrf_exempt
 def personal(request):
 	ctx = {}
+
+	def get_time(time):
+		return time.hour+time.minute/60
+
+	def get_duration(r):
+		now = datetime.datetime.now()
+		if not r.offline:
+			r.duration = get_time(now)-get_time(r.time)
+		else:
+			r.duration += get_time(now)-get_time(r.offline)
+
+		r.offline = now
+		r.save()
 	
 	user = User.objects.first()
+	worker = Worker.objects.filter(user=user).first()
 	workrecord = WorkRecord.objects.filter(worker=user).first()
+	get_duration(workrecord)
 
+
+	if request.method == 'POST':
+		action =request.POST.get('action','')
+		if action == 'offline':
+
+			get_duration(workrecord)
+			return redirect('/account/begin_work')
+
+	ctx['parkinglot']=worker.parkinglot.name
 	ctx['record'] = workrecord	
 	ctx['wuser'] = WechatUser.objects.filter(user=user).first()
 	return render(request,'personal.html',ctx)
+
+@csrf_exempt
+def begin_work(request):
+	ctx = {}
+	user = User.objects.first()
+
+	def serialize(obj):
+		list = []
+		for i in obj:
+			d = {
+				"id":i.id,
+				"name":i.name
+			}
+			list.append(d)
+		return list
+
+
+	def set_work(user,p,g):
+		today = datetime.datetime.now()
+		rs = WorkRecord.objects.order_by('-time').first()
+		p = ParkingLot.objects.filter(id=int(p)).first()
+		g = Gate.objects.filter(id=int(g)).first()
+		if today.day != rs.time.day:
+			r = WorkRecord()
+			r.worker = user
+			r.time = datetime.datetime.now()
+			r.parkinglot = p
+			r.gate = g
+		else:
+			r = WorkRecord.objects.filter(worker=user).order_by('-time').first()
+			r.offline = datetime.datetime.now()
+
+		r.save()
+
+	if request.method == 'POST':
+		action = request.POST.get('action','')
+		if action == 'login':
+			parkinglot = request.POST.get('parkinglot','')
+			gate = request.POST.get('gate','')
+			set_work(user,parkinglot,gate)
+		elif action == 'gate':
+			p_id = request.POST.get('parkinglot','')
+			gates = Gate.objects.filter(parkinglot__id=p_id).all()
+
+			return JsonResponse({'data':serialize(gates) })
+
+
+	ctx['parkinglots'] = ParkingLot.objects.all()
+	return render(request,'begin_work.html',ctx)
 
 
 

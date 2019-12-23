@@ -1,7 +1,23 @@
 {% extends 'home.html' %}
 {% block content%}
 <div id='total'>
-	{% include 'header.html' %}
+	<div id='head'>
+		<div >
+			<span id='in_p' {% if p == 1 %}class="active"{% endif %}>入场</span>
+		</div>
+		
+		<div >
+			<span id='out_p' {% if p == 0 %}class="active"{% endif %}>出场</span>
+		</div>
+		<div >
+			<span id='ex'>{{ex}}</span>
+			<span id='ex_p' {% if p == 2 %}class="active"{% endif %}>异常</span>
+		</div>
+		<form method="post" action="" >
+			<input type="hidden" name="action" value="">
+		</form>
+	</div>
+	{% if p != 2%}
 	<div id='onl'>
 		<div id='sel'>
 			<form method="post" action="" id='sel-form'>
@@ -10,8 +26,11 @@
 				<input type="hidden" name="action" value="select">
 			</form>
 		</div>
+		
 		<div id='spec'>{% if tip == 0 %}只看特放{% else %}查看全部{% endif %}</div>
+		
 	</div>
+	{% endif %}
 	<div id='to'>
 		{% for i in records %}
 		<div class="item">
@@ -34,8 +53,37 @@
 	{% csrf_token%}
 	<input type="hidden" name="action" value="change">
 	<input type="hidden" name="status" value="{{tip}}">
+	<input type="hidden" name="ps" value="{{p}}">
 </form>
 <style type="text/css">
+	#ex{
+		background-color: red;
+		color: white;
+		border-radius: 50%;
+		width: 13px;
+		height: 13px;
+		font-size: 9px;
+		position: absolute;
+		margin-left: 10%;
+	}
+	#head{
+		position: absolute;
+		top: 0;
+		font-size: 18px;
+		height: 50px;
+		width: 100%;
+	}
+	#head div{
+		display: inline-block;
+		width: 32%;
+		text-align: center;
+		padding-top: 3%;
+	}
+	.active{
+		border-bottom: 1px solid blue;
+		padding-bottom: 10px;
+		color: blue
+	}
 	.tim{
 		width: 43%;
 		border:1px solid gray;
@@ -97,19 +145,19 @@
 <link href="/static/css/laydate.css" rel="stylesheet">
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
-	// function ren(id ,t=0){
- //        laydate.render({
- //          elem: id,
- //          // type: 'time',
- //          format: 'yyyy-MM-dd'
- //        });
- //        if(t == 0){
- //            $(id).val('');
- //        }
-        
- //    };
- //    ren('#sel-form input[name=start]');
- //    ren('#sel-form input[name=end]')
+	$('#in_p').click(function(){
+		$('#head input').val('in');
+		$('#head form').submit()
+	});
+	$('#out_p').click(function(){
+		$('#head input').val('out');
+		$('#head form').submit()
+	});
+	$('#ex_p').click(
+		function(){
+		$('#head input').val('ex');
+		$('#head form').submit()
+	});
 	$(document).ready(()=>(
 		$('#to').css('height',window.innerHeight-130+'')
 	));

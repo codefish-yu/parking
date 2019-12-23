@@ -44,6 +44,7 @@
                                     <tr>
                                         <th></th>
                                         <th>编号</th>
+                                        <th>名称</th>
                                         <th>使用类型</th>
                                         <th>控制类型</th>
                                         <th>所属车场</th>
@@ -61,6 +62,7 @@
                                         <tr>
                                             <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
                                             <td>{{forloop.counter}} </td>
+                                            <td>{{i.name}}</td>
                                             <td>{{ i.get_use_type_display }}</td>
                                             <td>{{ i.get_ctrl_type_display }} </td>
                                             <td>{{ i.parkinglot.name}} </td>
@@ -75,7 +77,7 @@
                                         </tr>
                                     {% empty %}
                                     <tr class="text-center">
-                                        <td colspan="9">没有找到匹配的记录</td>
+                                        <td colspan="10">没有找到匹配的记录</td>
                                     </tr>
                                     {% endfor %}
                                     </form>
@@ -107,6 +109,12 @@
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{i.id}}' action='' method="post">
                         {% csrf_token %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" class="form-control " value="{{i.name}}">
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">使用类型</label>
                             <div class="col-sm-4">
@@ -200,7 +208,13 @@
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='add_form' action='' method="post">
                         {% csrf_token %}
-                       <div class="form-group">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="name" class="form-control " >
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="col-sm-2 control-label">使用类型</label>
                             <div class="col-sm-4">
                                 <select data-placeholder="选择使用类型" class="form-control chosen-select" name="use_type" >
@@ -299,10 +313,33 @@
 
 {% block js %}
  <script>
+    initValidator('#add_form','');
+    function initValidator(name,id){
+        $(name).bootstrapValidator({
+
+　　　　　　 message: 'This value is not valid',
+        　 feedbackIcons: {
+            　　　　　　　　valid: 'glyphicon glyphicon-ok',
+            　　　　　　　　invalid: 'glyphicon glyphicon-remove',
+            　　　　　　　　validating: 'glyphicon glyphicon-refresh'
+        　　　　　　　　   },
+
+            fields: {
+                name:{
+                    validators:{
+                        notEmpty:{
+                            message:'名称不能为空'
+                        }
+                    }
+                }
+
+            }
+        })
+    }
     function change(){
         var ids = $('input[name=ids]:checked')
                 if(ids.length == 1){
-
+                    initValidator('#update_form_'+ids[0],ids[0]);
                     $('#update_model_'+ids[0].value).show()
                 }
     }

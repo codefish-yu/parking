@@ -34,6 +34,7 @@ class Gate(models.Model):
 	monitor = models.CharField(max_length=30,blank=True,verbose_name='所属监控')
 	charge_rule = models.IntegerField(choices=rules,verbose_name='收费规则',default=0)
 	code = models.ImageField(null=True,upload_to='qrcode/',verbose_name='二维码')
+	name = models.CharField(max_length=30,verbose_name='名称',null=True)
 
 
 class Worker(models.Model):
