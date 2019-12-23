@@ -82,6 +82,11 @@ def spec_pass(request):
 		elif action == 'pass':
 			r_id = request.POST.get('id','')
 			remark = request.POST.get('remark','')
+			audio = request.FILES.get('audio','')
+			print(11111)
+			print(audio)
+			if audio:
+				print(audio)
 			record = InAndOut.objects.filter(id=r_id).first()
 			record.remark = remark
 			record.save()
@@ -90,6 +95,7 @@ def spec_pass(request):
 			r = SpecRecord()
 			r.tollman = user
 			r.record = record
+			r.audio = audio
 			r.save()
 
 			# 修改放行参数
@@ -241,7 +247,7 @@ def record(request):
 	ctx['tip'] =tip
 	ctx['records'] = records
 	return render(request,'record.html',ctx)
-	
+
 
 # @user_required
 @csrf_exempt

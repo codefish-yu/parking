@@ -79,9 +79,10 @@
 	{% include 'bottom.html' %}
 </div>
 <div id='pass'>
-	<form method="post" action="" id='pass-form'>
+	<form method="post" action="" id='pass-form' enctype="multipart/form-data">
 		<input type="hidden" name="action" value="pass">
 		<input type="hidden" name="remark">
+		<input type="file" name="audio" style="display:none">
 		<input type="hidden" name="id" value="{{record.id}}">
 	</form>
 	<div id='p_con'>
@@ -100,12 +101,26 @@
 				<div class="c_item">危险品车</div>
 				<div class="c_item">残疾证</div>
 			</div>
-			<div id='voic'><img src="/static/img/voice.svg"> </div>
+			<button id='voic'><img src="/static/img/voice.svg"></button>
+			<button id='stopAudio'><img src="/static/img/stop.svg"></button>
 			<div id='conf'>确认</div>
 		</div>
 	</div>
 </div>
 <style type="text/css">
+	#stopAudio{
+		text-align: center;
+		width: 100%;
+		margin: 10% 0 5% 0;
+		display: none
+	}
+	#stopAudio img{
+		width: 70px;
+		height: 70px;
+		border-radius:50%;
+		border:1px solid #3366CC;
+		color: #3366CC;
+	}
 	#ex_t{
 		position: absolute;
     	margin: -4% 0 0 -6%;
@@ -140,10 +155,10 @@
 	#conf{
 		text-align: center;
 		width: 60%;
-		margin-left: 20%;
+		margin: 10% 0 0 20%;
 		color: white;
 		background-color: #3366CC;
-		height: 12%;
+		height: 10%;
 		padding-top: 5%
 	}
 	#voic{
@@ -259,11 +274,42 @@
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script src="/static/js/Recorderjs/dist/recorder.js"></script>
 <script type="text/javascript">
+	
 	//录音
 	{
 		var audio_context;
-	  	var recorder;
+		var recorder;
+	  	function start(){
+	  		$('#voic').hide();
+	  		$('#stopAudio').show();
+	  		startRecord();
+	  		
+	  	}
 
+	  	function end(){
+	  		$('#voic').show();
+	  		$('#stopAudio').hide();
+	  		stopRecording()
+	  	}
+
+	  	function uploadAudio(blob){
+	  		var data = new FormData();
+	  		data.append('audio',blob);
+	  		data.append('action','audio');
+	  		$.ajax({
+	  			url:'',
+	  			type:'POST',
+                dataType:'json',
+                processData: false,
+                contentType: false,
+                traditional:true,
+                data:form_data,
+                success:function(e){
+
+                }
+	  		});
+
+	  	}
 
 		function startUserMedia(){
 			var input = audio_context.createMediaStreamSource(stream);
@@ -276,28 +322,35 @@
 
 		function startRecord(button){
 			recorder && recorder.record();
-		    button.disabled = true;
-		    button.nextElementSibling.disabled = false;
+		    // button.disabled = true;
+		    // button.nextElementSibling.disabled = false;
 		    console.log('Recording...');
+		}
+		function createDownloadLink() {
+		    recorder && recorder.exportWAV(function(blob) {
+		     	console.log(blob);
+		     	
+		     	$('#pass input[name=audio]').val(blob)
+		    });
+		    // var blob = new File([$('#voic')],'test.wav');
+		    // console.log(blob);
+		    // $('#pass input[name=audio]').val(blob)
 		}
 
 		function stopRecording(button) {
 		    recorder && recorder.stop();
-		    button.disabled = true;
-		    button.previousElementSibling.disabled = false;
+		    // button.disabled = true;
+		    // button.previousElementSibling.disabled = false;
 		    console.log('Stopped recording.');
 		    
 		    // create WAV download link using audio data blob
 		    createDownloadLink();
+	
 		    
-		    recorder.clear();
+		    // recorder.clear();
 		}
 
-		function createDownloadLink() {
-		    recorder && recorder.exportWAV(function(blob) {
-		     	console.log(blob)
-		    });
-		}
+
 
 
 		window.onload = function init() {
@@ -318,7 +371,8 @@
 		      console.log('No live audio input: ' + e);
 		    });
 		};
-		// $('#voic').click(startRecord)
+		$('#voic').click(start);
+		$('#stopAudio').click(stopRecording);
 	}
 
 	function setColor(){
