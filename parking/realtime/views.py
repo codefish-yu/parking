@@ -144,6 +144,8 @@ def parkin(request):
 
                 if r.bill and r.bill.status == 1:
                     print('sss')
+                    r.bill.status = 2
+                    r.bill.save()
                     r.status = 1
                     result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
                 else:

@@ -6,7 +6,7 @@
 	{% if record %}
 	<div class='con'>
 
-		<img src="{% if p == 0 %}{{ record.picture_out.url}}{% else %}{{ record.picture_in.url}}{% endif %}" id='im'>
+		<img src="{% if p == 0 %}{% if record.picture_out %}{{ record.picture_out.url}}{% endif %}{% else %}{% if record.picture_in %}{{ record.picture_in.url}}{% endif %}{% endif %}" id='im'>
 		<div>
 			<div class="number">{{ record.number}}</div>
 			<div class="ty">
@@ -41,20 +41,29 @@
 			<div class="item">无出场记录</div>
 			{% endif %}
 		</div>
+		{% if not record.in_time %}
 		<div>
-			<div class="price">¥{{record.get_price}}</div>
-			
+			<div class="price">¥0</div>
 		</div>
 		<div>
-			{% if not record.in_time %}
 			<div class="item">需核实入场时间</div>
 			<div id='phone'><img src="/static/img/phone.svg"></div>
-			{% elif record.get_price == 0%}
-			<div class="item">无需缴费</div>
-			{% elif record.bill.status == 1%}
-			<div class="item">已线上缴费：¥{{record.get_price}} </div>
-			{% endif %}
 		</div>
+		{% elif record.get_price == 0%}
+		<div>
+			<div class="price">¥0</div>
+		</div>
+		<div>
+			<div class="item">无需缴费</div>
+		</div>
+		{% elif record.bill.status == 1%}
+		<div>
+			<div class="price">¥0</div>
+		</div>
+		<div>
+			<div class="item">已线上缴费：¥{{record.get_price}} </div>
+		</div>
+		{% endif %}
 	</div>
 	<div class="bt">
 		<div id='pas'>特殊放行</div>
@@ -70,9 +79,10 @@
 	{% include 'bottom.html' %}
 </div>
 <div id='pass'>
-	<form method="post" action="" id='pass-form'>
+	<form method="post" action="" id='pass-form' enctype="multipart/form-data">
 		<input type="hidden" name="action" value="pass">
 		<input type="hidden" name="remark">
+		<input type="file" name="audio" style="display:none">
 		<input type="hidden" name="id" value="{{record.id}}">
 	</form>
 	<div id='p_con'>
@@ -91,12 +101,27 @@
 				<div class="c_item">危险品车</div>
 				<div class="c_item">残疾证</div>
 			</div>
-			<div id='voic'><img src="/static/img/voice.svg"> </div>
+			<button id='voic'><img src="/static/img/voice.svg"></button>
+			<!-- <audio src="/static/test.wav" controls></audio> -->
+			<button id='stopAudio'><img src="/static/img/stop.svg"></button>
 			<div id='conf'>确认</div>
 		</div>
 	</div>
 </div>
 <style type="text/css">
+	#stopAudio{
+		text-align: center;
+		width: 100%;
+		margin: 10% 0 5% 0;
+		display: none
+	}
+	#stopAudio img{
+		width: 70px;
+		height: 70px;
+		border-radius:50%;
+		border:1px solid #3366CC;
+		color: #3366CC;
+	}
 	#ex_t{
 		position: absolute;
     	margin: -4% 0 0 -6%;
@@ -131,10 +156,10 @@
 	#conf{
 		text-align: center;
 		width: 60%;
-		margin-left: 20%;
+		margin: 10% 0 0 20%;
 		color: white;
 		background-color: #3366CC;
-		height: 12%;
+		height: 10%;
 		padding-top: 5%
 	}
 	#voic{
@@ -200,12 +225,12 @@
 	.number{
 		display: inline-block;
 		font-size: 50px;
-		width: 46%;
+		width: 66%;
 		padding-left: 2%
 	}
 	.ty{
 		display: inline-block;
-		width: 49%;
+		width: 26%;
 		text-align: right;
 	}
 	.bt{
@@ -251,62 +276,105 @@
 <script src="/static/js/Recorderjs/dist/recorder.js"></script>
 <script type="text/javascript">
 	var audio_context;
-  	var recorder;
+	var recorder;
+	//录音
+	{
+		
+	  	function start(){
+	  		$('#voic').hide();
+	  		$('#stopAudio').show();
+	  		startRecord();
+	  		
+	  	}
+
+	  	function end(){
+	  		$('#voic').show();
+	  		$('#stopAudio').hide();
+	  		stopRecording()
+	  	}
+
+	  	function uploadAudio(blob){
+	  		var data = new FormData();
+	  		data.append('audio',blob);
+	  		data.append('action','audio');
+	  		$.ajax({
+	  			url:'',
+	  			type:'POST',
+                dataType:'json',
+                processData: false,
+                contentType: false,
+                traditional:true,
+                data:form_data,
+                success:function(e){
+
+                }
+	  		});
+
+	  	}
+
+		function startUserMedia(){
+			var input = audio_context.createMediaStreamSource(stream);
+	    	console.log('Media stream created.');
+			recorder = new Recorder(input);
+	    	console.log('Recorder initialised.');
+
+		}
 
 
-	function startUserMedia(){
-		var input = audio_context.createMediaStreamSource(stream);
-    	console.log('Media stream created.');
-		recorder = new Recorder(input);
-    	console.log('Recorder initialised.');
+		function startRecord(button){
+			recorder && recorder.record();
+		    // button.disabled = true;
+		    // button.nextElementSibling.disabled = false;
+		    console.log('Recording...');
+		}
+		function createDownloadLink() {
+		    recorder && recorder.exportWAV(function(blob) {
+		     	console.log(blob);
+		     	
+		     	$('#pass input[name=audio]')[0].files.append(blob)
+		    });
+		    // var blob = new File([$('#voic')],'test.wav');
+		    // console.log(blob);
+		    // $('#pass input[name=audio]')[0].files.append(blob)
+		}
 
+		function stopRecording(button) {
+		    recorder && recorder.stop();
+		    // button.disabled = true;
+		    // button.previousElementSibling.disabled = false;
+		    console.log('Stopped recording.');
+		    
+		    // create WAV download link using audio data blob
+		    createDownloadLink();
+	
+		    
+		    // recorder.clear();
+		}
+
+
+
+
+		window.onload = function init() {
+		    try {
+		      // webkit shim
+		      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+		      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+		      window.URL = window.URL || window.webkitURL;
+		      
+		      audio_context = new AudioContext;
+		      console.log('Audio context set up.');
+		      console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+		    } catch (e) {
+		      console.log('No web audio support in this browser!');
+		    }
+		    
+		    navigator.getUserMedia({audio: true}, startUserMedia, function(e) {
+		      console.log('No live audio input: ' + e);
+		    });
+		};
+		$('#voic').click(start);
+		$('#stopAudio').click(stopRecording);
 	}
-
-
-	function startRecord(button){
-		recorder && recorder.record();
-	    button.disabled = true;
-	    button.nextElementSibling.disabled = false;
-	    console.log('Recording...');
-	}
-
-	function stopRecording(button) {
-	    recorder && recorder.stop();
-	    button.disabled = true;
-	    button.previousElementSibling.disabled = false;
-	    console.log('Stopped recording.');
-	    
-	    // create WAV download link using audio data blob
-	    createDownloadLink();
-	    
-	    recorder.clear();
-	}
-
-	function createDownloadLink() {
-	    recorder && recorder.exportWAV(function(blob) {
-	     	console.log(blob)
-	    });
-	}
-
-
-	window.onload = function init() {
-	    try {
-	      // webkit shim
-	      window.AudioContext = window.AudioContext || window.webkitAudioContext;
-	      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
-	      window.URL = window.URL || window.webkitURL;
-	      
-	      audio_context = new AudioContext;
-	      console.log('Audio context set up.');
-	      console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
-	    } catch (e) {
-	      console.log('No web audio support in this browser!');
-	    }
-	    
-	    navigator.getUserMedia({audio: true}, startUserMedia, function(e) {
-	      console.log('No live audio input: ' + e);
-	    });
-	};
 
 	function setColor(){
 		for(let a =0;a<$('.c_item').length;a++){

@@ -420,9 +420,9 @@ def card(request):
             owner = request.POST.get('owner', '')
             id = request.POST.get('id','')
             if id:
-                r = Card.objects.filter(owner=owner.strip()).exclude(id=int(id))
+                r = Card.objects.filter(owner=owner.strip()).exclude(id=int(id),status=0)
             else:   
-                r = Card.objects.filter(owner=owner.strip())
+                r = Card.objects.filter(owner=owner.strip(),status=0)
 
             if r.exists():
                     return JsonResponse({'valid': False})

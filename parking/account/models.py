@@ -31,6 +31,8 @@ class SpecRecord(models.Model):
 
 	tollman = models.ForeignKey(User,null=True,on_delete=models.SET_NULL,verbose_name='操作员')
 	record = models.ForeignKey(InAndOut,null=True,on_delete=models.SET_NULL,verbose_name='记录')
+	audio = models.FileField(upload_to='audio/',verbose_name='语音备注',blank=True,null=True)
+	
 
 			
 	

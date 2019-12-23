@@ -122,7 +122,7 @@ class Bill(models.Model):
     pay_type = models.IntegerField(null=True, choices=[(0, '现金'),(1, '微信'),(2, '支付宝'),(3, '刷卡')], verbose_name='支付方式')
     tollman = models.ForeignKey(Worker,on_delete=models.SET_NULL,verbose_name='收费员',null=True,blank=True)
     parking_time = models.FloatField(null=True, verbose_name='停车时长(分钟)')
-    status = models.IntegerField(default=0, choices=[(0, '未支付'),(1, '已支付')])
+    status = models.IntegerField(default=0, choices=[(0, '未支付'),(1, '已支付'),(2,'已出场')])
     detail = models.ForeignKey('PayDetail',on_delete=models.SET_NULL,verbose_name='收费明细',related_name='detail',null=True,blank=True)
 
     product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)

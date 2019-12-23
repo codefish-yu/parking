@@ -82,6 +82,7 @@ def spec_pass(request):
 		elif action == 'pass':
 			r_id = request.POST.get('id','')
 			remark = request.POST.get('remark','')
+			audio = request.FILES.get('audio','')
 			record = InAndOut.objects.filter(id=r_id).first()
 			record.remark = remark
 			record.save()
@@ -90,13 +91,15 @@ def spec_pass(request):
 			r = SpecRecord()
 			r.tollman = user
 			r.record = record
+			r.audio = audio
 			r.save()
 
 			# 修改放行参数
 			chek = SpecRecord.objects.filter(tollman=user,record__is_spec=1).all()
 			re = WorkRecord.objects.filter(worker=user).order_by('-time').first()
-			re.spec_num = len(chek)
-			re.save()
+			if re:
+				re.spec_num = len(chek)
+				re.save()
 
 		elif action == 'in':
 			records = records.filter(out_time=None).all()
@@ -242,6 +245,7 @@ def record(request):
 	ctx['records'] = records
 	return render(request,'record.html',ctx)
 
+
 # @user_required
 @csrf_exempt
 def personal(request):
@@ -277,6 +281,7 @@ def personal(request):
 	ctx['record'] = workrecord	
 	ctx['wuser'] = WechatUser.objects.filter(user=user).first()
 	return render(request,'personal.html',ctx)
+
 
 @csrf_exempt
 def begin_work(request):
@@ -317,11 +322,14 @@ def begin_work(request):
 			parkinglot = request.POST.get('parkinglot','')
 			gate = request.POST.get('gate','')
 			set_work(user,parkinglot,gate)
+
+			return redirect('/account/spec_pass/')
+
 		elif action == 'gate':
 			p_id = request.POST.get('parkinglot','')
-			gates = Gate.objects.filter(parkinglot__id=p_id).all()
+			gates = Gate.objects.filter(parkinglot__id=p_id,status=0).all()
 
-			return JsonResponse({'data':serialize(gates) })
+			return JsonResponse({'data':serialize(gates)})
 
 
 	ctx['parkinglots'] = ParkingLot.objects.all()
