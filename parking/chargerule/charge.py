@@ -416,15 +416,13 @@ def get_by_card(start, end, parkinglot, card, day_max):
     return hours
 
 
-def hours2price(hours, free_time, min_price, day_max, per_hour):
-    if hours <= free_time:
+def hours2price(hours, baseRule):
+    if hours <= baseRule.free_time / 60:
         return 0
-    if hours <= min_price / 60:
-        return per_hour * min_price / 60
-    if hours > day_max:
-        return day_max * per_hour
-
-    return math.ceil(hours * 2) / 2 * per_hour
+    if hours <= baseRule.min_price / 60:
+        return baseRule.per_hour * baseRule.min_price / 60
+     
+    return math.ceil(hours * 2) / 2 * baseRule.per_hour
 
 
 '''
@@ -452,13 +450,13 @@ def compute(parkinglot, start, end, coupons, card):
         else:
             hours = get_by_card(start, end, parkinglot, card.my_card, day_max)
         
-        payable = payment = hours2price(hours)
+        payable = payment = hours2price(hours, baseRule)
 
     else:
         hours = get_valid_hours(start, end, day_max)
 
-        payable = payment = hours2price(hours)
-
+        payable = payment = hours2price(hours,baseRule)
+        print(hours, payable, 'xxxx')
         if coupons: # 有券, 只能同时用一种券, 可叠加多张
         
             for coupon in coupons:
