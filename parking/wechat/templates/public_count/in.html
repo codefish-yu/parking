@@ -84,18 +84,20 @@
 
 {% block js %}
 <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+<script type="text/javascript" src="/static/egret.min.js"></script>
+<script type="text/javascript" src="/static/egret.web.min.js"></script>
 <script type="text/javascript" src="/static/meta.0.0.1.js"></script>
 <script type="text/javascript">
 	$(document).ready(function(){
 		
+		meta.wechat(function() {
+			$('.btn').click(() => {
+		        meta.scan().then(function (result) {
+		            alert(result);
+		        });
+		    });
 
-		$('.btn').click(() => {
-	        meta.scan().then(function (result) {
-	            alert(result);
-	        });
-	    });
-
-
+		})
 
 	})
 </script>
