@@ -9,7 +9,7 @@
 <style type="text/css">
 	.car_number{
 		height: 38px;
-		width: 100%;
+		/*width: 100%;*/
 		padding-top: 8px;
 		padding-bottom: 8px;
 		padding-left: 5%;
@@ -65,6 +65,37 @@
 		color: #000000;
 		margin: 20px;
 	}
+	.error{
+		font-family: PingFangSC-Medium;
+		font-size: 16px;
+		color: #EBC34B;
+		text-align: center;
+	}
+	.error .icon{
+		border-radius: 50%;
+	    width: 30px;
+	    background-color: #EBC34B;
+	    color: white;
+	    padding-left: 8px;
+	    padding-right: 8px;
+	}
+	.error .msg{
+		font-family: PingFangSC-Medium;
+		font-size: 16px;
+		color: #000000;
+	}
+	.error .submit{
+		margin-top:20px;
+		/*background: rgba(84,127,213,0.25);*/
+		font-family: PingFangSC-Medium;
+		font-size: 16px;
+		color: #3366CC;
+		text-align: center;
+	}
+	.error .submit img{
+		width: 50px;
+	}
+
 </style>
 <form action='' method="post">
 
@@ -75,21 +106,36 @@
 		<input type='hidden' name='car_number' />
 		
 		<div class='car_number'>
-			<input type='text' name='number1' maxlength="1" />
-			<input type='text' name='number2' maxlength="1" />
-			<input type='text' class="circle" maxlength="1" />
-			<input type='text' name='number3' maxlength="1" />
-			<input type='text' name='number4' maxlength="1" />
-			<input type='text' name='number5' maxlength="1" />
-			<input type='text' name='number6' maxlength="1" />
-			<input type='text' name='number7' maxlength="1" />
-			<input type='text' placeholder='+' name='number8' maxlength="1" />
+			<input type='text' name='number1' maxlength="1" value='{{car_number.0}}' 
+			{% if not car_number %}autofocus="autofocus"{% endif %} />
+			<input type='text' name='number2' maxlength="1" value='{{car_number.1}}' />
+			<input type='text' class="circle" maxlength="1"  />
+			<input type='text' name='number3' maxlength="1" value='{{car_number.2}}' />
+			<input type='text' name='number4' maxlength="1" value='{{car_number.3}}' />
+			<input type='text' name='number5' maxlength="1" value='{{car_number.4}}' />
+			<input type='text' name='number6' maxlength="1" value='{{car_number.5}}' />
+			<input type='text' name='number7' maxlength="1" value='{{car_number.6}}' />
+			<input type='text' placeholder='+' name='number8' maxlength="1" value='{{car_number.7}}' />
 			<!-- <div class='btn' ><div>+</div><div>新能源</div></div> -->
 		</div>
 	<div class='parkinglot'>
 		<div>当前车场</div>
 		<div>{{ parkinglot.name }} </div>
 	</div>
+
+	 {% if error %}
+	<div class='error'>
+		<span class='icon'>i</span><span>  未匹配到入场车牌！请核对车牌。</span>
+		<br>
+		<span class='msg'>如果您输入无误，请提交给工作人员处理。</span>
+		<br>
+		<div class='submit'>
+			<div><img src="/static/wechat/user/img/submit.png" /></div>
+			<div>提交</div>
+		</div>
+	</div>
+	{% endif %}
+
 	<div class='confirm_div'>
 		<button class='confirm' type='button'>绑定车牌</button>
 		<div class='no_card'> 我是无牌车 </div>
@@ -113,7 +159,6 @@
 			return number
 		}
 		$('.car_number input').keydown(function(event){
-			console.info(event)
 			if(event.code == 'Backspace'){
 				if($(this).val() == ''){
 					if($(this).prev().attr('name')){
@@ -125,8 +170,10 @@
 			}
 		})
 		$('.car_number input').keyup(function(event){
-		 
-			if($(this).attr('name') != 'number1') $(this).val($(this).val().toLocaleUpperCase())
+		 	console.info(event)
+			if($(this).attr('name') == 'number1')
+				if(event.code != 'Enter') return
+			$(this).val($(this).val().toLocaleUpperCase())
 			if($(this).val().length != 1) return 
 			if($(this).next().attr('name')){
 				$(this).next().focus()
@@ -145,7 +192,13 @@
  			}
  			$('input[name=car_number]').val(get_number())
  			console.info(get_number())
- 			// $('form').submit
+ 			$('form').submit
+		})
+
+		$(document).ready(function(){
+			{% if not car_number %} 
+			$('input[name=number1]').trigger("click").focus()
+			{% endif %}
 		})
 	</script>
 {% endblock %}
