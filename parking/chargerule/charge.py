@@ -428,7 +428,7 @@ def hours2price(hours, baseRule):
 '''
 def compute(parkinglot, start, end, coupons, card):
 
-    baseRule = BaseRule.objects.filter(parkinglot=parkinglot).first()
+    baseRule = BaseRule.objects.filter(parkinglot=parkinglot, status=0).first()
     day_max = baseRule.day_max
     per_hour = baseRule.per_hour
     free_time = baseRule.free_time

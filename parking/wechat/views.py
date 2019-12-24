@@ -11,6 +11,7 @@ from parkinglot.models import ParkingLot
 from realtime.models import InAndOut, Bill, OpeningOrder
 
 
+import math
 import datetime
 import functools
 
@@ -81,13 +82,15 @@ def createBill(in_and_out):
     return bill
 
 
-@user_required
-def parkin(request, user, parkinglot_id, gate_id):
+# @user_required
+def parkin(request, parkinglot_id, gate_id):
     '''卡口扫码入场'''
-
+    from meta.models import User
+    user = User.objects.first()
     camera = Camera.objects.filter(gate_id=gate_id).first()
 
     r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, camera_in=camera, user=user, status__lte=0).first()
+    now = datetime.datetime.now()
     if not r:
         r = InAndOut.objects.create(
             status=-1, # -1  等待开闸入场
@@ -95,12 +98,15 @@ def parkin(request, user, parkinglot_id, gate_id):
             enter_type=1, 
             camera_in=camera,
             parkinglot_id=parkinglot_id, 
-            in_time=datetime.datetime.now(),
+            in_time=now,
         )
 
     createOpenOrder(parkinglot_id, gate_id, r)
 
-    ctx = {'r': r}
+    diff = r.in_time - now 
+    hours = math.floor(diff.seconds / 3600)
+    minutes = math.ceil((diff.seconds % 3600) / 60 )
+    ctx = {'r': r, 'menu': 'park', 'hours': hours, 'minutes': minutes}
     return render(request, 'public_count/in.html', ctx)
 
 
@@ -110,6 +116,7 @@ def parkout(request, parkinglot_id, gate_id=None):
     user = User.objects.first()
     '''卡口扫码出场'''
     ctx = {'parkinglot_id': parkinglot_id, 'menu': 'park'}
+
     ctx['parkinglot'] = ParkingLot.objects.filter(id=parkinglot_id).first()
     if gate_id:
         ctx['gate_id'] = gate_id
@@ -148,8 +155,8 @@ def parkout(request, parkinglot_id, gate_id=None):
                 ctx['record'] = r
                 return render(request, 'public_count/number2.html', ctx)
             else:
-                ctx['msg'] = '无入场记录'
-                return render(request, 'public_count/error.html', ctx)
+                ctx['error'] = '未匹配到入场车牌！请核对车牌。'
+                return render(request, 'public_count/number1.html', ctx)
 
         if action == 'leave':
             # 点击离场, 计算
