@@ -42,7 +42,7 @@ var meta;
     meta.api = api;
     function wechat(readyFunction) {
         console.info(window.location.href)
-        api('get_js_ticket', { 'current_url': window.location.href.replace('http://', '') }).then((result) => {
+        api('get_js_ticket', { 'current_url': window.location.href }).then((result) => {
             wx.config({
                 debug: true,
                 appId: result.appId,

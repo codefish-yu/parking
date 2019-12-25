@@ -1,4 +1,5 @@
 {% extends 'public_count/base/base.html' %}
+<!--  确认支付页面, 可选择优惠券 -->
 
 {% block content %}
 <style type="text/css">
@@ -90,6 +91,7 @@
 	}
 </style>
 
+{% if payment.0 != 0 %}
 <div class='pay'>
 	<div class='title'>缴费出场</div>
 	<form action="" method="post">
@@ -129,8 +131,8 @@
 		{% endif %}
 	</form>
 </div>
-
-<div class='paid' style="display: none;">
+{% else %}
+<div class='paid'>
 	<div class='title'>支付成功</div>
 	<div class='content_row'>
 		<img src='/static/wechat/user/img/bingo.png' class='bingo' />
@@ -161,23 +163,47 @@
 		5元现金券 <img src='/static/wechat/user/img/right.png' />
 	</div>
 	<div class="content_row">
-		实付金额 <span class='payment'> {{ payment.0 }} 15 </span>元 
-			 <del class='payable'>{{ payment.1 }} 1 元</del>
+		实付金额 <span class='payment'> {{ payment.0 }} </span> 元 
+			 <del class='payable'>{{ payment.1 }} 元</del>
 	</div>
 	<div class='content_row'>
+		{% if gate_id and not r.number %}
+		<div class='btn-scan'>
+			请至出口扫码 
+		</div>
+		{% else %}
 		<div class='btn-success'>
 			完  成
 		</div>
+		{% endif %}
 	</div>
 </div>
+{% endif %}
 
 {% endblock %}
 
 {% block js %}
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+<script type="text/javascript" src="/static/egret.min.js"></script>
+<script type="text/javascript" src="/static/egret.web.min.js"></script>
+<script type="text/javascript" src="/static/meta.0.0.1.js"></script>
 
 <script type="text/javascript">
+	$(document).ready(function(){
+		
+		meta.wechat(function() {
+			$('.btn-scan').click(() => {
+		        meta.scan().then(function (result) {
+		            window.location.href = result
+		        });
+		    });
+
+		})
+
+	})
+	
+
 	var parkinglot_id = {{ parkinglot_id }}
 
 	var product_id = {{product.id}}
