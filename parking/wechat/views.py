@@ -50,6 +50,7 @@ def user_required(func):
 
     return wrapper
 
+
 # 创建开闸指令
 def createOpenOrder(parkinglot_id, gate_id, in_and_out):
     in_and_out.final_out_time = datetime.datetime.now()
@@ -82,6 +83,13 @@ def createBill(in_and_out):
     return bill
 
 
+def get_park_time(in_time, out_time=None):
+    out_time =  out_time if out_time else datetime.datetime.now()
+    diff = in_time - out_time
+    hours = math.floor(diff.seconds / 3600)
+    minutes = math.ceil((diff.seconds % 3600) / 60 )
+    return hours, minutes
+
 # @user_required
 def parkin(request, parkinglot_id, gate_id):
     '''卡口扫码入场'''
@@ -103,18 +111,17 @@ def parkin(request, parkinglot_id, gate_id):
 
     createOpenOrder(parkinglot_id, gate_id, r)
 
-    diff = r.in_time - now 
-    hours = math.floor(diff.seconds / 3600)
-    minutes = math.ceil((diff.seconds % 3600) / 60 )
-    ctx = {'r': r, 'menu': 'park', 'hours': hours, 'minutes': minutes}
+    ctx = {'r': r, 'menu': 'park', 'hours': get_park_time(r.in_time) }
+
     return render(request, 'public_count/in.html', ctx)
 
 
-# @user_required
-def parkout(request, parkinglot_id, gate_id=None):
-    from meta.models import User
-    user = User.objects.first()
-    '''卡口扫码出场'''
+@user_required
+def parkout(request, user, parkinglot_id, gate_id=None):
+    # from meta.models import User
+    # user = User.objects.first()
+    '''场内扫码支付 或 卡口扫码支付出场'''
+    
     ctx = {'parkinglot_id': parkinglot_id, 'menu': 'park'}
 
     ctx['parkinglot'] = ParkingLot.objects.filter(id=parkinglot_id).first()
@@ -152,7 +159,9 @@ def parkout(request, parkinglot_id, gate_id=None):
                 r = r.first()
                 r.user = user
                 r.save()
-                ctx['record'] = r
+                ctx['r'] = r
+                ctx['hours'] = get_park_time(r.in_time)
+
                 return render(request, 'public_count/number2.html', ctx)
             else:
                 ctx['error'] = '未匹配到入场车牌！请核对车牌。'
@@ -176,9 +185,10 @@ def parkout(request, parkinglot_id, gate_id=None):
 
                 bill = createBill(r)
                 
-                ctx['record'] = r
+                ctx['r'] = r
+                ctx['hours'] = get_park_time(r.in_time,r.out_time)
                 ctx['product'] = bill.product
-
+                
                 return render(request, 'public_count/number3.html', ctx)
 
     if not r:     # 如果查不到记录就让其输入车牌号
@@ -196,7 +206,8 @@ def parkout(request, parkinglot_id, gate_id=None):
                 r.save()
                 bill = createBill(r)
 
-                ctx['record'] = r
+                ctx['r'] = r
+                ctx['hours'] = get_park_time(r.in_time, r.out_time)
                 ctx['product'] = bill.product
 
                 return render(request, 'public_count/number3.html', ctx)
@@ -206,5 +217,9 @@ def parkout(request, parkinglot_id, gate_id=None):
                 # 场内支付成功提示
                 return render(request, 'public_count/number4.html', ctx)
 
-        ctx['record'] = r
+        ctx['r'] = r
+        ctx['hours'] = get_park_time(r.in_time)
+
         return render(request, 'public_count/number2.html', ctx)
+
+

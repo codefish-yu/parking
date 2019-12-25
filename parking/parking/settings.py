@@ -144,8 +144,11 @@ MEDIA_ROOT=os.path.join(BASE_DIR, "media")
 
 WECHAT = {
     'public_account':{
-        'appid':'wx3d59f92c7bf0d0f9',
+        'appid':'wx3d59f92c7bf0d0f9', #测试号
         'secret':'04e6251c3b54340f68e693dafe761a0c',
+
+        # 'appid': 'wxc7594d7d49e0235f',
+        # 'secret': 'dc3a49e03e50770d6246ffebc4e840c2'
     },
     'domain': 'http://127.0.0.1:8000',
     # 'domain': 'http://parking.metatype.cn',
