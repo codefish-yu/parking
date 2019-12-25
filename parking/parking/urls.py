@@ -106,8 +106,6 @@ urlpatterns = [
     #account
     path('account/spec_pass/',ac.spec_pass),
     path('account/correct/',ac.correct),
-    path('account/home/',ac.home),
-    path('account/login/',ac.worker_login),
     path('account/record/',ac.record),
     path('account/personal/',ac.personal,name='personal'),
     path('account/begin_work/',ac.begin_work)

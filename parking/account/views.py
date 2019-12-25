@@ -116,6 +116,7 @@ def spec_pass(request):
 			remark = request.POST.get('remark','')
 			audio = request.FILES.get('audio','')
 			record = InAndOut.objects.filter(id=r_id).first()
+			record.is_spec = 1
 			record.remark = remark
 			record.save()
 
@@ -200,20 +201,6 @@ def correct(request):
 	return render(request,'correct.html',ctx)
 
 
-def home(request):
-	ctx = {}
-
-
-	return render(request,'home.html',ctx)
-
-
-def worker_login(request):
-	ctx = {}
-	
-
-	return render(request,'worker_login.html',ctx)
-
-
 # @user_required
 @csrf_exempt
 def record(request):
@@ -252,8 +239,7 @@ def record(request):
 		elif action == 'ex':
 			p=2
 			records = get_inandout(gate_id,p,0)
-			print(records)
-
+			
 		elif action == 'select':
 			start = request.POST.get('start','')
 			end = request.POST.get('end','')
