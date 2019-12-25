@@ -46,7 +46,7 @@
 		font-size: 16px;
 		color: #000000;
 	}
-	.btn-pay{
+	#pay-btn{
 		width: 60%;
 	    margin-left: 20%;
 	    margin-top: 10px;
@@ -55,7 +55,7 @@
 	    border: none;
 	    font-family: PingFangSC-Medium;
 	    font-size: 16px;
-	    color: #FFFFFF;
+	    color: white;
 	    text-align: center;
 	    height: 40px;
 	    padding-top: 10px;
@@ -119,8 +119,8 @@
 		</div>
 
 		<div class='content_row'>
-			<div class='btn-pay'>
-				<input type="button" id='pay-btn' value='立即缴费' product_id='{{product.id}}'  style="color:white" />
+			<div id='pay-btn' product_id='{{product.id}}'>
+				 立即缴费
 			</div>
 		</div>
 	 

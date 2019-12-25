@@ -168,16 +168,13 @@ def parkout(request, user, parkinglot_id, gate_id=None):
                 return render(request, 'public_count/number1.html', ctx)
 
         if action == 'leave':
-            # 点击离场, 计算
+            # 点击结算出场, 计算
             id = request.POST.get('id', '')
 
             r = InAndOut.objects.filter(id=int(id))
             if r:
-                # 计算费用
+                
                 r = r.first()
-
-                from chargerule.charge import charge
-                ctx['payment'] = charge(r)
 
                 if gate_id:
                     camera = Camera.objects.filter(gate_id=gate_id).first()
@@ -186,6 +183,9 @@ def parkout(request, user, parkinglot_id, gate_id=None):
                 r.leave_type = 1
                
                 r.save()
+
+                from chargerule.charge import charge
+                ctx['payment'] = charge(r)  # 计算费用
 
                 bill = createBill(r)
                 

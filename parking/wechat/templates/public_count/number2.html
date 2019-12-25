@@ -49,20 +49,22 @@
 	    height: 17px;
 	}
 	.bottom-panel .btn{
-		position: relative;
-	    bottom: -3px;
-	    left: 38%;
 	    width: 40%;
 	    background: #3366CC;
 	    border-radius: 3px;
 	    border: none;
 	    font-family: PingFangSC-Medium;
 	    font-size: 16px;
-	    color: #FFFFFF;
+	    color: white;
 	    text-align: center;
 	    height: 40px;
-	    vertical-align: middle;
-	    display: table-cell;
+	    margin-left: 30%;
+	}
+	.bottom-panel input{
+		color:white;
+		background:#3366CC;
+		border: none;
+		margin-top: 8px;
 	}
 </style>
 
@@ -80,11 +82,11 @@
 	</div>
 	<div>
 		<div class='bottom-panel'>
-			<div class='number'>{% if r.car_number %} {{ r.car_number}} {% else %} 无牌车 {% endif %}</div>
+			<div class='number'>{% if r.number %} {{ r.number}} {% else %} 无牌车 {% endif %}</div>
 			<div class='parkinglot'>{{ parkinglot.name }}</div>
 
 			<div class='address'>{{ parkinglot.address }}</div>
-			<div class='btn'><input type='submit' value='结算出场' style="color:white" /></div>
+			<div class='btn'><input type='submit' value='结算出场' /></div>
 		</div>
 	</div>
  
