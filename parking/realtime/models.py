@@ -97,6 +97,7 @@ class InAndOut(models.Model):
     def get_price(self):
         return 2
     def get_duration(self):
+        d = 0
         if self.out_time and self.in_time:
             d = self.out_time-self.in_time
 
