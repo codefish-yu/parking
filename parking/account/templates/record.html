@@ -40,13 +40,7 @@
 			</div>
 			<div class="ri">
 				<div>
-					{% if p == 2%}
 					{{i.get_status_display}}
-					{% elif not p%}
-					<i class="hi">hanhan</i>
-					{% else %}
-					{{i.bill.get_status_display}}
-					{% endif %}
 				</div>
 			</div>
 		</div>
@@ -177,7 +171,7 @@
 		$('#head form').submit()
 	});
 	$(document).ready(()=>(
-		$('#to').css('height',window.innerHeight-130+'')
+		$('#to').css('height',window.innerHeight-157+'')
 	));
 	$('#spec').click(()=>(
 		$('#status-form').submit()
