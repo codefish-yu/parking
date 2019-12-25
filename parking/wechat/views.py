@@ -85,16 +85,16 @@ def createBill(in_and_out):
 
 def get_park_time(in_time, out_time=None):
     out_time =  out_time if out_time else datetime.datetime.now()
-    diff = in_time - out_time
+    diff = out_time - in_time
     hours = math.floor(diff.seconds / 3600)
     minutes = math.ceil((diff.seconds % 3600) / 60 )
     return hours, minutes
 
-# @user_required
-def parkin(request, parkinglot_id, gate_id):
+@user_required
+def parkin(request, user, parkinglot_id, gate_id):
     '''卡口扫码入场'''
-    from meta.models import User
-    user = User.objects.first()
+    # from meta.models import User
+    # user = User.objects.first()
     camera = Camera.objects.filter(gate_id=gate_id).first()
 
     r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, camera_in=camera, user=user, status__lte=0).first()
@@ -121,7 +121,7 @@ def parkout(request, user, parkinglot_id, gate_id=None):
     # from meta.models import User
     # user = User.objects.first()
     '''场内扫码支付 或 卡口扫码支付出场'''
-    
+
     ctx = {'parkinglot_id': parkinglot_id, 'menu': 'park'}
 
     ctx['parkinglot'] = ParkingLot.objects.filter(id=parkinglot_id).first()
@@ -175,6 +175,10 @@ def parkout(request, user, parkinglot_id, gate_id=None):
             if r:
                 # 计算费用
                 r = r.first()
+
+                from chargerule.charge import charge
+                ctx['payment'] = charge(r)
+
                 if gate_id:
                     camera = Camera.objects.filter(gate_id=gate_id).first()
                     r.camera_out = camera
