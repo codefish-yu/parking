@@ -3,8 +3,6 @@
 {% block content%}
 <p>上岗</p>
 <form method="post" action="" id='login-form'>
-	<!-- <input type="" name="parkinglot" placeholder="请选择车场">
-	<input type="" name="gate" placeholder="请选择值班口"> -->
 	<select name="parkinglot" data-placeholder=选择车场" onchange="get_gate(this)">
 		<option value="">选择车场</option>
 		{% for i in parkinglots%}
@@ -31,13 +29,6 @@
 		height: 40px;
 		margin-left: 5%
 	}
-	/*select option{
-		width: 90%;
-		border:0px;
-		border-bottom: 1px solid rgba(158, 158, 158, 0.19);
-		height: 40px;
-		margin-left: 5%
-	}*/
 	div{
 		width: 70%;
 		background-color: rgba(158, 158, 158, 0.70);

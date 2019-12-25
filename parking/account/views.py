@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from chargerule.models import *
 from account.models import *
 from meta.models import User,WechatUser
+from device.models import * 
 from meta import api
 import functools
 
@@ -45,14 +46,50 @@ def user_required(func):
     return wrapper
 
 
+def max(a,b):
+	if a.update_time>b.update_time:
+		return a
+	return b
+
+def all_or_fir(obj,t=1):
+	if t == 0:
+		return obj.all()
+	else:
+		return obj.first()
+
+def get_inandout(id,t=0,r=1):
+	c = Camera.objects.filter(gate__id=id,in_or_out=0 if t else 1).first()
+	if t == 1:
+		return all_or_fir(InAndOut.objects.filter(camera_in=c,out_time=None).order_by('-update_time'),r)
+	elif t == 2:
+		return all_or_fir(ExceptRecord.objects.filter(status=0).order_by('-update_time'),r)
+
+	return all_or_fir(InAndOut.objects.filter(camera_out=c).order_by('-update_time'),r)
+
+
+def get_record(gate_id):
+	ri = get_inandout(gate_id,1)
+	ro = get_inandout(gate_id)
+	exc =get_inandout(gate_id,2) 
+	if not exc:
+		return max(ri,ro)
+
+	return max(exc,max(ri,ro))
+
+def get_gate_id(user):
+	wk = WorkRecord.objects.filter(worker=user).order_by('-time').first()
+
+	return wk.gate.id
+
 @csrf_exempt
 # @user_required
 def spec_pass(request):
 	ctx ={}
 	user = User.objects.first()
-	records = InAndOut.objects.order_by('-update_time').all()
-	record = records.first()
+	gate_id = get_gate_id(user)
+	record = get_inandout(gate_id)
 	p = 0
+
 
 	def check_type(number):
 		card = Card.objects.filter(car_number=number).first()
@@ -67,23 +104,19 @@ def spec_pass(request):
 		action =request.POST.get('action','')
 
 		if action == 'check':
-			record = InAndOut.objects.order_by('-update_time').first()
-			exc = ExceptRecord.objects.order_by('-time').first()
-			if record.update_time < exc.time:
-				record = exc
+			record = get_record(gate_id)
+			if str(record._meta) == 'realtime.exceptrecord': 
+				return JsonResponse({'tip':0,'id':gate_id})
 
-				return redirect('/account/correct/')
+			return JsonResponse({'result':True})
 
-			today = datetime.datetime.now()
-			if  record.update_time.day == today.day:
-				p= 0 if record.out_time else 1
-				
-
+			
 		elif action == 'pass':
 			r_id = request.POST.get('id','')
 			remark = request.POST.get('remark','')
 			audio = request.FILES.get('audio','')
 			record = InAndOut.objects.filter(id=r_id).first()
+			record.is_spec = 1
 			record.remark = remark
 			record.save()
 
@@ -102,27 +135,26 @@ def spec_pass(request):
 				re.save()
 
 		elif action == 'in':
-			records = records.filter(out_time=None).all()
-			record = records.first()
+			record = get_inandout(gate_id,1)
 			p=1
 
 		elif action == 'out':
-			records = InAndOut.objects.order_by('-update_time').all()
-			record = records.first()
+			record = get_inandout(gate_id,0)
 			p = 0
 
 
 	ctx['p'] = p
 	ctx['type'],ctx['card'] = check_type(record.number) if record else [0,0]
 	ctx['record'] = record
-	ctx['records'] = records
 	return render(request,'spec_pass.html',ctx)
 
 
 @csrf_exempt
 def correct(request):
 	ctx = {}
-	record = ExceptRecord.objects.order_by('-time').first()
+	user = User.objects.first()
+	gate_id = get_gate_id(user)
+	record = get_inandout(gate_id,2) 
 	p = record.direction if record else 0
 
 	if request.method == 'POST':
@@ -156,12 +188,12 @@ def correct(request):
 
 		elif action == 'in':
 			p=1
-			record = ExceptRecord.objects.filter(direction=p).first()
+			record = ExceptRecord.objects.filter(direction=p,status=0).order_by('-update_time').first()
 			
 
 		elif action == 'out':
 			p = 0
-			record = ExceptRecord.objects.filter(direction=p).first()
+			record = ExceptRecord.objects.filter(direction=p,status=1).order_by('-update_time').first()
 
 
 	ctx['p'] = p
@@ -169,29 +201,17 @@ def correct(request):
 	return render(request,'correct.html',ctx)
 
 
-def home(request):
-	ctx = {}
-
-
-	return render(request,'home.html',ctx)
-
-
-def worker_login(request):
-	ctx = {}
-	
-
-	return render(request,'worker_login.html',ctx)
-
-
 # @user_required
 @csrf_exempt
 def record(request):
-
+	
 	def transfor(t):
 		return datetime.datetime.strptime(t,'%Y-%m-%d %H:%M:%S')
 
 	ctx = {}
-	records = InAndOut.objects.order_by('-update_time').all()
+	user = User.objects.first()
+	gate_id = get_gate_id(user)
+	records = get_inandout(gate_id,0,0)
 	tip = 0
 	p=0
 
@@ -200,26 +220,26 @@ def record(request):
 		if action == 'change':
 			status = request.POST.get('status','')
 			p = request.POST.get('ps','')
-			if p:
-				p = int(p)
+			p = int(p)
+			records = get_inandout(gate_id,p,0)
 			if not int(status):
 				records = records.filter(is_spec=1).all()
 				tip = 1
 			else:
-				records = InAndOut.objects.order_by('-update_time').all()
 				tip = 0
 
 		elif action == 'in':
-			records = InAndOut.objects.filter(out_time=None).order_by('-update_time').all()
 			p=1
+			records = get_inandout(gate_id,p,0)
 
 		elif action == 'out':
-			records = InAndOut.objects.order_by('-update_time').all()
 			p = 0
-		elif action == 'ex':
-			records = []
-			p=2
+			records = get_inandout(gate_id,p,0)
 
+		elif action == 'ex':
+			p=2
+			records = get_inandout(gate_id,p,0)
+			
 		elif action == 'select':
 			start = request.POST.get('start','')
 			end = request.POST.get('end','')
@@ -239,7 +259,7 @@ def record(request):
 				else:
 					records = records.filter(out_time__lte=end).all()
 
-	ctx['ex'] =len(ExceptRecord.objects.filter(status=0).all())	
+	ctx['ex'] =len(get_inandout(gate_id,2,0))	
 	ctx['p'] = p
 	ctx['tip'] =tip
 	ctx['records'] = records
@@ -266,7 +286,7 @@ def personal(request):
 	
 	user = User.objects.first()
 	worker = Worker.objects.filter(user=user).first()
-	workrecord = WorkRecord.objects.filter(worker=user).first()
+	workrecord = WorkRecord.objects.filter(worker=user).order_by('-time').first()
 	get_duration(workrecord)
 
 
@@ -277,7 +297,7 @@ def personal(request):
 			get_duration(workrecord)
 			return redirect('/account/begin_work')
 
-	ctx['parkinglot']=worker.parkinglot.name
+	ctx['parkinglot']=workrecord.parkinglot.name
 	ctx['record'] = workrecord	
 	ctx['wuser'] = WechatUser.objects.filter(user=user).first()
 	return render(request,'personal.html',ctx)

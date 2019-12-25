@@ -57,10 +57,10 @@ class InAndOut(models.Model):
     triger_type_out = models.CharField(max_length=100, null=True, verbose_name='触发类型')
 
     update_time = models.DateTimeField(auto_now_add=True, verbose_name='更新时间')
-    status = models.IntegerField(default=0, choices=[(-1, '待入场'),(0,'入场'),(1,'出场')], verbose_name='车辆状态')
+    status = models.IntegerField(default=0, choices=[(-1, '待入场'),(0,'入场'),(1,'已出场')], verbose_name='车辆状态')
 
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name='停车用户')
-    bill = models.OneToOneField('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单',related_name='InAndOut')
+    bill = models.OneToOneField('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单',related_name='InAndOut',blank=True)
     is_spec = models.IntegerField(default=0,choices=[(0,'正常'),(1,'特殊')])
     remark = models.CharField(max_length=30,null=True, verbose_name='备注信息')
     exception = models.IntegerField(default=0,choices=[(0,'正常'),(1,'异常')])
@@ -97,7 +97,11 @@ class InAndOut(models.Model):
     def get_price(self):
         return 2
     def get_duration(self):
-        return 2
+        d = 0
+        if self.out_time and self.in_time:
+            d = self.out_time-self.in_time
+
+        return round(d.days*24+d.seconds/3600,2) if d else 0
 
 
 class OpeningOrder(models.Model):
@@ -159,7 +163,7 @@ class ExceptRecord(models.Model):
     vdc_type = models.CharField(max_length=100, null=True, verbose_name='出入口类型')
     triger_type = models.CharField(max_length=100, null=True, verbose_name='触发类型')
     vehicle_type = models.CharField(max_length=100, null=True,verbose_name='车辆类型')
-    time = models.DateTimeField(null=True, verbose_name='识别时间')
+    update_time = models.DateTimeField(null=True, verbose_name='识别时间')
     status = models.IntegerField(default=0,verbose_name='状态',choices=[(0,'待处理'),(1,'已处理')])
 
 

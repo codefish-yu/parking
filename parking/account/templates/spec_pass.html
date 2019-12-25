@@ -12,9 +12,10 @@
 			<div class="ty">
 				{% if type == 0%}
 				<div>临停车</div>
+				<div id="no"> 233</div>
 				{% elif type == 1%}
 				<div>月租车</div>
-				<div>显示月租有效期</div>
+				<div id="ti">{{ card.valid_start | date:'Y-m-d'}}-{{ card.valid_end | date:'Y-m-d'}} </div>
 				{% endif %}
 				
 			</div>
@@ -23,14 +24,14 @@
 		</div>
 		<div>
 			<div class="item">计费时长:</div>
-			<div class="item">{{record.get_duration}}</div>
+			<div class="item">{{record.get_duration}}小时</div>
 		</div>
 		<div>
 			<div class="item">入场时间:</div>
 			{% if record.in_time %}
 			<div class="item">{{record.in_time}} </div>
 			{% else%}
-			<div class="item">无入场记录</div>
+			<div class="nr item">无入场记录</div>
 			{% endif %}
 		</div>
 		<div>
@@ -63,6 +64,14 @@
 		<div>
 			<div class="item">已线上缴费：¥{{record.get_price}} </div>
 		</div>
+		{% else %}
+		<div>
+			<div class="price">¥16</div>
+		</div>
+		<div>
+			<div class="item">示例</div>
+		</div>
+
 		{% endif %}
 	</div>
 	<div class="bt">
@@ -109,6 +118,16 @@
 	</div>
 </div>
 <style type="text/css">
+	.nr{
+		color: #EBC34B!important
+	}
+	#no{
+		font-size: 8px;
+		color: white
+	}
+	#ti{
+		font-size: 8px;
+	}
 	#stopAudio{
 		text-align: center;
 		width: 100%;
@@ -252,6 +271,7 @@
 	.ty div{
 		margin-bottom: 10px;
 		color: gray;
+		ont-size: 12px;
 	}
 	.con{
 		margin-top: 50px
@@ -410,7 +430,20 @@
 	})
 	// var inter = setInterval(check,50);
 	// function check(){
-	// 	$('#info_form').submit()
+	// 	$.ajax({
+	// 		url:'',
+	// 		type:'post',
+	// 		data:{
+	// 			'action':'check'
+	// 		},
+	// 		success:function(e){
+	// 			if(e.tip == 0){
+	// 				window.location.href = '/account/correct/'+e.id+'/'
+	// 			}else{
+	// 				window.location.reload()
+	// 			}
+	// 		}
+	// 	})
 	// }
 </script>
 {% endblock %}
