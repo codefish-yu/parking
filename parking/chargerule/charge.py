@@ -445,7 +445,6 @@ def compute(parkinglot, start, end, coupons, card):
             hours = get_by_card(start, card.valid_end, parkinglot, card.my_card, day_max) + get_valid_hours(card.valid_end, end, day_max)
         else:
             hours = get_by_card(start, end, parkinglot, card.my_card, day_max)
-        print(hours , 'xxxx')
         
         payable = payment = math.ceil(hours * 2) / 2 * baseRule.per_hour
 

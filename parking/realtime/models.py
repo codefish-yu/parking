@@ -97,7 +97,9 @@ class InAndOut(models.Model):
     def get_price(self):
         return 2
     def get_duration(self):
-        return 2
+        d = self.out_time-self.in_time
+
+        return round(d.days*24+d.seconds/3600,2)
 
 
 class OpeningOrder(models.Model):

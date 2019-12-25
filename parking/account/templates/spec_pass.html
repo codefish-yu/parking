@@ -24,7 +24,7 @@
 		</div>
 		<div>
 			<div class="item">计费时长:</div>
-			<div class="item">{{record.get_duration}}</div>
+			<div class="item">{{record.get_duration}}小时</div>
 		</div>
 		<div>
 			<div class="item">入场时间:</div>
@@ -64,6 +64,14 @@
 		<div>
 			<div class="item">已线上缴费：¥{{record.get_price}} </div>
 		</div>
+		{% else %}
+		<div>
+			<div class="price">¥16</div>
+		</div>
+		<div>
+			<div class="item">示例</div>
+		</div>
+
 		{% endif %}
 	</div>
 	<div class="bt">
