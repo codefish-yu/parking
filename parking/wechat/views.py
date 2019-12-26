@@ -189,7 +189,7 @@ def parkout(request, user, parkinglot_id, gate_id=None):
                 r.leave_type = 1
                
                 r.save()
-·                
+                               
                 bill = createBill(r)
                 ctx['payment'] = (bill.payment, bill.payable)
 

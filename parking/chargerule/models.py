@@ -204,7 +204,7 @@ class UserCoupon(models.Model):
         verbose_name = verbose_name_plural = '用户和券'
 
     user = models.ForeignKey(CarUser, on_delete=models.SET_NULL, null=True, blank=True)
-    car_number = models.CharField(null=True, blank=True, verbose_name='车牌')
+    car_number = models.CharField(max_length=200, null=True, blank=True, verbose_name='车牌')
     coupon = models.ForeignKey(Coupons, on_delete=models.CASCADE)
     status = models.IntegerField(choices=[(0, '未使用'),(1, '已使用')])
 
