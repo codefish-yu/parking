@@ -17,5 +17,13 @@ def apply(request):
 
 def grant(request):
 	ctx = {}
+	p=0
 
+
+	if request.method == 'POST':
+		action = request.POST.get('action','')
+		if action == 'change':
+			p = int(request.POST.get('p'))
+
+	ctx['p']=p
 	return render(request,'grant.html',ctx) 
