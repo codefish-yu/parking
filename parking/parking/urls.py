@@ -28,6 +28,7 @@ from wechat import views as wechat
 from chargerule import views as charge
 from realtime import views as realtime
 from account import views as ac
+from business import views as b
 
 
 urlpatterns = [
@@ -108,7 +109,13 @@ urlpatterns = [
     path('account/correct/',ac.correct),
     path('account/record/',ac.record),
     path('account/personal/',ac.personal,name='personal'),
-    path('account/begin_work/',ac.begin_work)
+    path('account/begin_work/',ac.begin_work),
+
+    #business
+    path('business/com_login/',b.com_login),
+    path('business/apply/',b.apply),
+    path('business/grant/',b.grant),
+
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

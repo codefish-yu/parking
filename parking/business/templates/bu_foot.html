@@ -1,0 +1,55 @@
+<div id='bottom' >
+	{% if menu != 'my'%}
+	<div id='park'class="act">
+		<img src="/static/img/applied.png"><br>
+		申请
+	</div>
+	<div id='my'>
+		<img src="/static/img/cou.png"><br>
+		优惠券
+	</div>
+	{% else %}
+	<div id='park'>
+		<img src="/static/img/apply.png"><br>
+		购买	
+	</div>
+	<div id='my'class="act">
+		<img src="/static/img/cous.png"><br>
+		优惠券
+	</div>
+	{% endif %}
+</div>
+<style type="text/css">
+	#bottom{
+		position: absolute;
+		/*margin-top: calc(100%-100px);*/
+		font-size: 10px;
+		height: 50px;
+		bottom: 0;
+		width: 100%;
+		background-color: rgba(195, 182, 176, 0.13);
+		
+	}
+	#bottom div{
+		display: inline-block;
+		width: 49%;
+		text-align: center;
+		padding-top: 2%
+	}
+	#bottom img{
+		width: 10%;
+	}
+	.act{
+		color: #3366CC
+	}
+
+</style>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+	$('#my').click(()=>(
+		window.location.href='/business/grant'
+	))
+	$('#park').click(()=>(
+		window.location.href='/business/apply'
+	))
+</script>

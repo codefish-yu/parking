@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'chargerule',
     'administrator',
     'account',
+    'business',
 
 ]
 
