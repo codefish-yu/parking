@@ -1,7 +1,49 @@
 <!-- 有车牌的车辆 -->
 
 
-<!DOCTYPE html>
+
+{% extends 'public_count/base/base.html' %}
+
+{% block content %}
+<style type="text/css">
+	
+	.content_row{
+		text-align: center;
+		margin-top: 20px;
+		font-family: PingFangSC-Semibold;
+		color: #000000;
+	}
+	.bingo{
+		width: 60px;
+	}
+	 
+	.content_row .number{
+		background: #3366CC;
+		border-radius: 3px;
+		border-radius: 3px;
+		width: 40%;
+		margin-top:10px;
+		text-align: center;
+		color:white; 
+		padding: 3px;
+		margin-left: 30%;
+	}
+	 
+</style>
+
+	<div class='title'>支付成功</div>
+	<div class='content_row'>
+		<img src='/static/wechat/user/img/bingo.png' class='bingo' />
+	</div>
+	<div class='content_row'>
+	 	{% if gate_id %} 一路顺风
+	 	{% else %} 支付成功, 请在15分钟内离场 
+	 	{% endif %}
+	</div>
+
+{% endblock %}
+
+<!-- <!DOCTYPE html>
 <html>
 
 <head>
@@ -15,4 +57,4 @@
 	 	{% endif %}
 	 </h4>
 </body>
-</html>
+</html> -->

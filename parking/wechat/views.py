@@ -50,6 +50,7 @@ def user_required(func):
 
     return wrapper
 
+
 # 创建开闸指令
 def createOpenOrder(parkinglot_id, gate_id, in_and_out):
     in_and_out.final_out_time = datetime.datetime.now()
@@ -65,15 +66,21 @@ def createOpenOrder(parkinglot_id, gate_id, in_and_out):
 
 
 # 计费
-def createBill(in_and_out):
-    pass
+def createBill(in_and_out, coupons=None):
+
     #  根据出入场的时间in_time, out_time , number, 计算收费
+    from chargerule.charge import charge
+    payable, payment = charge(in_and_out, coupons)
 
-    bill = Bill(payable=0.01, payment=0.01, status=0, pay_time=datetime.datetime.now())
-    bill.save()
-    in_and_out.bill = bill
-    in_and_out.save()
+    if not in_and_out.bill:
+        bill = Bill(payable=0.01, payment=0.01, status=1 if payment == 0 else 0, pay_time=datetime.datetime.now())
 
+        bill.save()
+        in_and_out.bill = bill
+        in_and_out.save()
+    else:
+        bill = in_and_out.bill
+        bill.update(payable=payable, payment=payment, status=1 if payment == 0 else 0, pay_time=datetime.datetime.now())
     product = Product.objects.create(price=bill.payment, name='parking fee', company='jietingkeji', category='park')
     
     bill.product = product
@@ -82,11 +89,18 @@ def createBill(in_and_out):
     return bill
 
 
-# @user_required
-def parkin(request, parkinglot_id, gate_id):
+def get_park_time(in_time, out_time=None):
+    out_time =  out_time if out_time else datetime.datetime.now()
+    diff = out_time - in_time
+    hours = math.floor(diff.seconds / 3600)
+    minutes = math.ceil((diff.seconds % 3600) / 60 )
+    return hours, minutes
+
+
+@user_required
+def parkin(request, user, parkinglot_id, gate_id):
     '''卡口扫码入场'''
-    from meta.models import User
-    user = User.objects.first()
+ 
     camera = Camera.objects.filter(gate_id=gate_id).first()
 
     r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, camera_in=camera, user=user, status__lte=0).first()
@@ -103,18 +117,17 @@ def parkin(request, parkinglot_id, gate_id):
 
     createOpenOrder(parkinglot_id, gate_id, r)
 
-    diff = r.in_time - now 
-    hours = math.floor(diff.seconds / 3600)
-    minutes = math.ceil((diff.seconds % 3600) / 60 )
-    ctx = {'r': r, 'menu': 'park', 'hours': hours, 'minutes': minutes}
+    ctx = {'r': r, 'menu': 'park', 'hours': get_park_time(r.in_time) }
+
     return render(request, 'public_count/in.html', ctx)
 
 
-# @user_required
-def parkout(request, parkinglot_id, gate_id=None):
-    from meta.models import User
-    user = User.objects.first()
-    '''卡口扫码出场'''
+@user_required
+def parkout(request, user, parkinglot_id, gate_id=None):
+    # from meta.models import User
+    # user = User.objects.first()
+    '''场内扫码支付 或 卡口扫码支付出场'''
+
     ctx = {'parkinglot_id': parkinglot_id, 'menu': 'park'}
 
     ctx['parkinglot'] = ParkingLot.objects.filter(id=parkinglot_id).first()
@@ -152,20 +165,23 @@ def parkout(request, parkinglot_id, gate_id=None):
                 r = r.first()
                 r.user = user
                 r.save()
-                ctx['record'] = r
+                ctx['r'] = r
+                ctx['hours'] = get_park_time(r.in_time)
+
                 return render(request, 'public_count/number2.html', ctx)
             else:
                 ctx['error'] = '未匹配到入场车牌！请核对车牌。'
-                return render(request, 'public_count/number1.html', ctx)
+                return render(request, 'public_count/number2.html', ctx)
 
         if action == 'leave':
-            # 点击离场, 计算
+            # 点击结算出场, 计算
             id = request.POST.get('id', '')
 
             r = InAndOut.objects.filter(id=int(id))
             if r:
-                # 计算费用
+                
                 r = r.first()
+
                 if gate_id:
                     camera = Camera.objects.filter(gate_id=gate_id).first()
                     r.camera_out = camera
@@ -173,17 +189,19 @@ def parkout(request, parkinglot_id, gate_id=None):
                 r.leave_type = 1
                
                 r.save()
-
+                               
                 bill = createBill(r)
-                
-                ctx['record'] = r
-                ctx['product'] = bill.product
+                ctx['payment'] = (bill.payment, bill.payable)
 
+                ctx['r'] = r
+                ctx['hours'] = get_park_time(r.in_time,r.out_time)
+                ctx['product'] = bill.product
+                
                 return render(request, 'public_count/number3.html', ctx)
 
     if not r:     # 如果查不到记录就让其输入车牌号
         return render(request, 'public_count/number1.html', ctx)
-    else:         # 如果有记录跳至记录页面, 可以点击离场
+    else:         # 如果有停车记录跳至记录页面, 可以点击离场
 
         if r.bill:
             if r.bill.status == 0: # 未支付
@@ -194,9 +212,10 @@ def parkout(request, parkinglot_id, gate_id=None):
                     r.camera_out = camera
 
                 r.save()
-                bill = createBill(r)
+                bill = createBill(r) #未支付过一会儿再次扫码, 便要重新计算
 
-                ctx['record'] = r
+                ctx['r'] = r
+                ctx['hours'] = get_park_time(r.in_time, r.out_time)
                 ctx['product'] = bill.product
 
                 return render(request, 'public_count/number3.html', ctx)
@@ -206,5 +225,9 @@ def parkout(request, parkinglot_id, gate_id=None):
                 # 场内支付成功提示
                 return render(request, 'public_count/number4.html', ctx)
 
-        ctx['record'] = r
+        ctx['r'] = r
+        ctx['hours'] = get_park_time(r.in_time)
+
         return render(request, 'public_count/number2.html', ctx)
+
+

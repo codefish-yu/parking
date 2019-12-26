@@ -487,9 +487,9 @@ def compute(parkinglot, start, end, coupons, card):
     return payable, payment 
         
 # 计价
-def charge(in_and_out, coupons):
+def charge(in_and_out, coupons=None):
     card = Card.objects.filter(car_number=in_and_out.number)
-    compute(in_and_out.parkinglot, in_and_out.in_time, in_and_out.out_time, coupons, card)
+    return compute(in_and_out.parkinglot, in_and_out.in_time, in_and_out.out_time, coupons, card)
 
 
   

@@ -1,14 +1,17 @@
 from django.db import models
+
+
 from administrator.models import AdminUser as User
 from parkinglot.models import ParkingLot 
 from company.models import Company
+from meta.models import User as CarUser
+
+
 import datetime
-
-# Create your models here.
-
 
 
 '''计费规则模块'''
+
 
 class Coupons(models.Model):
     class Meta:
@@ -100,8 +103,6 @@ class CardType(models.Model):
     free_sa = models.TextField(max_length=30,null=True,verbose_name='周六优惠开始') 
     free_su = models.TextField(max_length=30,null=True,verbose_name='周日优惠开始') 
 
-
- 
 
 class Card(models.Model):
     class Meta:
@@ -199,9 +200,17 @@ class BaseRule(models.Model):
     min_price = models.IntegerField(default=0,verbose_name='最短计价时间')#单位：分钟
             
 
+class UserCoupon(models.Model):
+    class Meta:
+        verbose_name = verbose_name_plural = '用户和券'
 
+    user = models.ForeignKey(CarUser, on_delete=models.SET_NULL, null=True, blank=True)
+    car_number = models.CharField(max_length=200, null=True, blank=True, verbose_name='车牌')
+    coupon = models.ForeignKey(Coupons, on_delete=models.CASCADE)
+    status = models.IntegerField(choices=[(0, '未使用'),(1, '已使用')])
 
-
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    use_time = models.DateTimeField(auto_now_add=True, verbose_name='使用时间')
 
 
 

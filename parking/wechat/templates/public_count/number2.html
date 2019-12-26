@@ -1,21 +1,106 @@
 <!-- 有车牌的车辆 -->
+<!-- 停车状态, 包括进场时间, 已停时间等 -->
+{% extends 'public_count/base/base.html' %}
 
-<!DOCTYPE html>
-<html>
-<head>
-	<title>出场</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-	<form action="" method="post">
-		{% csrf_token %}
-		<span>车牌号: {{ car_number|default:'无牌-扫码入场' }}</span>
-		{% if record %}
-			<span>入场时间: {{ record.in_time|date:'Y-m-d H:i:s'}}</span>
-			<input type="hidden" name='action' value='leave' />
-			<input type="hidden" name='id' value='{{ record.id }}' />
-			<input type="submit" value='出场' style='width: 100px;'/>
-		{% endif %}
-	</form>
-</body>
-</html>
+{% block content %}
+<style type="text/css">
+	.in{
+		font-family: PingFangSC-Medium;
+	    font-size: 16px;
+	    color: #6D7278;
+	    padding-left: 20px;
+	}
+	.time{
+		font-family: PingFangSC-Medium;
+		font-size: 16px;
+		color: #000000;
+	}
+
+	/*.bottom-panel. */
+	.bottom-panel{
+		background: #FFFFFF;
+	    box-shadow: 0 0 10px 0 rgba(0,0,0,0.50);
+	    border-radius: 3px;
+	    border-radius: 3px;
+	    height: 120px;
+	    width: 80%;
+	    margin: 10%;
+	    position: absolute;
+	    text-align: left;
+	    bottom: 100px;
+	    font-family: PingFangSC-Semibold;
+	}
+	.bottom-panel .number{
+		font-size: 32px;
+		text-align: left;
+	    margin: 5px 1px 0px 15px;
+		color: #000000;
+	}
+	.bottom-panel .parkinglot{
+		color: #000000;
+	    margin: 0px 1px 0px 15px;
+		font-size: 18px;
+		height: 28px;
+	}
+	.bottom-panel .address{
+		font-size: 12px;
+	    margin: 0px 1px 0px 15px;
+		color: #6D7278;
+	    height: 20px;
+	}
+	.bottom-panel .btn{
+	    width: 40%;
+	    background: #3366CC;
+	    border-radius: 3px;
+	    border: none;
+	    font-family: PingFangSC-Medium;
+	    font-size: 16px;
+	    color: white;
+	    text-align: center;
+	    height: 40px;
+	    margin-left: 30%;
+	    line-height: 38px;
+	}
+	.bottom-panel input{
+		color:white;
+		background:#3366CC;
+		border: none;
+		margin-top: 8px;
+	}
+</style>
+
+<div class='title'>停车详情</div>
+<form action="" method="post">
+	{% csrf_token %}
+	<div class="in">
+		<div>入场时间</div>
+		<div class='time'>{{ r.in_time|date:'Y-m-d H:i' }}</div>
+	</div>
+	<div class='in' style="margin-top:10px">
+		<div>已停时长</div>
+		<div class='time'>{{ hours.0 }} 小时 {{ hours.1 }} 分钟</div>
+	</div>
+	<div>
+		<div class='bottom-panel'>
+			<div class='number'>{% if r.number %} {{ r.number}} {% else %} 无牌车 {% endif %}</div>
+			<div class='parkinglot'>{{ parkinglot.name }}</div>
+
+			<div class='address'>{{ parkinglot.address }}</div>
+			<div class='btn'> 结算出场 </div>
+		</div>
+	</div>
+ 
+	<input type="hidden" name='action' value='leave' />
+	<input type="hidden" name='id' value='{{ r.id }}' />
+</form>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	$('.btn').click(function(){
+		$('form').submit()
+	})
+
+</script>
+{% endblock %}

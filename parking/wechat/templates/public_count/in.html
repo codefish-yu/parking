@@ -1,4 +1,4 @@
-<!-- 有车牌的车辆 -->
+<!-- 无车牌的车辆 -->
 
 {% extends 'public_count/base/base.html' %}
 
@@ -40,11 +40,13 @@
 		color: #000000;
 	    margin: 0px 1px 0px 15px;
 		font-size: 18px;
+		height: 26px;
 	}
 	.bottom-panel .address{
 		font-size: 12px;
 	    margin: 0px 1px 0px 15px;
 		color: #6D7278;
+		height: 17px;
 	}
 	.bottom-panel .btn{
 		position: relative;
@@ -64,22 +66,22 @@
 	}
 </style>
 <div class='title'>停车详情</div>
-	<div class="in">
-		<div>入场时间</div>
-		<div class='time'>{{ r.in_time|date:'Y-m-d H:i' }}</div>
+<div class="in">
+	<div>入场时间</div>
+	<div class='time'>{{ r.in_time|date:'Y-m-d H:i' }}</div>
+</div>
+<div class='in' style="margin-top:10px">
+	<div>已停时长</div>
+	<div class='time'>{{ hours.0 }} 小时 {{ hours.1 }} 分钟</div>
+</div>
+<div>
+	<div class='bottom-panel'>
+		<div class='number'>无牌车</div>
+		<div class='parkinglot'>上海交通大学医学院附属仁济</div>
+		<div class='address'>上海交通大学医学院附属仁济</div>
+		<div class='btn'>扫描二维码</div>
 	</div>
-	<div class='in' style="margin-top:10px">
-		<div>已停时长</div>
-		<div class='time'>{{ hours }} 小时 {{ minutes }} 分钟</div>
-	</div>
-	<div>
-		<div class='bottom-panel'>
-			<div class='number'>无牌车</div>
-			<div class='parkinglot'>上海交通大学医学院附属仁济</div>
-			<div class='address'>上海交通大学医学院附属仁济</div>
-			<div class='btn'>扫描二维码</div>
-		</div>
-	</div>
+</div>
 {% endblock %}
 
 {% block js %}
@@ -93,7 +95,7 @@
 		meta.wechat(function() {
 			$('.btn').click(() => {
 		        meta.scan().then(function (result) {
-		            alert(result);
+		            window.location.href = result
 		        });
 		    });
 
