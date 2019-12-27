@@ -164,7 +164,7 @@
 	</div>
 	<div class="content_row">
 		实付金额 <span class='payment'> {{ payment.0 }} </span> 元 
-			 <del class='payable'>{{ payment.1 }} 元</del>
+			 <del class='payable'> {{ payment.1 }} </del>  元
 	</div>
 	<div class='content_row'>
 		{% if gate_id and not r.number %}
@@ -203,6 +203,7 @@
 
 	})
 	
+	var record_id = {{ r.id }}
 
 	var parkinglot_id = {{ parkinglot_id }}
 
@@ -278,6 +279,22 @@
 	// }else{
 	//    onBridgeReady();
 	// }
+
+	function get_coupons(){
+
+	}
+
+	function charge_by_coupons(){
+		var coupons = get_coupons()
+
+		myajax('', 
+			{ 'action': 'coupons_charge', 'coupons': coupons, 'id': record_id },
+			(data)=>{
+				$('.payable').html(data.payable)
+				$('.payment').html(data.payment)
+			})
+	}
+
 
 </script>
 {% endblock %}

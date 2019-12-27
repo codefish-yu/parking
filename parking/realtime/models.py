@@ -20,7 +20,8 @@ class InAndOut(models.Model):
     logo_out = models.CharField(max_length=200, verbose_name='logo')
 
     in_time = models.DateTimeField(null=True, verbose_name='入口识别时间')
-    out_time = models.DateTimeField(null=True, verbose_name='出场时间(用户端点击出场)')
+    out_time = models.DateTimeField(null=True, verbose_name='出场时间(用户端点击出场结算)')
+    latest_leave_time = models.DateTimeField(null=True, verbose_name='最晚离场时间(超出则产生滞留费)')
     final_out_time = models.DateTimeField(null=True, verbose_name='实际出场时间')
 
     picture_in = models.ImageField(null=True, upload_to='car/%Y/%m/%d', verbose_name='车辆图片')
@@ -61,10 +62,11 @@ class InAndOut(models.Model):
 
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name='停车用户')
     bill = models.OneToOneField('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单',related_name='InAndOut',blank=True)
+    bill2 = models.OneToOneField('Bill', null=True, on_delete=models.SET_NULL, verbose_name='滞留费',blank=True)
     is_spec = models.IntegerField(default=0,choices=[(0,'正常'),(1,'特殊')])
     remark = models.CharField(max_length=30,null=True, verbose_name='备注信息')
     exception = models.IntegerField(default=0,choices=[(0,'正常'),(1,'异常')])
-    # params = {
+    # params = { 摄像头识别结果
     #     'type': 'online', 
     #     'mode': '5', 
     #     'plate_num': '京PH3XJ0', 

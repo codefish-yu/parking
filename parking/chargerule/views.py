@@ -475,7 +475,7 @@ def chargedemo(request):
             ctx['parkinglot'] = parkinglot = ParkingLot.objects.get(id=parkinglot_id)
             ctx['baserule'] = baserule = BaseRule.objects.filter(parkinglot=parkinglot).first()
             ctx['coupons'] = coupons = Coupons.objects.filter(id__in=coupons)
-            ctx['card'] = card = Card.objects.filter(car_number=car_number).first()
+            ctx['card'] = card = parkinglot.parkinglot_card.filter(car_number=car_number).first()
 
             in_time = datetime.datetime.strptime(in_time, '%Y-%m-%d %H:%M:%S')
             out_time = datetime.datetime.strptime(out_time, '%Y-%m-%d %H:%M:%S')

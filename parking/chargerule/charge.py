@@ -413,12 +413,16 @@ def get_by_card(start, end, parkinglot, card, day_max):
 
 
 def hours2price(hours, baseRule):
-    if hours <= baseRule.free_time / 60:
-        return 0
-    if hours <= baseRule.min_price / 60:
-        return baseRule.per_hour * baseRule.min_price / 60
-     
-    return math.ceil(hours * 2) / 2 * baseRule.per_hour
+    '''返回费用, 和可滞留时间'''
+    basehour = baseRule.free_time / 60
+    minhour = baseRule.min_price / 60
+    if hours <= basehour:
+        return 0, basehour - hours
+    if hours <= minhour:
+        return baseRule.per_hour * minhour, minhour - hours + basehour
+    
+    valid_hour = math.ceil(hours * 2) / 2
+    return valid_hour * baseRule.per_hour, valid_hour - hours + basehour
 
 
 '''
@@ -427,6 +431,8 @@ def hours2price(hours, baseRule):
 @param baseRule 基本收费规则对象, start 开始计费时间, end 停止计费时间, coupons 优惠券对象, card 会员卡
 '''
 def compute(parkinglot, start, end, coupons, card):
+    if end <= start:
+        return 0,0
 
     baseRule = BaseRule.objects.filter(parkinglot=parkinglot, status=0).first()
     day_max = baseRule.day_max
@@ -446,12 +452,23 @@ def compute(parkinglot, start, end, coupons, card):
         else:
             hours = get_by_card(start, end, parkinglot, card.my_card, day_max)
         
-        payable = payment = math.ceil(hours * 2) / 2 * baseRule.per_hour
+        if hours == get_valid_hours(start, end):     # 说明错峰卡没有生效, 停车时间跟错峰时间没有重叠
+            payment, left_time = hours2price(hours, baseRule) 
+            latest_leave_time = end + datetime.timedelta(hours=left_time)      # 超过这个时间, 就会产生滞留费
+            payable = payment
+
+        else:                                        # 错峰卡生效, 超出的时间按每半小时一计
+            payable = payment = math.ceil(hours * 2) / 2 * baseRule.per_hour
+            left_time = math.ceil(hours * 2) / 2 - hours + free_time/60
+            latest_leave_time = end + datetime.timedelta(hours=left_time)
 
     else:
         hours = get_valid_hours(start, end, day_max)
 
-        payable = payment = hours2price(hours,baseRule)
+        payment, left_time = hours2price(hours,baseRule)
+        latest_leave_time = end + datetime.timedelta(hours=left_time)      # 超过这个时间, 就会产生滞留费
+        payable = payment
+
         if coupons: # 有券, 只能同时用一种券, 可叠加多张
         
             for coupon in coupons:
@@ -484,15 +501,29 @@ def compute(parkinglot, start, end, coupons, card):
                         payment = payment - coupon.hours1 * per_hour + coupon.money1
                         hours -= coupon.hours1
 
-    return payable, payment 
+    return payable, payment, latest_leave_time 
         
+
 # 计价
 def charge(in_and_out, coupons=None):
-    card = Card.objects.filter(car_number=in_and_out.number)
+    card = in_and_out.parkinglot.parkinglot_card.filter(car_number=in_and_out.number).first()
     return compute(in_and_out.parkinglot, in_and_out.in_time, in_and_out.out_time, coupons, card)
 
 
-  
+# 计算滞留费
+def demurrage(in_and_out):
+    card = in_and_out.parkinglot.parkinglot_card.filter(car_number=in_and_out.number).first()
+    
+    now = datetime.datetime.now()
+    if now < in_and_out.latest_leave_time:
+        return 0
+    else:
+        parkinglot = in_and_out.parkinglot
+
+        baseRule = BaseRule.objects.filter(parkinglot=parkinglot, status=0).first()
+        start = in_and_out.latest_leave_time - datetime.timedelta(hours=baseRule.free_time/60)
+        end = now
+        return compute(parkinglot, start, end, None, card)[1]
 
     
 
