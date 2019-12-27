@@ -3,7 +3,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import ApplyRecord
 from chargerule.models import TicketRecord
 from company.models import Company
-from meta.models import Product,Order
+from meta.models import Product,Order,Payment
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -43,6 +44,7 @@ def com_login(request):
 def apply(request,tc_id):
 	ctx = {}
 	record = TicketRecord.objects.filter(id=int(tc_id)).first()
+	ctx['diff'] = record.amount - record.extra
 	if request.method == 'POST':
 		action = request.POST.get('action','')
 		if action == 'buy':
@@ -64,10 +66,15 @@ def apply(request,tc_id):
 			if p_id:
 				order = Order.objects.filter(product_id=pid).order_by('-create_time').first()
 				if order:
-					from meta.models import Payment
 					if Payment.objects.filter(order=order).exists():
-						bill = Bill.objects.filter(product_id=int(p_id))
+						bill = BusinessBill.objects.filter(product_id=int(p_id))
 						bill.update(status=1, pay_type=1, pay_time=datetime.datetime.now())
+						ar = ApplyRecord.objects.filter(product__id=p_id).first()
+						record.extra +=ar.number
+						record.save()
+
+						return JsonResponse({'result':'ok'})
+			return JsonResponse({'result':'bad'})
 
 	ctx['record'] = record
 	return render(request,'apply.html',ctx)

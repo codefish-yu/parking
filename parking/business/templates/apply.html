@@ -19,7 +19,7 @@
 		</div>
 		<div class="item">
 			<label>数量</label>
-			<input type="text" name="amount" placeholder="最多可购{{record.amount}}张" class='elem' >
+			<input type="text" name="amount" placeholder="最多可购{{diff}}张" class='elem' >
 		</div>
 		<div class="item">
 			<label>金额</label>
@@ -134,9 +134,9 @@
 			      		 	product_id: product_id,
 			      		 	action: 'confirm'
 			      		}, (data)=>{
-						if(data.success){
-							clearInterval(xx)
-							
+						if(data.result == 'ok'){
+							clearInterval(xx);
+							window.location.href='/account/grant';
 						}
 					})
 				},500)
@@ -144,7 +144,7 @@
 		        // res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
 		      } else{
 		      	alert('支付失败')
-		      	console.info(res)
+		
 		      }
 		
 	   }); 
