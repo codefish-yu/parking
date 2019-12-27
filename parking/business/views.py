@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from .models import ApplyRecord
 
 # Create your views here.
 
@@ -19,6 +20,7 @@ def apply(request):
 def grant(request):
 	ctx = {}
 	p=0
+	records = ApplyRecord.objects.filter(status=0).all()
 
 
 	if request.method == 'POST':
@@ -27,4 +29,5 @@ def grant(request):
 			p = int(request.POST.get('p'))
 
 	ctx['p']=p
+	ctx['records'] = records
 	return render(request,'grant.html',ctx) 

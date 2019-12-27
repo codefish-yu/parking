@@ -270,8 +270,17 @@ def coupon_type(request):
 def coupon(request):
     '''优惠券管理'''
 
-    ctx = {}
+    def code(id):
+        from meta.qrcode import make_qrcode
+        import datetime
+        
+        url = str(id)
+        now = datetime.datetime.now()
+        name = str(now.year)+''+str(now.month)+''+str('now.day')+''+str(now.hour)+''+str(now.minute)+''+str(now.second)
+        return make_qrcode(url,name+'.png')
 
+
+    ctx = {}
     objects = TicketRecord.objects.select_related('parkinglot', 'company', 'coupons').all()
 
     if request.method == 'POST':
@@ -295,7 +304,7 @@ def coupon(request):
             ticket_id = request.POST.get('ticket_id', '')
             if ticket_type and ticket_id:
                 r.coupons_id = int(ticket_id)
-            
+            r.coucode = code(r.id)
             r.save()
 
         elif action == 'update':
