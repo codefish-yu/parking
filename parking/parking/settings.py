@@ -164,6 +164,8 @@ WECHAT = {
 }
 
 
+CAR_IMG_PATH = BASE_DIR + 'media/car/'
+PLATE_IMG_PATH = BASE_DIR + 'media/plate/'
 
 
 
