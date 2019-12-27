@@ -52,8 +52,12 @@ def user_required(func):
 
 
 # 创建开闸指令
-def createOpenOrder(parkinglot_id, gate_id, in_and_out):
-    in_and_out.final_out_time = datetime.datetime.now()
+def createOpenOrder(parkinglot_id, gate_id, in_and_out, type):
+    if type == 'in': # 进口开闸
+        in_and_out.in_time = datetime.datetime.now()
+    else:            # 入口开闸
+        in_and_out.final_out_time = datetime.datetime.now()
+    
     in_and_out.save()
 
     if OpeningOrder.objects.filter(gate_id=gate_id).exists():
@@ -70,21 +74,22 @@ def createBill(in_and_out, coupons=None):
 
     #  根据出入场的时间in_time, out_time , number, 计算收费
     from chargerule.charge import charge
-    payable, payment = charge(in_and_out, coupons)
+    payable, payment, latest_leave_time = charge(in_and_out, coupons)
 
     if not in_and_out.bill:
         bill = Bill(payable=0.01, payment=0.01, status=1 if payment == 0 else 0, pay_time=datetime.datetime.now())
-
+        product = Product.objects.create(price=bill.payment, name='parking fee', company='jietingkeji', category='park')
+    
+        bill.product = product
         bill.save()
-        in_and_out.bill = bill
-        in_and_out.save()
     else:
         bill = in_and_out.bill
         bill.update(payable=payable, payment=payment, status=1 if payment == 0 else 0, pay_time=datetime.datetime.now())
-    product = Product.objects.create(price=bill.payment, name='parking fee', company='jietingkeji', category='park')
-    
-    bill.product = product
-    bill.save()
+        bill.product.update(price=payment)
+
+    in_and_out.latest_leave_time = latest_leave_time
+    in_and_out.bill = bill
+    in_and_out.save()
 
     return bill
 
@@ -104,7 +109,6 @@ def parkin(request, user, parkinglot_id, gate_id):
     camera = Camera.objects.filter(gate_id=gate_id).first()
 
     r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, camera_in=camera, user=user, status__lte=0).first()
-    now = datetime.datetime.now()
     if not r:
         r = InAndOut.objects.create(
             status=-1, # -1  等待开闸入场
@@ -112,10 +116,9 @@ def parkin(request, user, parkinglot_id, gate_id):
             enter_type=1, 
             camera_in=camera,
             parkinglot_id=parkinglot_id, 
-            in_time=now,
         )
 
-    createOpenOrder(parkinglot_id, gate_id, r)
+    createOpenOrder(parkinglot_id, gate_id, r, 'in')
 
     ctx = {'r': r, 'menu': 'park', 'hours': get_park_time(r.in_time) }
 
@@ -151,7 +154,7 @@ def parkout(request, user, parkinglot_id, gate_id=None):
                         if gate_id:  # 如果此时在出口扫描支付, 则要立即创建开闸指令
                             r = bill.first().InAndOut
                             bill.update(status=2)
-                            createOpenOrder(parkinglot_id, gate_id, r)
+                            createOpenOrder(parkinglot_id, gate_id, r, 'out')
 
                         return JsonResponse({'success': True})
             return JsonResponse({'success': False})
@@ -177,51 +180,64 @@ def parkout(request, user, parkinglot_id, gate_id=None):
             # 点击结算出场, 计算
             id = request.POST.get('id', '')
 
-            r = InAndOut.objects.filter(id=int(id))
-            if r:
-                
-                r = r.first()
+            r = InAndOut.objects.filter(id=int(id)).first()
+ 
+            if gate_id:
+                camera = Camera.objects.filter(gate_id=gate_id).first()
+                r.camera_out = camera
+            r.out_time = datetime.datetime.now()
+            r.leave_type = 1
+           
+            r.save()
 
-                if gate_id:
-                    camera = Camera.objects.filter(gate_id=gate_id).first()
-                    r.camera_out = camera
-                r.out_time = datetime.datetime.now()
-                r.leave_type = 1
-               
-                r.save()
-                               
-                bill = createBill(r)
-                ctx['payment'] = (bill.payment, bill.payable)
+            bill = createBill(r)
+            ctx['payment'] = (bill.payment, bill.payable)
 
-                ctx['r'] = r
-                ctx['hours'] = get_park_time(r.in_time,r.out_time)
-                ctx['product'] = bill.product
-                
-                return render(request, 'public_count/number3.html', ctx)
+            ctx['r'] = r
+            ctx['hours'] = get_park_time(r.in_time,r.out_time)
+            ctx['product'] = bill.product
+            
+            return render(request, 'public_count/number3.html', ctx)
+
+        if action == 'coupons_charge':
+            # 用券。 用户在结算支付页面, 选择优惠券进行重新计算费用
+            coupons = request.POST.getlist('coupons', '')
+            id = request.POST.get('id', '')
+            r = InAndOut.objects.filter(id=int(id)).first()
+
+            coupons = [Coupons.objects.get(id=_) for _ in coupons]
+            bill = createBill(r, coupons)
+            
+            ctx['payment'] = bill.payment
+            ctx['payable'] = bill.payable
+
+            return JsonResponse(ctx)
 
     if not r:     # 如果查不到记录就让其输入车牌号
         return render(request, 'public_count/number1.html', ctx)
     else:         # 如果有停车记录跳至记录页面, 可以点击离场
 
         if r.bill:
-            if r.bill.status == 0: # 未支付
-                r.out_time = datetime.datetime.now()
-                r.leave_type = 1
-                if gate_id:
-                    camera = Camera.objects.filter(gate_id=gate_id).first()
-                    r.camera_out = camera
+            # if r.bill.status == 0: # 未支付
+            #     r.out_time = datetime.datetime.now()
+            #     r.leave_type = 1
+            #     if gate_id:
+            #         camera = Camera.objects.filter(gate_id=gate_id).first()
+            #         r.camera_out = camera
 
-                r.save()
-                bill = createBill(r) #未支付过一会儿再次扫码, 便要重新计算
+            #     r.save()
+            #     bill = createBill(r) #未支付过一会儿再次扫码支付, 便要重新计算
 
-                ctx['r'] = r
-                ctx['hours'] = get_park_time(r.in_time, r.out_time)
-                ctx['product'] = bill.product
+            #     ctx['r'] = r
+            #     ctx['hours'] = get_park_time(r.in_time, r.out_time)
+            #     ctx['product'] = bill.product
 
-                return render(request, 'public_count/number3.html', ctx)
-            else:   # 已支付
+            #     return render(request, 'public_count/number3.html', ctx)
+            # else:   # 已支付
+
+            if r.bill.status == 1:
                 if gate_id: # 抬杆离场
-                    createOpenOrder(parkinglot_id, gate_id, r)
+                    createOpenOrder(parkinglot_id, gate_id, r, 'out')
                 # 场内支付成功提示
                 return render(request, 'public_count/number4.html', ctx)
 
