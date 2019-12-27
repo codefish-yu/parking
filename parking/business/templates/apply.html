@@ -102,6 +102,10 @@
 	})
 	$('#buy-form input[name=amount]').change(function(){
 		var v = $(this).val();
+		if(v >{{diff}}){
+			$(this).val('');
+			alert('可购买数量超出上限')
+		}
 		if(v == '' || v == '0'){
 			$('#buy-form input[name=con]').val('');
 			$('#bt').css('background-color','#929292');
