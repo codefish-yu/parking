@@ -1,0 +1,80 @@
+{% extends 'home.html' %}
+{% block content %}
+<div id='bod'>
+	<p>购买优惠券</p>
+	<form method="post" action="">
+		<div class="item">
+			<label>名称</label>
+			<select name='name' data-placeholder='请填写优惠券名称' class='elem'>
+				<option value="" disabled selected >请选择优惠券名称</option>
+			</select>
+		</div>
+		<div class="item">
+			<label>类型</label>
+			<select name='type' data-placeholder='请选择优惠券类型' class='elem'>
+				<option value="" disabled selected >请选择优惠券类型</option>
+			</select>
+		</div>
+		<div class="item">
+			<label>数量</label>
+			<input type="text" name="amount" placeholder="请填写优惠券数量" class='elem'>
+		</div>
+	</form>
+
+	<div id='bt'>
+		提交申请
+		<form method="post" action="">
+			<input type="hidden" name="action" value="apply">
+		</form>
+	</div>
+	
+</div>
+<style type="text/css">
+	p{
+		font-size: 25px
+	}
+	#bt{
+		position: absolute;
+		bottom: 110px;
+		width: 60%;
+		background-color:#3366CC;
+		color: white;
+		margin-left: 17%;
+		text-align: center;
+		height: 30px;
+		padding-top: 10px
+	}
+	#bod{
+		    padding-left: 3%;
+	}
+	.elem{
+		width: 60%;
+		height: 28px;
+		border:0px;
+		background-color: white;
+		font-size: 14px
+	}
+	.item{
+		border:0px;
+		border-bottom: 1px solid rgba(158, 158, 158, 0.19);
+		width: 90%;
+		height: 35px;
+		
+	}
+	.item label{
+		color: black;
+		font-size: 12px;
+		padding-right: 20%;
+		
+		
+	}
+	select option{
+		text-align: center;
+		width: 100%
+	}
+</style>
+<script type="text/javascript">
+	
+</script>
+<!-- {% include 'bu_foot.html' %} -->
+{% endblock%}

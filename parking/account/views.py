@@ -106,7 +106,7 @@ def spec_pass(request):
 		if action == 'check':
 			record = get_record(gate_id)
 			if str(record._meta) == 'realtime.exceptrecord': 
-				return JsonResponse({'tip':0,'id':gate_id})
+				return JsonResponse({'tip':0})
 
 			return JsonResponse({'result':True})
 

@@ -88,8 +88,8 @@
                                         <th>商家</th>
                                         <th>优惠券类型</th>
                                         <th>优惠券</th>
-                                        <th>数量</th>
-                                        <th>购买日期</th>
+                                        <th>限额</th>
+                                        <th>有效截至</th>
                                         <!-- <th>优惠时段</th> -->
                                         <th>操作</th>
                                     </tr>
@@ -112,9 +112,9 @@
                                             </td>
                                             <td>{{ i.coupons.name }}</td>
                                             <td>{{ i.amount }}</td>
-                                            <td>{{ i.buy_time|date:'Y-m-d' }}</td>
+                                            <td>{{ i.end_date|date:'Y-m-d' }}</td>
                                             <!-- <td></td> -->
-                                            <!-- <td>{{ i.buy_time|date:'Y-m-d' }}</td> -->
+                                            <!-- <td>{{ i.end_date|date:'Y-m-d' }}</td> -->
                                             <td>
                                                 <button type="button" _id='{{i.id}}' class="btn btn-primary update-btn" style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
                                                 
@@ -195,15 +195,22 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">数量</label>
+                            <label class="col-sm-2 control-label ">限额</label>
                             <div class="col-sm-4">
-                                <input type="text" name="amount" value="{{i.amount}}" class="form-control required">
+                                <input type="text" name="amount" class="form-control required " style="width: 200px" value="{{i.amount}}">
                             </div>
-                            <label class="col-sm-1 control-label">购买时间</label>
+                            <label class="col-sm-1 control-label ">单价</label>
                             <div class="col-sm-4">
-                                <input placeholder="购买日期" class="laydate-icon form-control layer-date buy_time_update" name="buy_time" id='buy_time_{{forloop.counter}}' value='{{i.buy_time|date:"Y-m-d H:i:s"}}'>
+                                <input type="text" name="price" class="form-control required unit" style="width: 200px" value="{{i.price}}">
+                                <span class="unit">  &nbsp;元/张</span>
+                            </div>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">有效截至</label>
+                            <div class="col-sm-4">
+                                <input placeholder="有效截至" class="laydate-icon form-control layer-date end_date_update" name="end_date" id='end_date_{{forloop.counter}}' value='{{i.end_date|date:"Y-m-d H:i:s"}}'>
                             </div>
                         </div>
                        <!--  <div class="form-group">
@@ -325,13 +332,21 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">数量</label>
+                            <label class="col-sm-2 control-label ">限额</label>
                             <div class="col-sm-4">
-                                <input type="text" name="amount" class="form-control required">
+                                <input type="text" name="amount" class="form-control required " style="width: 200px">
                             </div>
-                            <label class="col-sm-1 control-label">购买时间</label>
+                            <label class="col-sm-1 control-label ">单价</label>
+                            <div class="col-sm-5">
+                                <input type="text" name="price" class="form-control required unit" style="width: 200px">
+                                <span class="unit">  &nbsp;元/张</span>
+                            </div>
+                            
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">有效截至</label>
                             <div class="col-sm-4">
-                                <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="buy_time" id='buy_time_add'>
+                                <input placeholder="有效截至" class="laydate-icon form-control layer-date" name="end_date" id='end_date_add' style="width: 200px">
                             </div>
                         </div>
                         <!-- <div class="form-group">
@@ -395,7 +410,12 @@
             <span class="layui-layer-resize"></span></div>
        </div>
 
+<style type="text/css">
+    .unit{
+      display: inline-block;
 
+    }
+</style>
 {% endblock %}
 
 {% block js %}
@@ -411,16 +431,16 @@
 
         $('.chosen-select').chosen({'width': '200px'});
 
-        var buy_time_add = { elem: "#buy_time_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
-        laydate(buy_time_add)
+        var end_date_add = { elem: "#end_date_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
+        laydate(end_date_add)
         // var start_date_add = { elem: "#start_date_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
         // laydate(start_date_add)
         // var end_date_add = { elem: "#end_date_add", format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
         // laydate(end_date_add)
 
-        for(var i=1;i<=$('.buy_time_update').length;i++){
-            var buy_time = { elem: "#buy_time_"+i, format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: false };
-            laydate(buy_time)  
+        for(var i=1;i<=$('.end_date_update').length;i++){
+            var end_date = { elem: "#end_date_"+i, format: "YYYY-MM-DD", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: false };
+            laydate(end_date)  
         }
               
        
@@ -522,32 +542,28 @@
 
                 fields: {
 
-                    number: {
-                        message: '设备编号不能为空',
+                    price: {
+                    validators: {
+                        notEmpty: {
+                            message: '单价不能为空'
+                        },
+                        regexp: {
+                            regexp: /^[-+]?[0-9]*\.?[0-9]+$/,
+                            message: '请输入整数或浮点数'
+                        },
+                    },
+                    amount: {
                         validators: {
                             notEmpty: {
-                                message: '设备编号不能为空'
+                                message: '限额不能为空'
                             },
-                            stringLength: {
-                                     min: 3,
-                                     max: 20,
-                                     message: '设备编号长度必须在3到20之间'
-                                 },
-                            remote:{
-                                url: '',
-                                data:function(validator) {
-                                    return {
-                                        id: $( '#update_form_'+id + ' input[name=id]').val(),
-                                        number: $('#update_form_'+id + ' input[name=number]').val(),
-                                        action: 'validate',
-                                    }
-                                },
-                                type:'post',
-                                message: '设备编号已存在'
+                            regexp: {
+                                regexp: /^[0-9]+$/,
+                                message: '请输入整数'
                             }
                         }
                     },
-
+                },
                 }
             });
         }

@@ -1,0 +1,43 @@
+{% extends 'home.html'%}
+{% block content%}
+
+<div>
+	<img src="/static/img/brand.png">
+	<div id='title'>杰停停车</div>
+	<form method="post" action="" id='login-form'>
+		<input type="text" name="account" placeholder="请输入账号">
+		<input type="password" name="password" placeholder="请输入密码">
+		<input type="hidden" name="action" value=""login>
+	</form>
+
+	<div id='log'>登录</div>
+</div>
+<style type="text/css">
+	img{
+		margin: 20% 0% 0 35%;
+		width: 30%
+	}
+	#title{
+		text-align: center;
+		font-size: 25px
+	}
+	input{
+		width: 90%;
+		border:0px;
+		border-bottom: 1px solid rgba(158, 158, 158, 0.19);
+		height: 40px;
+		margin-left: 5%
+	}
+	#log{
+		width: 70%;
+		background-color: rgba(158, 158, 158, 0.70);
+		text-align: center;
+		margin: 25% 0% 0% 15%;
+		height: 30px;
+    	padding-top: 10px;
+	}
+	form{
+		margin-top: 10%
+	}
+</style>
+{% endblock %}

@@ -3,10 +3,10 @@
 {% block content %}
 <div id='total'>
 	{% include 'header.html' %}
-	{% if record %}
+	
 	<div class='con'>
 
-		<img src="{% if p == 0 %}{% if record.picture_out %}{{ record.picture_out.url}}{% endif %}{% else %}{% if record.picture_in %}{{ record.picture_in.url}}{% endif %}{% endif %}" id='im'>
+		<img src="{% if p == 0 %}{% if record.picture_out %}{{ record.picture_out.url}}{%else%}/static/img/car.png{% endif %}{% else %}{% if record.picture_in %}{{ record.picture_in.url}}{%else%}/static/img/car.png{% endif %}{% endif %}" id='im'>
 		<div>
 			<div class="number">{{ record.number}}</div>
 			<div class="ty">
@@ -24,7 +24,7 @@
 		</div>
 		<div>
 			<div class="item">计费时长:</div>
-			<div class="item">{{record.get_duration}}小时</div>
+			<div class="item">{% if record %}{{record.get_duration}}{% else %}0{% endif %} 小时</div>
 		</div>
 		<div>
 			<div class="item">入场时间:</div>
@@ -39,7 +39,7 @@
 			{% if record.out_time %}
 			<div class="item">{{record.out_time}} </div>
 			{% else%}
-			<div class="item">无出场记录</div>
+			<div class="nr item">无出场记录</div>
 			{% endif %}
 		</div>
 		{% if not record.in_time %}
@@ -75,16 +75,16 @@
 		{% endif %}
 	</div>
 	<div class="bt">
+		{% if p == 0%}
 		<div id='pas'>特殊放行</div>
-		<div id='que'><span id='ex_t'><img src="/static/img/ex.png" id='ex_i'><i id='ex_f'>有异常</i></span>查看记录</div>
+		{% endif %}
+		<div id='que' {% if p == 1%}style="margin-left: 31%;"{% endif %}><span id='ex_t'><img src="/static/img/ex.png" id='ex_i'><i id='ex_f'>有异常</i></span>查看记录</div>
 	</div>
 	<form id='info_form' method="post" action="">
 		 {% csrf_token %}
 		<input type="hidden" name="action" value="check">
 	</form>
-	{% else %}
-	<div class="con non">记录为空</div>
-	{% endif %}
+	
 	{% include 'bottom.html' %}
 </div>
 <div id='pass'>
@@ -165,9 +165,9 @@
     	height: 30%;
 	}
 	#phone img{
-		width: 70%;
-		height: 70%;
-		padding: 10%
+		width: 60%;
+	    height: 60%;
+	    padding: 13%;
 	}
 	.non{
 		text-align: center;
@@ -175,7 +175,7 @@
 	#conf{
 		text-align: center;
 		width: 60%;
-		margin: 10% 0 0 20%;
+		margin: 5% 0 0 20%;
 		color: white;
 		background-color: #3366CC;
 		height: 10%;
@@ -309,8 +309,9 @@
 	  	}
 
 	  	function end(){
+	  		$('#stopAudio').toggle();
 	  		$('#voic').show();
-	  		$('#stopAudio').hide();
+	  		
 	  		stopRecording()
 	  	}
 
@@ -344,14 +345,10 @@
 
 		function startRecord(button){
 			recorder && recorder.record();
-		    // button.disabled = true;
-		    // button.nextElementSibling.disabled = false;
 		    console.log('Recording...');
 		}
 		function createDownloadLink() {
 		    recorder && recorder.exportWAV(function(blob) {
-		     	console.log(blob);
-		     	
 		     	$('#pass input[name=audio]')[0].files.append(blob)
 		    });
 		    // var blob = new File([$('#voic')],'test.wav');
@@ -361,11 +358,7 @@
 
 		function stopRecording(button) {
 		    recorder && recorder.stop();
-		    // button.disabled = true;
-		    // button.previousElementSibling.disabled = false;
 		    console.log('Stopped recording.');
-		    
-		    // create WAV download link using audio data blob
 		    createDownloadLink();
 	
 		    
@@ -394,7 +387,7 @@
 		    });
 		};
 		$('#voic').click(start);
-		$('#stopAudio').click(stopRecording);
+		$('#stopAudio').click(end);
 	}
 
 	function setColor(){
@@ -438,7 +431,7 @@
 	// 		},
 	// 		success:function(e){
 	// 			if(e.tip == 0){
-	// 				window.location.href = '/account/correct/'+e.id+'/'
+	// 				window.location.href = '/account/correct/'
 	// 			}else{
 	// 				window.location.reload()
 	// 			}

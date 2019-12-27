@@ -70,8 +70,9 @@ class TicketRecord(models.Model):
 
     coupons = models.ForeignKey(Coupons, on_delete=models.SET_NULL, null=True)
 
-    buy_time = models.DateTimeField(null=True, verbose_name='购买时间')
-    amount = models.IntegerField(null=True, verbose_name='购买数量')
+    buy_time = models.DateTimeField(verbose_name='购买时间',auto_now_add=True,null=True)
+    amount = models.IntegerField(null=True, verbose_name='购买上限')
+    price = models.FloatField(default=0,verbose_name='单价',null=True)
 
     start_date = models.DateTimeField(null=True, verbose_name='起始日期')
     end_date = models.DateTimeField(null=True, verbose_name='截止日期')
@@ -81,6 +82,7 @@ class TicketRecord(models.Model):
 
     start_time2 = models.FloatField(null=True, verbose_name='优惠时段起点')
     end_time2 = models.FloatField(null=True, verbose_name='优惠时段截止')
+    coucode = models.ImageField(null=True,verbose_name='券码',upload_to='coucode/')
 
     # is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
 
