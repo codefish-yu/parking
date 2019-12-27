@@ -73,6 +73,7 @@ class TicketRecord(models.Model):
     buy_time = models.DateTimeField(verbose_name='购买时间',auto_now_add=True,null=True)
     amount = models.IntegerField(null=True, verbose_name='购买上限')
     price = models.FloatField(default=0,verbose_name='单价',null=True)
+    extra = models.IntegerField(default=0,verbose_name='余量')
 
     start_date = models.DateTimeField(null=True, verbose_name='起始日期')
     end_date = models.DateTimeField(null=True, verbose_name='截止日期')

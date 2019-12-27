@@ -6,27 +6,40 @@
 		<div id='laun' {% if p == 0 %}class="active"{% endif %}>可发放</div>
 		<div id='buy' {% if p == 1 %}class="active"{% endif %}>购买记录</div>
 	</div>
-	{% for i in records %}
+	
 	<div id='cou_list'>
+		{% for i in records %}
 		<div class="cou">
-			<div class="le side cover {% if p == 1 %}ad{% endif %}">
-				<span>{{i.coupon.get_ticket_type_display}} </span>
+			<div onclick="by({{i.id}})" class="le side cover {% if p == 0 %}
+			{%if i.ticket_type == 0 %}o
+			{%elif i.ticket_type == 2 %}b
+			{%elif i.ticket_type == 3 %}ad{%endif%}{% else%}ad{% endif %}">
+				<span>{% if p == 0%}{{i.get_ticket_type_display}}{% else%}{{i.coupon.get_ticket_type_display}}{%endif%} </span>
 				
 			</div>
 			<div class="ri side cover1">
 				<span>
-					<div id='tit'>{{i.coupon.coupons.name}} </div>
-					<div class='ti'>有效期至:{{i.end_date}} </div>
+					<div id='tit'>{% if p == 0%}{{i.coupons.name}}{% else%}{{i.coupon.coupons.name}}{%endif%}</div>
+					<div class='ti'>有效期至:{% if p == 0%}{{i.end_date |date:'Y-m-d'}}{% else%}{{i.coupon.end_date |date:'Y-m-d' }}{%endif%}</div>
 					<div id='inl'>
-						<div class='ti'>剩余:{{i.extra}} /{{i.number}}</div>
-						<div id='code'>展示二维码</div>
+						<div class='ti'>{% if p == 0 %} 剩余:{{i.extra}}/{{i.amount}}{% else%}数量:{{i.number}}{% endif%}</div>
+						{% if p == 0%}
+						<div class='code' onclick="sh({{i.id}})">展示二维码</div>
+						{% else %}
+						<div class='sta {% if i.bill.status == 0%}cb{% elif i.status == 0%}co{% else%}cr{%endif%}'>{{i.get_status_display}} </div>
+						{% endif %}
 					</div>
 				</span>
 			</div>
 		</div>
-		<img src="{{i.coupon.coucode.url}}">
+		{% if p == 0%}
+		<div id="code_{{i.id}}" class="barc" onclick="sh({{i.id}})">
+			<img src="{{i.coucode.url}}" >
+		</div>
+		{% endif %}
+		{% endfor %}
 	</div>
-	{% endfor %}
+	
 </div>
 <form method="post" action="" id='change-form'>
 	<input type="hidden" name="action" value="change">
@@ -34,20 +47,53 @@
 </form>
 <!-- {% include 'bu_foot.html' %} -->
 <style type="text/css">
-	img{
-		display: inline-block;
-	}
+	
 	p{
 		font-size: 25px;
 		height: 30px;
 	}
-	#code{
+	.barc{
+		z-index: 1;
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		display: none;
+		top:0;
+		left: 0;
+		text-align: center;
+		background-color: rgba(0,0,0,0.5)
+	}
+	.barc img{
+		margin-top: 35%
+	}
+	.code{
 		font-size: 12px;
 		color: #3366CC;
-		margin-left: 30%;
+		text-align: right;
+
 	}
 	#tit{
 		font-size: 20px;
+	}
+	.sta{
+		font-size: 12px;
+		text-align: right;
+		
+	}
+	.cb{
+		color: #3366CC;
+	}
+	.cr{
+		color: #EB514B!important
+	}
+	.co{
+		color: #EBC34B!important
+	}
+	.o{
+		background-color: #EBC34B!important
+	}
+	.b{
+		background-color: #00CAD9!important
 	}
 	.ti{
 		color:gray;
@@ -59,6 +105,7 @@
 	}
 	#inl div{
 		display: inline-block;
+		width: 40%
 	}
 	#bod{
 		padding-left: 5%
@@ -95,7 +142,7 @@
 		font-size: 16px;
 		position: absolute;
 		letter-spacing:5px;
-		margin: 25% 0% 0% 13%;
+		margin: 30px 0% 0% 13%;
 	}
 	.ri{
 		width: 66%;
@@ -184,8 +231,11 @@
 	$(document).ready(()=>(
 		$('#cou_list').css('height',window.innerHeight-157)
 	))
-	$('.le').click(()=>(
-		window.location.href = '/business/apply'
-	))
+	function by(id) {
+		window.location.href = '/business/apply/'+id+'/'
+	}
+	function sh(id) {
+		$('#code_'+id).toggle()
+	}
 </script>
 {% endblock %}
