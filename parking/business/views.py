@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -14,7 +15,7 @@ def apply(request):
 
 	return render(request,'apply.html',ctx)
 
-
+@csrf_exempt
 def grant(request):
 	ctx = {}
 	p=0

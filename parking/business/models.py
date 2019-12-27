@@ -18,5 +18,10 @@ class ApplyRecord(models.Model):
 	status = models.IntegerField(default=0,verbose_name="状态",choices = [(0,'待审核'),(1,'使用中'),(2,'审核失败')])
 
 
+class BusinessBill(models.Model):
+	class Meta:
+		verbose_name = verbose_name_plural = '商户账单'
+
+
 
 

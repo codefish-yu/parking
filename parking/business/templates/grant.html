@@ -8,7 +8,7 @@
 	</div>
 	<div id='cou_list'>
 		<div class="cou">
-			<div class="le side cover">
+			<div class="le side cover {% if p == 1 %}ad{% endif %}">
 				<span>五元现金券</span>
 				
 			</div>
@@ -48,6 +48,9 @@
 		color:gray;
 		font-size: 12px;
     	margin-top: 5px;
+	}
+	.ad{
+		background-color: gray!important;
 	}
 	#inl div{
 		display: inline-block;
@@ -166,11 +169,11 @@
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
 	$('#laun').click(()=>(
-		$('#change-form input[name=action]').value(0),
+		$('#change-form input[name=p]').val(0),
 		$('#change-form').submit()
 	))
 	$('#buy').click(()=>(
-		$('#change-form input[name=action]').value(1),
+		$('#change-form input[name=p]').val(1),
 		$('#change-form').submit()
 	))
 	$(document).ready(()=>(

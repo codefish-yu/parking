@@ -82,6 +82,7 @@ class TicketRecord(models.Model):
 
     start_time2 = models.FloatField(null=True, verbose_name='优惠时段起点')
     end_time2 = models.FloatField(null=True, verbose_name='优惠时段截止')
+    coucode = models.ImageField(null=True,verbose_name='券码',upload_to='coucode/')
 
     # is_delete = models.IntegerField(choices=[(0, '未删除'),(1, '已删除')], default=0)
 

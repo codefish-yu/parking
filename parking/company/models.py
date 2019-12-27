@@ -15,6 +15,7 @@ class Company(models.Model):
 	name = models.CharField(max_length=30, null=True,verbose_name='商家名称')
 	address = models.CharField(max_length=30,null=True,verbose_name='商家地址')
 	account = models.CharField(max_length=30,verbose_name='登录账号')
+	password = models.CharField(default='123456',verbose_name='密码',max_length=30)
 	owner = models.CharField(max_length=30,verbose_name='联系人姓名')
 	phone = models.CharField(max_length=30, default=0,verbose_name='联系人电话')
 	balance = models.FloatField(default=0,verbose_name='余额')
