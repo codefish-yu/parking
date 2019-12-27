@@ -236,6 +236,9 @@ def parkout(request, user, parkinglot_id, gate_id=None):
         
         if not r.bill:
             if gate_id:
+                if not r.out_time:
+                    r.out_time = datetime.datetime.now()
+                    r.save()
                 payment = charge(r)[1]
                 if payment == 0:      # 1.没产生费用, 开闸
                     createOpenOrder(parkinglot_id, gate_id, r, 'out')
