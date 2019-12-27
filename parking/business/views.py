@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.views.decorators.csrf import csrf_exempt
-from .models import ApplyRecord
+from .models import *
 from chargerule.models import TicketRecord
 from company.models import Company
 from meta.models import Product,Order,Payment
@@ -43,23 +43,27 @@ def com_login(request):
 @csrf_exempt
 def apply(request,tc_id):
 	ctx = {}
+	tip = -1
 	record = TicketRecord.objects.filter(id=int(tc_id)).first()
-	ctx['diff'] = record.amount - record.extra
+	
 	if request.method == 'POST':
 		action = request.POST.get('action','')
 		if action == 'buy':
 			amount = request.POST.get('amount')
-			cost = request.POST.get('cost')
+			cost = float(request.POST.get('cost'))
+			print(cost)
 			r = ApplyRecord()
 			r.coupon = record
 			r.number = int(amount)
 			b = BusinessBill()
 			p = Product()
 			b.cost=cost
+			p.price=cost
+			p.save()
 			b.product = p
 			b.save()
 			r.save()
-			ctx['product_id'] = p.id
+			tip = p.id
 
 		elif action == 'confirm':
 			p_id = request.POST.get('product_id')
@@ -76,6 +80,8 @@ def apply(request,tc_id):
 						return JsonResponse({'result':'ok'})
 			return JsonResponse({'result':'bad'})
 
+	ctx['product_id'] = tip
+	ctx['diff'] = record.amount - record.extra
 	ctx['record'] = record
 	return render(request,'apply.html',ctx)
 
