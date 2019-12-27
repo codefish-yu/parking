@@ -39,3 +39,9 @@ WECHAT = {
         #'pay_secret': 'Applepie1314metatype121928284010', # 微信商户平台(pay.weixin.qq.com) -->账户设置 -->API安全 -->密钥设置，设置完成后把密钥复制到这里
     }
 }
+
+
+
+CAR_IMG_PATH = '/var/parking/media/car/'
+PLATE_IMG_PATH = '/var/parking/media/plate/'
+

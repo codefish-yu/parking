@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-
+from django.conf import settings
 
 from .models import * 
 from parkinglot.models import *
@@ -25,6 +25,7 @@ def parkin(request):
         with open(file, 'wb') as f:
                 f.write(con)
                 f.close()
+    
     def decode(f):
         return base64.b64decode(f.replace('-', '+').replace('.', '=').replace('_','/'))
 
@@ -32,8 +33,8 @@ def parkin(request):
         picture = decode(p1)
         plate_pic = decode(p2)
         name = random_name()
-        car = '/Users/dsc/Githome/parking/parking/media/car/' + name + '.jpg'
-        plate = '/Users/dsc/Githome/parking/parking/media/plate/' + name + '.jpg'
+        car = settings.CAR_IMG_PATH + name + '.jpg'
+        plate = settings.PLATE_IMG_PATH + name + '.jpg'
         wri(car,picture)
         wri(plate,plate_pic)
 
@@ -141,23 +142,27 @@ def parkin(request):
                 r.triger_type_out = params['triger_type']
                 r.vehicle_type_out = params['vehicle_type']
                 r.camera_out = camera
+                if not r.out_time:
+                    r.out_time = datetime.datetime.now() 
 
-                if r.bill and r.bill.status == 1:
-                    print('sss')
-                    r.bill.status = 2
-                    r.bill.save()
-                    r.status = 1
+                r.save()
+
+                from chargerule.charge import charge, demurrage
+                if charge(in_and_out)[0] == 0:    # 1. 不需支付
                     result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
+                    r.status = 1
                 else:
-                    b = Bill(
-                        status=0,
-                        payable=100, 
-                        payment=100, 
-                        pay_time=datetime.datetime.now()
-                    )
-                    b.save()
-                    r.bill = b
-
+                    if r.bill and r.bill.status == 1: # 支付了停车费
+                        if not r.bill2:
+                            payment = demurrage(r)
+                            if payment == 0:          # 2. 没有产生滞留费, 放行  
+                                result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
+                                r.status = 1
+                        else:
+                            if r.bill2.status == 1:   # 3. 已支付了滞留费, 放行
+                                result["gpio_data"] = [{"ionum":"io1","action":"on"}] # 开闸
+                                r.status = 1
+                            
         # 保存汽车出入时抓拍的全景图和车牌特写图
         try: 
             name = save_pic(params['picture'],params['closeup_pic'])
