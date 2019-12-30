@@ -286,7 +286,7 @@ def parkout(request, user, parkinglot_id, gate_id=None):
                             createOpenOrder(parkinglot_id, gate_id, r)
                         else:
                             bill = createBill2(r)
-                            ctx['hours'] = get_park_time(r.out_time, now())
+                            ctx['hours'] = get_park_time(r.latest_leave_time, now())
                             ctx['payment'] = bill.payment
                             ctx['r'] = r
                             ctx['product'] = bill.product
