@@ -92,7 +92,7 @@ def apply(request,tc_id):
 			b.cost=cost
 			p.price=cost
 			if cost == 0:
-				record.extra +=ar.number
+				record.extra +=int(amount)
 				record.save() 
 			p.save()
 			b.product = p
