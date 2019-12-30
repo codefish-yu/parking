@@ -38,7 +38,7 @@ def user_required(func):
         # try:
         #     user = api.check_token(token)
         # except APIError:
-        	
+
         #     return redirect('/login/public/account/?next=' + next_url)
 
         request.user = user
@@ -322,19 +322,19 @@ def begin_work(request,user):
 		return list
 
 
-	def set_work(user,p,g):
+	def set_work(us,p,g):
 		today = datetime.datetime.now()
 		rs = WorkRecord.objects.order_by('-time').first()
 		p = ParkingLot.objects.filter(id=int(p)).first()
 		g = Gate.objects.filter(id=int(g)).first()
 		if today.day != rs.time.day:
 			r = WorkRecord()
-			r.worker = user
+			r.worker = us
 			r.time = datetime.datetime.now()
 			r.parkinglot = p
 			r.gate = g
 		else:
-			r = WorkRecord.objects.filter(worker=user).order_by('-time').first()
+			r = WorkRecord.objects.filter(worker=us).order_by('-time').first()
 			r.offline = datetime.datetime.now()
 
 		r.save()
