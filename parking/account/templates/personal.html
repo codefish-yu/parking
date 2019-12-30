@@ -4,8 +4,8 @@
 
 <div>
 	<div id='fir'>
-		<img id='pic' src="{{wuser.head_img}}">
-		<div id='na'>{{record.worker.display_name}} </div>
+		<img id='pic' src="{%if wuser%}{{wuser.head_img}}{% endif%}">
+		<div id='na'>{%if record %}{{record.worker.display_name}}{% else %}{% endif%}</div>
 	</div>
 	<div class="basic">
 		<div class="tit">上岗车场</div>
@@ -13,15 +13,15 @@
 	</div>
 	<div class="basic">
 		<div class="tit">上岗时间</div>
-		<div class="pro">{{record.time |date:'Y-m-d H:m:s'}} </div>
+		<div class="pro">{%if record %}{{record.time |date:'Y-m-d H:m:s'}}{% else %}{% endif%} </div>
 	</div>
 	<div class="basic">
 		<div class="tit">值班时长</div>
-		<div class="pro">{{record.duration |floatformat:2}}小时</div>
+		<div class="pro">{{record.duration |floatformat:2}}{% else %}0{% endif%}小时</div>
 	</div>
 	<div class="basic">
 		<div class="tit">特放车辆</div>
-		<div class="pro">{{record.spec_num}}辆</div>
+		<div class="pro">{%if record %}{{record.spec_num}}{% else %}0{% endif%}辆</div>
 	</div>
 	<div id='bt'>
 		退出账号
