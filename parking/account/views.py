@@ -338,10 +338,10 @@ def begin_work(request,user):
 		p = ParkingLot.objects.filter(id=int(p)).first()
 		g = Gate.objects.filter(id=int(g)).first()
 		if not rs:
-			r = set_wc()
+			r = set_wc(us,p,g)
 
 		elif today.day != rs.time.day:
-			r = set_wc()
+			r = set_wc(us,p,g)
 		
 		else:
 			r = WorkRecord.objects.filter(worker=us).order_by('-time').first() 
