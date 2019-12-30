@@ -190,7 +190,7 @@
                                 <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='gate_update_{{i.id}}' name="parkinglot_id" style="display: none;width: 100%">
                                     <option value=''>选择停车场</option>
                                     {% for x in parkinglots %}
-                                        <option value='{{i.id}}'
+                                        <option value='{{x.id}}'
                                         {% if x.id == i.parkinglot.id %}selected{% endif %}
                                         >{{x.name}}</option>
                                     {% endfor %}
