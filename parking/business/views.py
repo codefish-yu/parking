@@ -60,8 +60,6 @@ def com_login(request):
 		if action == 'login':
 			account = request.POST.get('account')
 			password = request.POST.get('password')
-			print(account)
-			print(password)
 			company = Company.objects.filter(account=account,password=password,status=1).first()
 			if company:
 				request.session['company_id'] = company.id
