@@ -73,7 +73,7 @@ def createBill(in_and_out, coupons=None):
     payable, payment, latest_leave_time = charge(in_and_out, coupons)
 
     if not in_and_out.bill:
-        bill = Bill(payable=payable, payment=payment, status=1 if payment == 0 else 0, pay_time=now())
+        bill = Bill(payable=payable, payment=0.01, status=1 if payment == 0 else 0, pay_time=now())
         product = Product.objects.create(price=bill.payment, name='parking fee', company='jietingkeji', category='parking')
     
         bill.product = product
@@ -98,7 +98,7 @@ def createBill(in_and_out, coupons=None):
 def createBill2(in_and_out):
     payment = demurrage(in_and_out)
     if not in_and_out.bill2:
-        bill = Bill(payable=payment, payment=payment, status=0)
+        bill = Bill(payable=payment, payment=0.01, status=0)
         product = Product.objects.create(price=payment, name='parking fee', company='jieting', category='parking')
         bill.product = product
         bill.save()
@@ -158,7 +158,7 @@ def parkout(request, user, parkinglot_id, gate_id=None):
     if gate_id:
         ctx['gate_id'] = gate_id
 
-    r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, user=user, ).order_by('-in_time').first()#status=0
+    r = InAndOut.objects.filter(parkinglot_id=parkinglot_id, user=user, status=0).order_by('-in_time').first()#status=0
 
     if request.method == 'POST':
         action = request.POST.get('action', '')
@@ -274,6 +274,7 @@ def parkout(request, user, parkinglot_id, gate_id=None):
                             print(bill.payment)
                             ctx['hours'] = get_park_time(r.out_time, now())
                             ctx['payment'] = bill.payment
+                            ctx['payable'] = bill.payable
                             ctx['r'] = r
                             ctx['product'] = bill.product
 
@@ -288,6 +289,7 @@ def parkout(request, user, parkinglot_id, gate_id=None):
                             bill = createBill2(r)
                             ctx['hours'] = get_park_time(r.latest_leave_time, now())
                             ctx['payment'] = bill.payment
+                            ctx['payable'] = bill.payable
                             ctx['r'] = r
                             ctx['product'] = bill.product
                             
