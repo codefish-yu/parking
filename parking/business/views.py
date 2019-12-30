@@ -142,7 +142,7 @@ def grant(request,company):
 			if p == 0:
 				records = TicketRecord.objects.filter(company=company).all()
 			else:
-				records = ApplyRecord.objects.exclude(status=1).all()
+				records = ApplyRecord.objects.filter(coupon__company=company).all()
 
 
 	ctx['p']=p
