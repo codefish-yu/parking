@@ -324,7 +324,7 @@ def begin_work(request,user):
 
 	def set_work(us,p,g):
 		today = datetime.datetime.now()
-		rs = WorkRecord.objects.order_by('-time').first()
+		rs = WorkRecord.objects.filter(worker=us).order_by('-time').first()
 		p = ParkingLot.objects.filter(id=int(p)).first()
 		g = Gate.objects.filter(id=int(g)).first()
 		if today.day != rs.time.day:
@@ -333,11 +333,14 @@ def begin_work(request,user):
 			r.time = datetime.datetime.now()
 			r.parkinglot = p
 			r.gate = g
+			r.save()
 		else:
-			r = WorkRecord.objects.filter(worker=us).order_by('-time').first()
+			r = WorkRecord.objects.filter(worker=us).order_by('-time').first() 
 			r.offline = datetime.datetime.now()
 
 		r.save()
+
+		
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')
