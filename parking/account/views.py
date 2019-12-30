@@ -32,14 +32,14 @@ def user_required(func):
         next_url = request.get_full_path()
 
         if not token:
-        	user = User.objects.first()
-            # return redirect('/login/public/account/?next=' + next_url)
+        	# user = User.objects.first()
+            return redirect('/login/public/account/?next=' + next_url)
 
-        # try:
-        #     user = api.check_token(token)
-        # except APIError:
-        	
-        #     return redirect('/login/public/account/?next=' + next_url)
+        try:
+            user = api.check_token(token)
+        except APIError:
+
+            return redirect('/login/public/account/?next=' + next_url)
 
         request.user = user
         result = func(request, user=user, *args, **kwargs)
@@ -300,7 +300,7 @@ def personal(request,user):
 			get_duration(workrecord)
 			return redirect('/account/begin_work')
 
-	ctx['parkinglot']=workrecord.parkinglot.name
+	ctx['parkinglot']=workrecord.parkinglot.name if workrecord else None
 	ctx['record'] = workrecord	
 	ctx['wuser'] = WechatUser.objects.filter(user=user).first()
 	return render(request,'personal.html',ctx)
@@ -322,22 +322,34 @@ def begin_work(request,user):
 		return list
 
 
-	def set_work(user,p,g):
+	def set_wc(u,p,g):
+		r = WorkRecord()
+		r.worker = u
+		r.time = datetime.datetime.now()
+		r.parkinglot = p
+		r.gate = g
+		return r
+
+
+
+	def set_work(us,p,g):
 		today = datetime.datetime.now()
-		rs = WorkRecord.objects.order_by('-time').first()
+		rs = WorkRecord.objects.filter(worker=us).order_by('-time').first()
 		p = ParkingLot.objects.filter(id=int(p)).first()
 		g = Gate.objects.filter(id=int(g)).first()
-		if today.day != rs.time.day:
-			r = WorkRecord()
-			r.worker = user
-			r.time = datetime.datetime.now()
-			r.parkinglot = p
-			r.gate = g
+		if not rs:
+			r = set_wc(us,p,g)
+
+		elif today.day != rs.time.day:
+			r = set_wc(us,p,g)
+		
 		else:
-			r = WorkRecord.objects.filter(worker=user).order_by('-time').first()
+			r = WorkRecord.objects.filter(worker=us).order_by('-time').first() 
 			r.offline = datetime.datetime.now()
 
 		r.save()
+
+		
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')
