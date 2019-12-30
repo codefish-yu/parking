@@ -111,7 +111,7 @@
 		</div>
 	</div>
 {% elif i.type == 3 %}
-	<div class='coupon_row coupon-type3 inactive' repeatable='{{ i.repeatable }}'>
+	<div class='coupon_row coupon-type3 inactive' repeatable='{{ i.repeatable }}' type='{{ i.coupon.type }}'>
 		<div class='coupon-left'>
 			<div class='money'><div class='price'>10<span style="font-size: 16px">元</span></div></div>
 			<div class='type'><div>满时券</div></div>
@@ -122,25 +122,33 @@
 		</div>
 	</div>
 {% endif %}
-<!-- <div class='coupon_row coupon-type2 active'>
-	<div class='coupon-left'>
-		<div class='money'><div class='price'>10<span style="font-size: 16px">元</span></div></div>
-		<div class='type'><div>现金券</div></div>
-	</div>
-	<div class='coupon-center'>
-		<div class='name'><div class='nn'>通用券</div></div>
-		<div class='date'>1992-10-10</div>
-	</div>
-	<div class='coupon-right'></div>
-</div> -->
+
+{% endfor %}
 
 <script type="text/javascript">
 	
 	function get_coupons(){
-
+		ids = $.map($('.checked'), (v)=>{
+			$(v).attr(id)
+		})
 	}
 	$(document).ready(function(){
 		$('.active').click(function(){
+			var type = $(this).attr('type')
+			$('.coupon_row').removeClass('checked')
+			$('.coupon_row').removeClass('active')
+			$('.coupon_row').addClass('inactive')
+			
+			$(this).addClass('active')
+			$(this).addClass('checked')
+
+			$.map($("div[type='"+type+"']"), function(v){
+				if($(v).attr('repeatable')){     
+					// 可叠加原则: 不同商户的不可叠加, 同商户的不同券不可叠加, 同商户同种券可选择叠加
+					$(v).addClass('active')
+				}
+			})
+
 
 		})
 	})

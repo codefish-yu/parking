@@ -87,7 +87,7 @@ def parkin(request):
 
                     if camera.in_or_out == 0:
                         r.status = 0   # 根据扫码创建的指令, 正式入场
-                        r.in_time = datetime.datetime.now()
+                        # r.in_time = datetime.datetime.now()
                     else:
                         r.status = 1   # 根据扫码创建的指令, 正式离场 
                         r.final_out_time = datetime.datetime.now()

@@ -61,8 +61,8 @@ class InAndOut(models.Model):
     status = models.IntegerField(default=0, choices=[(-1, '待入场'),(0,'入场'),(1,'已出场')], verbose_name='车辆状态')
 
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, verbose_name='停车用户')
-    bill = models.OneToOneField('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单',related_name='InAndOut',blank=True)
-    bill2 = models.OneToOneField('Bill', null=True, on_delete=models.SET_NULL, verbose_name='滞留费',blank=True)
+    bill = models.ForeignKey('Bill', null=True, on_delete=models.SET_NULL, verbose_name='账单',related_name='InAndOut',blank=True)
+    bill2 = models.ForeignKey('Bill', null=True, on_delete=models.SET_NULL, verbose_name='滞留费',blank=True)
     is_spec = models.IntegerField(default=0,choices=[(0,'正常'),(1,'特殊')])
     remark = models.CharField(max_length=30,null=True, verbose_name='备注信息')
     exception = models.IntegerField(default=0,choices=[(0,'正常'),(1,'异常')])

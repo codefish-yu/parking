@@ -515,6 +515,7 @@ def demurrage(in_and_out):
     card = in_and_out.parkinglot.parkinglot_card.filter(car_number=in_and_out.number).first()
     
     now = datetime.datetime.now()
+    print(in_and_out.latest_leave_time)
     if now < in_and_out.latest_leave_time:
         return 0
     else:
