@@ -89,6 +89,7 @@ def apply(request,tc_id):
 			r.number = int(amount)
 			b = BusinessBill()
 			p = Product()
+			r.bill = b
 			b.cost=cost
 			p.price=cost
 			if cost == 0:
