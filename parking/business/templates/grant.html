@@ -34,7 +34,7 @@
 		</div>
 		{% if p == 0%}
 		<div id="code_{{i.id}}" class="barc" onclick="sh({{i.id}})">
-			<img src="{{i.coucode.url}}" >
+			<img src="{% if i.coucode %}{{i.coucode.url}}{% endif %}" >
 		</div>
 		{% endif %}
 		{% endfor %}
