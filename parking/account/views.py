@@ -322,18 +322,27 @@ def begin_work(request,user):
 		return list
 
 
+	def set_wc(u,p,g):
+		r = WorkRecord()
+		r.worker = u
+		r.time = datetime.datetime.now()
+		r.parkinglot = p
+		r.gate = g
+		return r
+
+
+
 	def set_work(us,p,g):
 		today = datetime.datetime.now()
 		rs = WorkRecord.objects.filter(worker=us).order_by('-time').first()
 		p = ParkingLot.objects.filter(id=int(p)).first()
 		g = Gate.objects.filter(id=int(g)).first()
-		if today.day != rs.time.day:
-			r = WorkRecord()
-			r.worker = us
-			r.time = datetime.datetime.now()
-			r.parkinglot = p
-			r.gate = g
-			r.save()
+		if not rs:
+			r = set_wc()
+
+		elif today.day != rs.time.day:
+			r = set_wc()
+		
 		else:
 			r = WorkRecord.objects.filter(worker=us).order_by('-time').first() 
 			r.offline = datetime.datetime.now()
