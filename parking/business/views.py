@@ -62,7 +62,7 @@ def com_login(request):
 			password = request.POST.get('password')
 			print(account)
 			print(password)
-			company = Company.objects.filter(account=account,password=password,status=0).first()
+			company = Company.objects.filter(account=account,password=password,status=1).first()
 			if company:
 				request.session['company_id'] = company.id
 				return redirect('/business/grant/')
