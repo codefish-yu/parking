@@ -300,7 +300,7 @@ def personal(request,user):
 			get_duration(workrecord)
 			return redirect('/account/begin_work')
 
-	ctx['parkinglot']=workrecord.parkinglot.name if workrecord else None
+	ctx['parkinglot']=workrecord.parkinglot.name if workrecord.parkinglot else None
 	ctx['record'] = workrecord	
 	ctx['wuser'] = WechatUser.objects.filter(user=user).first()
 	return render(request,'personal.html',ctx)
