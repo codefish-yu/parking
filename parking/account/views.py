@@ -66,7 +66,7 @@ def get_inandout(id,t=0,r=1):
 	elif t == 2:
 		return all_or_fir(ExceptRecord.objects.filter(status=0).order_by('-update_time'),r)
 
-	return all_or_fir(InAndOut.objects.filter(camera_out=c).order_by('-update_time'),r)
+	return all_or_fir(InAndOut.objects.filter(camera_out=c).exclude(status=0).order_by('-update_time'),r)
 
 
 def get_record(gate_id):
