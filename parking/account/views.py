@@ -81,11 +81,11 @@ def get_gate_id(user):
 
 	return wk.gate.id
 
+
 @csrf_exempt
-# @user_required
-def spec_pass(request):
+@user_required
+def spec_pass(request,user):
 	ctx ={}
-	user = User.objects.first()
 	gate_id = get_gate_id(user)
 	record = get_inandout(gate_id)
 	p = 0
@@ -106,10 +106,10 @@ def spec_pass(request):
 		if action == 'check':
 			record = get_record(gate_id)
 			if str(record._meta) == 'realtime.exceptrecord': 
-				return JsonResponse({'tip':0})
-
-			return JsonResponse({'result':True})
-
+			
+				return redirect('/account/correct/')
+			if not record.out_time:
+				ctx['p'] = 1
 			
 		elif action == 'pass':
 			r_id = request.POST.get('id','')
@@ -128,6 +128,7 @@ def spec_pass(request):
 			r.save()
 
 			# 修改放行参数
+			
 			chek = SpecRecord.objects.filter(tollman=user,record__is_spec=1).all()
 			re = WorkRecord.objects.filter(worker=user).order_by('-time').first()
 			if re:
@@ -149,10 +150,10 @@ def spec_pass(request):
 	return render(request,'spec_pass.html',ctx)
 
 
+@user_required
 @csrf_exempt
-def correct(request):
+def correct(request,user):
 	ctx = {}
-	user = User.objects.first()
 	gate_id = get_gate_id(user)
 	record = get_inandout(gate_id,2) 
 	p = record.direction if record else 0
@@ -201,15 +202,14 @@ def correct(request):
 	return render(request,'correct.html',ctx)
 
 
-# @user_required
+@user_required
 @csrf_exempt
-def record(request):
+def record(request,user):
 	
 	def transfor(t):
 		return datetime.datetime.strptime(t,'%Y-%m-%d %H:%M:%S')
 
 	ctx = {}
-	user = User.objects.first()
 	gate_id = get_gate_id(user)
 	records = get_inandout(gate_id,0,0)
 	tip = 0
@@ -266,9 +266,9 @@ def record(request):
 	return render(request,'record.html',ctx)
 
 
-# @user_required
+@user_required
 @csrf_exempt
-def personal(request):
+def personal(request,user):
 	ctx = {}
 
 	def get_time(time):
@@ -303,10 +303,10 @@ def personal(request):
 	return render(request,'personal.html',ctx)
 
 
+@user_required
 @csrf_exempt
-def begin_work(request):
+def begin_work(request,user):
 	ctx = {}
-	user = User.objects.first()
 
 	def serialize(obj):
 		list = []

@@ -10,7 +10,7 @@
 	<div id='cou_list'>
 		{% for i in records %}
 		<div class="cou">
-			<div onclick="by({{i.id}})" class="le side cover {% if p == 0 %}
+			<div {% if p == 0 %}onclick="by({{i.id}})"{% endif %} class="le side cover {% if p == 0 %}
 			{%if i.ticket_type == 0 %}o
 			{%elif i.ticket_type == 2 %}b
 			{%elif i.ticket_type == 3 %}ad{%endif%}{% else%}ad{% endif %}">

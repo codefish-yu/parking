@@ -23,7 +23,8 @@
 		</div>
 		<div class="item">
 			<label>金额</label>
-			<input type="text" name="cost" value="" class='elem' disabled>
+			<input type="text" name="con" class='elem' disabled>
+			<input type="hidden" name="cost">
 		</div>
 	</form>
 
@@ -83,6 +84,16 @@
 <script type="text/javascript" src="/static/egret.web.min.js"></script>
 <script type="text/javascript" src="/static/meta.0.0.1.js"></script>
 <script type="text/javascript">
+	function myajax(url, data, callback, type){
+            type = type || 'json'
+            $.ajax({
+                url: url, 
+                data: data,
+                type: 'post',
+                dataType: 'json',
+                success: callback
+            })
+    }
 	var t = 0
 	$('#bt').click(function(){
 		if(t==1){
@@ -91,19 +102,24 @@
 	})
 	$('#buy-form input[name=amount]').change(function(){
 		var v = $(this).val();
+		if(v >{{diff}}){
+			$(this).val('');
+			alert('可购买数量超出上限')
+		}
 		if(v == '' || v == '0'){
-			$('#buy-form input[name=cost]').val('');
+			$('#buy-form input[name=con]').val('');
 			$('#bt').css('background-color','#929292');
 			t = 0
 		}else{
-			$('#buy-form input[name=cost]').val(v*{{record.price}}+'元');
+			$('#buy-form input[name=con]').val(v*{{record.price}}+'元');
+			$('#buy-form input[name=cost]').val(v*{{record.price}});
 			$('#bt').css('background-color','#3366CC');
 			t=1
 
 		}
 	})
 	var product_id = {{product_id}}
-	if(product_id != ''){
+	if(product_id != -1){
 		myajax('/order/public/account/'+product_id+'/', {csrfmiddlewaretoken:'{{ csrf_token }}'}, (data)=>{
 			pay(data)
 		})
