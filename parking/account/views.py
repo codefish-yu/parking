@@ -287,7 +287,6 @@ def personal(request,user):
 		r.offline = now
 		r.save()
 	
-	user = User.objects.first()
 	worker = Worker.objects.filter(user=user).first()
 	workrecord = WorkRecord.objects.filter(worker=user).order_by('-time').first()
 	get_duration(workrecord)
