@@ -5,8 +5,40 @@ from chargerule.models import TicketRecord
 from company.models import Company
 from meta.models import Product,Order,Payment
 from django.http import JsonResponse
+from meta import api
 
 # Create your views here.
+def wuser_required(func):
+
+    @functools.wraps(func)
+    def wrapper(request, *args, **kwargs):
+        from meta import api
+        
+        wrapper.__name__ = func.__name__
+
+        token = request.session['token'] if 'token' in request.session else ''
+        
+        if not token:
+            token = request.GET.get('token', '')
+            if token:
+                request.session['token'] = token
+
+        next_url = request.get_full_path()
+
+        if not token:
+            return redirect('/login/public/account/?next=' + next_url)
+
+        try:
+            user = api.check_token(token)
+        except APIError:
+            return redirect('/login/public/account/?next=' + next_url)
+
+        request.user = user
+        result = func(request, user=user, *args, **kwargs)
+        return result
+
+    return wrapper
+
 
 def user_required(view_func):
 
@@ -19,9 +51,9 @@ def user_required(view_func):
 
     return wrapper
 
-
+# @wuser_required
 @csrf_exempt
-def com_login(request):
+def com_login(request,user):
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')

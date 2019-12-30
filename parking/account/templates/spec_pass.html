@@ -117,6 +117,9 @@
 		</div>
 	</div>
 </div>
+<form method="post" action="" id ="check-form">
+	<input type="hidden" name="action">
+</form>
 <style type="text/css">
 	.nr{
 		color: #EBC34B!important
@@ -421,23 +424,10 @@
 			$(this).css('background-color','rgb(51, 102, 204)')
 		}
 	})
-	// var inter = setInterval(check,50);
-	// function check(){
-	// 	$.ajax({
-	// 		url:'',
-	// 		type:'post',
-	// 		data:{
-	// 			'action':'check'
-	// 		},
-	// 		success:function(e){
-	// 			if(e.tip == 0){
-	// 				window.location.href = '/account/correct/'
-	// 			}else{
-	// 				window.location.reload()
-	// 			}
-	// 		}
-	// 	})
-	// }
+	var inter = setInterval(check,50);
+	function check(){
+		$('#check-form').submit()
+	}
 </script>
 {% endblock %}
 
