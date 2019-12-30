@@ -32,14 +32,14 @@ def user_required(func):
         next_url = request.get_full_path()
 
         if not token:
-        	user = User.objects.first()
-            # return redirect('/login/public/account/?next=' + next_url)
+        	# user = User.objects.first()
+            return redirect('/login/public/account/?next=' + next_url)
 
-        # try:
-        #     user = api.check_token(token)
-        # except APIError:
+        try:
+            user = api.check_token(token)
+        except APIError:
 
-        #     return redirect('/login/public/account/?next=' + next_url)
+            return redirect('/login/public/account/?next=' + next_url)
 
         request.user = user
         result = func(request, user=user, *args, **kwargs)
