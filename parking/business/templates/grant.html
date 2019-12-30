@@ -26,7 +26,7 @@
 						{% if p == 0%}
 						<div class='code' onclick="sh({{i.id}})">展示二维码</div>
 						{% else %}
-						<div class='sta {% if i.bill.status == 0%}cb{% elif i.status == 0%}co{% else%}cr{%endif%}'>{{i.get_status_display}} </div>
+						<div class='sta{% if i.bill %}{% if i.bill.status == 0%}cb{% else%}co{%endif%}{% endif %}'>{{i.bill.get_status_display}} </div>
 						{% endif %}
 					</div>
 				</span>

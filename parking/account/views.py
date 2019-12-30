@@ -62,7 +62,7 @@ def all_or_fir(obj,t=1):
 def get_inandout(id,t=0,r=1):
 	c = Camera.objects.filter(gate__id=id,in_or_out=0 if t else 1).first()
 	if t == 1:
-		return all_or_fir(InAndOut.objects.filter(camera_in=c,out_time=None).order_by('-update_time'),r)
+		return all_or_fir(InAndOut.objects.filter(camera_in=c,cam_id_out='').order_by('-update_time'),r)
 	elif t == 2:
 		return all_or_fir(ExceptRecord.objects.filter(status=0).order_by('-update_time'),r)
 
@@ -287,7 +287,6 @@ def personal(request,user):
 		r.offline = now
 		r.save()
 	
-	user = User.objects.first()
 	worker = Worker.objects.filter(user=user).first()
 	workrecord = WorkRecord.objects.filter(worker=user).order_by('-time').first()
 	get_duration(workrecord)
@@ -300,7 +299,7 @@ def personal(request,user):
 			get_duration(workrecord)
 			return redirect('/account/begin_work')
 
-	ctx['parkinglot']=workrecord.parkinglot.name if workrecord else None
+	ctx['parkinglot']=workrecord.parkinglot.name if workrecord.parkinglot else None
 	ctx['record'] = workrecord	
 	ctx['wuser'] = WechatUser.objects.filter(user=user).first()
 	return render(request,'personal.html',ctx)

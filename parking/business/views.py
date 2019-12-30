@@ -91,11 +91,19 @@ def apply(request,tc_id):
 			p = Product()
 			b.cost=cost
 			p.price=cost
+			if cost == 0:
+				b.status =1
+				record.extra +=int(amount)
+				record.save() 
 			p.save()
 			b.product = p
 			b.save()
 			r.save()
 			tip = p.id
+			if cost == 0:
+				return redirect('/business/grant/')
+
+			
 
 		elif action == 'confirm':
 			p_id = request.POST.get('product_id')
@@ -124,7 +132,6 @@ def apply(request,tc_id):
 def grant(request,company):
 	ctx = {}
 	p=0
-	company = Company.objects.filter(id=5).first()
 	records = TicketRecord.objects.filter(company=company).all()
 
 
@@ -135,7 +142,7 @@ def grant(request,company):
 			if p == 0:
 				records = TicketRecord.objects.filter(company=company).all()
 			else:
-				records = ApplyRecord.objects.exclude(status=1).all()
+				records = ApplyRecord.objects.filter(coupon__company=company).all()
 
 
 	ctx['p']=p

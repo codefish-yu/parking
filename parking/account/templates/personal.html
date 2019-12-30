@@ -17,7 +17,7 @@
 	</div>
 	<div class="basic">
 		<div class="tit">值班时长</div>
-		<div class="pro">{{record.duration |floatformat:2}}{% else %}0{% endif%}小时</div>
+		<div class="pro">{%if record %}{{record.duration |floatformat:2}}{% else %}0{% endif%}小时</div>
 	</div>
 	<div class="basic">
 		<div class="tit">特放车辆</div>

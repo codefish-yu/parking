@@ -14,7 +14,7 @@ class ApplyRecord(models.Model):
 	coupon = models.ForeignKey(TicketRecord,verbose_name='券',on_delete=models.SET_NULL,null=True)
 	number = models.IntegerField(default=0,verbose_name='数量')
 	time = models.DateTimeField(auto_now_add=True,verbose_name='申请时间',null=True)
-	status = models.IntegerField(default=0,verbose_name="状态",choices = [(0,'审核中'),(1,'使用中'),(2,'未通过')])
+	status = models.IntegerField(default=1,verbose_name="状态",choices = [(0,'审核中'),(1,'使用中'),(2,'未通过')])
 	bill = models.ForeignKey('BusinessBill',verbose_name='商户账单',on_delete=models.SET_NULL,null=True)
 
 
