@@ -118,10 +118,11 @@ def spec_pass(request,user):
 			r_id = request.POST.get('id','')
 			remark = request.POST.get('remark','')
 			audio = request.FILES.get('audio','')
-			record = InAndOut.objects.filter(id=r_id).first()
-			record.is_spec = 1
-			record.remark = remark
-			record.save()
+			if r_id:
+				record = InAndOut.objects.filter(id=r_id).first()
+				record.is_spec = 1
+				record.remark = remark
+				record.save()
 
 			# 操作员放行记录
 			r = SpecRecord()
