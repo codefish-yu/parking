@@ -92,6 +92,7 @@ def apply(request,tc_id):
 			b.cost=cost
 			p.price=cost
 			if cost == 0:
+				b.status =1
 				record.extra +=int(amount)
 				record.save() 
 			p.save()
@@ -99,6 +100,10 @@ def apply(request,tc_id):
 			b.save()
 			r.save()
 			tip = p.id
+			if cost == 0:
+				return redirect('/business/grant/')
+
+			
 
 		elif action == 'confirm':
 			p_id = request.POST.get('product_id')
