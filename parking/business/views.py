@@ -91,6 +91,9 @@ def apply(request,tc_id):
 			p = Product()
 			b.cost=cost
 			p.price=cost
+			if cost == 0:
+				record.extra +=ar.number
+				record.save() 
 			p.save()
 			b.product = p
 			b.save()
