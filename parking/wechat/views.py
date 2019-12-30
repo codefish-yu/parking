@@ -44,7 +44,7 @@ def user_required(func):
             return redirect('/login/public/account/?next=' + next_url)
 
         try:
-            user = User.objects.first() #api.check_token(token)
+            user =  api.check_token(token) #User.objects.first() 
         except APIError:
             return redirect('/login/public/account/?next=' + next_url)
 
@@ -73,7 +73,7 @@ def createBill(in_and_out, coupons=None):
     payable, payment, latest_leave_time = charge(in_and_out, coupons)
 
     if not in_and_out.bill:
-        bill = Bill(payable=0.01, payment=0.01, status=1 if payment == 0 else 0, pay_time=now())
+        bill = Bill(payable=payable, payment=payment, status=1 if payment == 0 else 0, pay_time=now())
         product = Product.objects.create(price=bill.payment, name='parking fee', company='jietingkeji', category='parking')
     
         bill.product = product

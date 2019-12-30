@@ -107,10 +107,11 @@ def camera(request):
     gates = Gate.objects.select_related('parkinglot').filter(parkinglot__status=0).order_by('parkinglot')
     for i in gates:
         if i.parkinglot.id in all_gates:
-            all_gates[i.parkinglot.id].append({'gate_id': i.id, 'gate_name': i.monitor})
+            all_gates[i.parkinglot.id].append({'gate_id': i.id, 'gate_name': i.name if i.name else ''})
         else:
-            all_gates[i.parkinglot.id] = [{'gate_id': i.id, 'gate_name': i.monitor}]
+            all_gates[i.parkinglot.id] = [{'gate_id': i.id, 'gate_name': i.name if i.name else ''}]
     ctx['all_gates'] = all_gates
+    print(all_gates)
 
     return (ctx, 'camera.html')
 
