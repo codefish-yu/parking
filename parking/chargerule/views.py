@@ -358,10 +358,10 @@ def coupon(request):
     companies = {}
 
     for i in c:
-        if i.id in companies:
-            companies[i.id].append({'id': i.id, 'name': i.name})
+        if i.parkinglot.id in companies:
+            companies[i.parkinglot.id].append({'id': i.id, 'name': i.name})
         else:
-            companies[i.id] = [{'id': i.id, 'name': i.name}]
+            companies[i.parkinglot.id] = [{'id': i.id, 'name': i.name}]
     print(c)
     ctx['all_companies'] = companies
 
