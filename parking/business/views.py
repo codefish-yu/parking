@@ -124,7 +124,6 @@ def apply(request,tc_id):
 def grant(request,company):
 	ctx = {}
 	p=0
-	company = Company.objects.filter(id=5).first()
 	records = TicketRecord.objects.filter(company=company).all()
 
 
