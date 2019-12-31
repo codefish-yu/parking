@@ -9,16 +9,16 @@
     <meta name=renderer content=webkit>
     <meta name="viewport" content="width=device-width"/>
     <title>登录</title>
-    <meta name="keywords" content="欢迎使用智慧停车平台云车场">
+    <meta name="keywords" content="欢迎使用畅杰停车互联网平台">
     <meta name="description" content="领先行业的互联网云停车系统">
     <link rel="shortcut icon" href="favicon.ico">
-    <!-- <link href="/Static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
-    <link href="/Static/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
-    <link href="/Static/css/animate.min.css" rel="stylesheet">
-    <link href="/Static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
-    <link href="/Static/css/plugins/iCheck/custom.css" rel="stylesheet"> -->
+    <link href="/static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+    <link href="/static/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+    <link href="/static/css/animate.min.css" rel="stylesheet">
+    <link href="/static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
+    <link href="/static/css/plugins/iCheck/custom.css" rel="stylesheet">
     <style>
-        body {background: url(../Static/css/patterns/bg.png) no-repeat;background-size: 100% 100%;background-position-y: 0px; }
+        body {background: url(../static/css/patterns/bg.png) no-repeat;background-size: 100% 100%;background-position-y: 0px; }
         .gray-bg { background-color: #02c17e; }
         .logo-name { color: #fff; }
         .form-control, .single-line { border: 1px solid #5db1a0; }
@@ -35,23 +35,16 @@
         .tabs-container .panel-body {border-bottom-right-radius: 3px;border-bottom-left-radius: 3px; }
 
         .btn-w-m{min-width:258px !important;}
-       /* .pro{
-            width: 200px;
-            margin: 5px 0
-        }
-        .bo{
-            width: 400px;
-            height: 400px
-        }*/
+
     </style>
 </head>
 <body class="gray-bg">
-<div class="middle-box text-center loginscreen  animated fadeInDown" style="margin-top: 200px;">
+<div class="middle-box text-center loginscreen  animated fadeInDown" style="margin-top: 400px;">
     <div style="text-align: center;">
         <div>
-            <!-- <img src="../Static/css/patterns/logo.png" alt="智慧停车互联网平台" style="height: 50px; margin-top: 140px;" /> -->
+            <!-- <img src="../static/css/patterns/logo.png" alt="畅杰停车互联网平台" style="height: 50px; margin-top: 140px;" /> -->
         </div>
-        <h3 style="color: #fff; margin-top: 20px;">畅停智慧停车互联网平台</h3>
+        <h3 style="color: #fff; margin-top: 0px;">畅杰停车互联网平台</h3>
         <form id="LoginForm" class="m-t" role="form" action="#" method="POST">
         	{% csrf_token %}
             <div class="tabs-container">
@@ -62,10 +55,10 @@
                     <div class="tab-pane active">
                         <div class="panel-body bo">
                             <div class="form-group">
-                                <input type="text" id="Account" name='user_name' class="form-control pro" placeholder="用户名" required>
+                                <input type="text" id="Account" name='user_name' class="form-control pro" placeholder="用户名" >
                             </div>
                             <div class="form-group">
-                                <input type="password" id="Pwd" name='user_pass' class="form-control pro" placeholder="密码" required>
+                                <input type="password" id="Pwd" name='user_pass' class="form-control pro" placeholder="密码" >
                             </div>
                             <div class="form-group">
                                 <input type="hidden" name="action" value="login" required>
@@ -80,14 +73,23 @@
         </form>
     </div>
 </div>
-<!-- <script src="/Static/js/jquery.min.js?v=2.1.4"></script>
-<script src="/Static/js/bootstrap.min.js?v=3.3.6"></script>
-<script src="/Scripts/jquery.md5.js"></script>
-<script src="/Static/js/plugins/layer/layer.js?v=5"></script>
-<script src="/Static/js/jquery.common.js"></script>
-<script src="/Static/js/plugins/iCheck/icheck.min.js"></script>
-<script src="/Static/js/localData.js"></script> -->
+<style type="text/css">
+    form{
 
+    }
+    form input{
+        padding: 0px!important;
+        margin-bottom: 10px;
+        height: 20px
+    }
+</style>
+<script src="/static/js/jquery.min.js?v=2.1.4"></script>
+<script src="/static/js/bootstrap.min.js?v=3.3.6"></script>
+<script src="/static/js/jquery.md5.js"></script>
+<script src="/static/js/plugins/layer/layer.js?v=5"></script>
+<script src="/static/js/jquery.common.js"></script>
+<script src="/static/js/plugins/iCheck/icheck.min.js"></script>
+<script src="/static/js/localData.js"></script>
 <script>
 
     // //判断当前浏览器是否是谷歌内核
@@ -179,26 +181,26 @@
     //     }
     // });
 
-    // $('#LoginForm').submit(function () {
-    //     var channel = $("#liPlatform").hasClass("active");
-    //     var account = $("#Account").val().trim();
-    //     var pwd = $("#Pwd").val().trim();
-    //     if (account.length < 5) {
-    //         layer.tips("提示：用户名为5-20位字符", '#Account', { tips: [3] });
-    //         return false;
-    //     }
-    //     if (pwd.length < 6) {
-    //         layer.tips("提示：密码为6-20位字符", '#Pwd', { tips: [3] });
-    //         return false;
-    //     }
-    //     $('#submit').button('loading');
-    //     login(account, pwd,channel);
-    //     return false; //防止submit按钮自动刷新一次页面
-    // });
-    // $('#submit').click(function(){
-    // 	$('#LoginForm').submit()
+    $('#LoginForm').submit(function () {
+        var channel = $("#liPlatform").hasClass("active");
+        var account = $("#Account").val().trim();
+        var pwd = $("#Pwd").val().trim();
+        if (account.length < 5) {
+            layer.tips("提示：用户名为5-20位字符", '#Account', { tips: [3] });
+            return false;
+        }
+        if (pwd.length < 2) {
+            layer.tips("提示：密码为2-20位字符", '#Pwd', { tips: [3] });
+            return false;
+        }
+        $('#submit').button('loading');
+        login(account, pwd,channel);
+        return false; //防止submit按钮自动刷新一次页面
+    });
+    $('#submit').click(function(){
+    	$('#LoginForm').submit()
 
-    // })
+    })
 </script>
 </body>
 </html>

@@ -14,7 +14,7 @@ class AdminUser(models.Model):
     user_name = models.CharField(max_length=30, unique=True, verbose_name='用户账号')
     user_pass = models.CharField(max_length=30,  verbose_name='密码')
     role_name = models.ForeignKey('Role',null=True,on_delete=models.CASCADE)
-    phone = models.IntegerField(verbose_name='电话号码',default=0)
+    phone = models.CharField(verbose_name='电话号码',max_length=30)
     sex = models.IntegerField(null=True,choices=[(0,'男'),(1,'女')],verbose_name='性别' ,default=0)
     real_name = models.CharField(max_length=30,verbose_name='姓名')
     remark = models.CharField(max_length=100,verbose_name='备注')

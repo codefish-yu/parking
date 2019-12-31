@@ -20,8 +20,6 @@ def login(request):
     if request.method == 'POST':
         
         action = request.POST.get('action','')
-
-
         if action == 'login':
             user_name = request.POST.get('user_name')
             password = request.POST.get('user_pass')
@@ -30,10 +28,7 @@ def login(request):
                 request.session['uid'] = user.id
 
                 return render(request, 'common/base.html')
-            else:
-                return render(request, 'login.html')
 
-        return render(request, 'common/base.html')
 
     return render(request, 'login.html')
 

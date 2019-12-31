@@ -131,7 +131,7 @@ def apply(request,tc_id):
 def grant(request,company):
 	ctx = {}
 	p=0
-	records = TicketRecord.objects.filter(company=company).all()
+	records = TicketRecord.objects.filter(company=company,status=1).all()
 
 
 	if request.method == 'POST':
@@ -139,7 +139,7 @@ def grant(request,company):
 		if action == 'change':
 			p = int(request.POST.get('p'))
 			if p == 0:
-				records = TicketRecord.objects.filter(company=company).all()
+				records = TicketRecord.objects.filter(company=company,status=1).all()
 			else:
 				records = ApplyRecord.objects.filter(coupon__company=company).all()
 

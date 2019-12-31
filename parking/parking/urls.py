@@ -39,7 +39,7 @@ urlpatterns = [
 
     # administrator
     path('',a.base),
-    path('login/',a.login),
+    path('administrator/login/',a.login),
     path('base/', a.base),   
     path('index/', a.index),
     path('administrator/log/', a.log),
