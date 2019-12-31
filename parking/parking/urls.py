@@ -90,6 +90,7 @@ urlpatterns = [
     path('chargerule/cardtype/',charge.card_type),
     path('chargerule/coupontype/',charge.coupon_type),
     path('chargerule/chargedemo/',charge.chargedemo),
+    path('chargerule/check_coupon/',charge.check_coupon),
 
 
     # realtime
