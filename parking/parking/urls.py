@@ -108,8 +108,10 @@ urlpatterns = [
     path('wechat/personal/mybill/',wechat.mybill),
     path('wechat/personal/mycard/',wechat.mycard),
     path('wechat/personal/mycoupon/',wechat.mycoupon),
+    path('wechat/personal/myplate/bound/',wechat.bound),
     path('wechat/personal/myplate/',wechat.myplate),
     path('wechat/personal/',wechat.personal),
+    path('wechat/problem/',wechat.problem),
 
 
     #account

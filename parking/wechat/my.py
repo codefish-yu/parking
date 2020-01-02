@@ -40,10 +40,12 @@ def mybill(request, user, id=None):
 def mycard(request, user):
 	ctx = {}
 
-	if request.method == 'POST':
-		action = request.POST.get('action')
-		pass
+	from chargerule.models import Card
 
+	plates = MyPlate.objects.filter(user=user)
+	plates = [i.plate for i in plates]
+	if plates:
+		ctx['cards'] = Card.objects.filter(car_number__in=plates)
 
 	return render(request, 'public_count/personal/mycard.html', ctx)
 
@@ -52,11 +54,7 @@ def mycard(request, user):
 def mycoupon(request, user):
 	ctx = {}
 
-	if request.method == 'POST':
-		action = request.POST.get('action')
-		pass
-
-
+	 
 	return render(request, 'public_count/personal/mycoupon.html', ctx)
 
 
@@ -74,9 +72,29 @@ def myplate(request, user):
 		elif action == 'unbound':
 			id = request.POST.get('id', '')
 			MyPlate.objects.filter(id=id).delete()
-
-
+		
+		return redirect('/wechat/personal/myplate/')
+	
+	ctx['plates'] = plates
 	return render(request, 'public_count/personal/myplate.html', ctx)
 
 
+@user_required
+def bound(request, user):
+	return render(request, 'public_count/personal/bound.html')
+
+
+@user_required
+def problem(request, user):
+	if request.method == 'POST':
+		car_number = request.POST.get('car_number', '')
+		gate_id = request.POST.get('gate', '')
+		parkinglot_id = request.POST.get('parkinglot', '')
+
+		p = Problem(user=user, plate=car_number, parkinglot_id=parkinglot_id)
+		if gate_id:
+			p.gate_id = gate_id
+		p.save()
+
+		return render(request, 'public_count/problem.html')
 

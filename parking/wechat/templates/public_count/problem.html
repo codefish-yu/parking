@@ -1,0 +1,62 @@
+<!-- 用户在结算支付的时候, 选择优惠券重新进行计算金额 -->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>杰停停车</title>
+	<meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+<style type="text/css">
+	.title{
+		font-family: PingFangSC-Semibold;
+		font-size: 32px;
+		color: #000000;
+		text-align: left;
+		margin: 10px;
+	}
+	.coupon_row{
+	 	height: 50px;
+	    background: #FFFFFF;
+	    padding: 10px;
+	    padding-top: 15px;
+	    display: flex;
+	    /*border-top: 1px solid #f7f5f5;*/
+	    border-bottom: 1px solid #f7f5f5;
+	}
+	 
+</style>
+</head>
+
+
+<body>
+
+<div class='title'>	异常受理 </div>
+
+<div class='coupon_row' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
+	 <div class='coupon-left'>
+	 	<img src='/static/wechat/user/img/system-tips@3x.png' 
+		style="width: 20px" 
+		/>
+	 </div>
+	 <div class='coupon-right'>
+	 	正在加急处理您的问题
+	 </div>
+</div>
+ 
+<div class='coupon_row' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
+	 <div class='coupon-right'>
+	 	您也可以直接联系客服进行处理
+	 </div>
+	 <div class='coupon-left'>
+	 	<img src='/static/wechat/user/img/wodekefu@3x.png' 
+		style="width: 20px" 
+		/>
+	 </div>
+	 <div class='coupon-right'>
+	 	联系客服
+	 </div>
+</div>
+ 
+ 
+</body>
+</html>

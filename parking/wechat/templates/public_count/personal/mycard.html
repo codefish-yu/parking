@@ -125,23 +125,24 @@
 	</div>
 </div>
 
+{% for i in cards %}
 <div class='coupon_row' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
 	<div class="top">
 		<div class='parkinglot'>
-			 上海交通大学医学院附属仁济医院
+			 {% for j in i.suit %}  {{j.name}}  {% endfor %}
 		</div>
 		<div class='plate'>
-			<div class='number'> 沪A·DF392 </div>
+			<div class='number'> {{ i.car_number }} </div>
 			<div class='price'> 350 <span>元/月</span></div>
 		</div>
 	</div>
  
 	<div class='bottom'>
-		<div class='date'>有效期 2019-10-20</div>
+		<div class='date'>有效期 {{ valid_end|date:'Y-m-d' }}</div>
 		<div class='xufei'>续费</div>
 	</div>
 </div>
-
+{% endfor %}
 <script type="text/javascript">
 	
 	 
