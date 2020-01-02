@@ -159,6 +159,22 @@ def spec_pass(request,user):
 @user_required
 @csrf_exempt
 def correct(request,user):
+
+	def que(number):
+		l = len(number)
+		list = []
+		for i in range(l):
+			item = InAndOut.objects.filter(status__in=[-1,0],number__startswith=number[:i],number__endswith=number[(i+1):]).all()
+			if item:
+				for j in item:
+					d ={
+						'id':j.id,
+						'pic':j.picture_in.url
+					}
+					list.append(d)
+		return list
+
+
 	ctx = {}
 	gate_id = get_gate_id(user)
 	record = get_inandout(gate_id,2) 
@@ -191,13 +207,19 @@ def correct(request,user):
 				r.closeup_pic = record.closeup_pic
 				r.exception = 1
 				r.save()
-				record = r
+				if r.bill:
+					if r.bill.status == 1:
+						re = WorkRecord.objects.filter(worker=user).order_by('-time').first()
+						createOpenOrder(re.parkinglot.id,re.gate.id,r)
+
+				return redirect('/account/spec_pass')
 
 		elif action == 'in':
 			p=1
 			record = ExceptRecord.objects.filter(direction=p,status=0).order_by('-update_time').first()
+			if record :
+				ctx['except'] = que(record.number)
 			
-
 		elif action == 'out':
 			p = 0
 			record = ExceptRecord.objects.filter(direction=p,status=1).order_by('-update_time').first()
