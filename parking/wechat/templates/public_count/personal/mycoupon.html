@@ -1,6 +1,19 @@
 <!-- 用户在结算支付的时候, 选择优惠券重新进行计算金额 -->
-
+<!DOCTYPE html>
+<html>
+<head>
+	<title>杰停停车</title>
+	<meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
 <style type="text/css">
+	.title{
+		font-family: PingFangSC-Semibold;
+		font-size: 32px;
+		color: #000000;
+		text-align: left;
+		margin: 15px;
+	}
 	.coupon_row{
 		text-align: center;
 	    font-family: PingFangSC-Medium;
@@ -75,7 +88,25 @@
 		opacity: 0.5;
 	}
 </style>
+</head>
+
+
+<body>
+
 <div class='title'>	优惠券</div>
+
+<!-- <div class='coupon_row coupon-type1' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
+		<div class='coupon-left'>
+			<div class='money'><div class='price'>{{ i.coupon.money }}<span style="font-size: 16px">元</span></div></div>
+			<div class='type'><div>{{ i.coupon.get_type_display }}</div></div>
+		</div>
+		<div class='coupon-center'>
+			<div class='name'><div class='nn'>通用券</div></div>
+			<div class='date'>1992-10-10{{ i.end_date }}</div>
+		</div>
+	</div> -->
+
+
 {% for i in user_coupons %} 
 {% if i.coupon.type == 0 %}
 	<div class='coupon_row coupon-type1' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
@@ -122,56 +153,17 @@
 		</div>
 	</div>
 {% endif %}
+{% empty %}
 	<div class='coupon_row'>
-		对不起, 您当前没有可用的优惠券!
+		<img src='/static/wechat/user/img/system-tips@3x.png' 
+		style="width: 20px" 
+		/><span style="margin: 5px">对不起, 您当前没有可用的优惠券!</span>
 	</div>
 {% endfor %}
-	<div class='coupon_row'>
-		<div>
-			<input type="text" name="" class="payable" />
-			<input type="text" name="" class="payment" />
-		</div>
-		<button class='coupon_cancel'>取消</button>
-		<button class='coupon_confirm'>确定</button>
-	</div>
+	 
 <script type="text/javascript">
 	
-	function get_coupons(){
-		var ids = $.map($('.checked'), (v)=>{
-			return $(v).attr(id)
-		})
-		return ids
-	}
-	$(document).ready(function(){
-		$('.active').click(function(){
-			var type = $(this).attr('type')
-			$('.coupon_row').removeClass('checked')
-			$('.coupon_row').removeClass('active')
-			$('.coupon_row').addClass('inactive')
-			
-			$(this).addClass('active')
-			$(this).addClass('checked')
-
-			$.map($("div[type='"+type+"']"), function(v){
-				if($(v).attr('repeatable')){     
-					// 可叠加原则: 不同商户的不可叠加, 同商户的不同券不可叠加, 同商户同种券可选择叠加
-					$(v).addClass('active')
-				}
-			})
-
-			var coupon_ids = get_coupons()
-
-			myajax('', 
-				{
-					'action': 'coupons_charge', 
-					'coupons': coupon_ids, 
-					'id': {{r.id}} 
-				},
-				(data)=>{
-					$('.payable').val(data.payable)
-					$('.payment').val(data.payment)
-				})
-
-		})
-	})
+	 
 </script>
+</body>
+</html>

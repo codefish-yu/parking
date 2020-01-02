@@ -1,0 +1,103 @@
+
+
+{% extends 'public_count/base/base.html' %}
+
+{% block content %}
+<style type="text/css">
+	.top-div{
+		height: 180px;
+		text-align: center;
+	}
+	.top-div img{
+		height: 50px;
+		margin-top: 30px; 
+	}
+	.name{
+		font-family: PingFangSC-Medium;
+		font-size: 17px;
+		color: #333333;
+		letter-spacing: 0.27px;
+	}
+	.phone{
+		font-family: PingFangSC-Regular;
+		font-size: 14px;
+		color: #999999;
+		letter-spacing: 0.23px;
+	}
+	.content_row{
+		font-family: PingFangSC-Medium;
+		font-size: 17px;
+		color: #333333;
+		letter-spacing: 0.29px;
+		text-align: left;
+		height: 50px;
+		width: 100%;
+	}
+	.content_row a{
+		color: #333333;
+	}
+	.content_row div{
+		float: left;
+	}
+ 
+	.left-icon{
+		width: 15%;
+		text-align: center;
+	}
+	.left-icon img{
+		height: 35px;
+	}
+	.center{
+		width: 70%;
+		padding: 5px;
+		border-bottom: 1px solid #eaeaea;
+	}
+	.right-icon{
+		/*width: 15%;*/
+		padding: 5px;
+		border-bottom: 1px solid #eaeaea;
+	}
+	.right-icon img{
+		height: 16px;
+	}
+</style>
+
+	<div class="top-div">
+		<div><img src='{{ user.wechat_user.head_img }}' height="50px"></div>
+		<div>{{ user.wechat_user.nickname }}</div>
+		<div>{{ user.phone }}</div>
+	</div>
+
+	<div class="content_row">
+		<div class="left-icon"><img src='/static/wechat/user/img/bill.png' /></div>
+		<a href="mybill">
+			<div class="center">我的账单</div>
+			<div class="right-icon"><img src='/static/wechat/user/img/right.png' /></div>
+		</a>
+		<div style="clear: both;"></div>
+	</div>
+	<div class="content_row">
+		<div class="left-icon"><img src='/static/wechat/user/img/coupon.png' /></div>
+		<a href="mycoupon">
+			<div class="center">我的优惠券</div>
+			<div class="right-icon"><img src='/static/wechat/user/img/right.png' /></div>
+		</a>
+		<div style="clear: both;"></div>
+	</div>
+	<div class="content_row">
+		<div class="left-icon"><img src='/static/wechat/user/img/card.png' /></div>
+		<a href="mycard">
+			<div class="center">我的月卡</div>
+			<div class="right-icon"><img src='/static/wechat/user/img/right.png' /></div>
+		</a>
+		<div style="clear: both;"></div>
+	</div>
+	<div class="content_row">
+		<div class="left-icon"><img src='/static/wechat/user/img/plate.png' /></div>
+		<a href="myplate">
+			<div class="center">我的车牌</div>
+			<div class="right-icon"><img src='/static/wechat/user/img/right.png' /></div>
+		</a>
+		<div style="clear: both;"></div>
+	</div>
+{% endblock %}

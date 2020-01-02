@@ -1,0 +1,149 @@
+{% extends 'public_count/base/base.html' %}
+<!--  确认支付页面, 可选择优惠券 -->
+
+{% block content %}
+<style type="text/css">
+	form{
+	 	font-family: PingFangSC-Semibold;
+	}
+	.in{
+	    font-size: 16px;
+	    color: #6D7278;
+	 }
+	.parkinglot{
+		font-size: 16px;
+		text-align: center;
+	}
+	.content_row{
+		text-align: center;
+		margin-top: 20px;
+		font-family: PingFangSC-Semibold;
+		color: #000000;
+	}
+	.content_row .number{
+		background: #3366CC;
+		border-radius: 3px;
+		border-radius: 3px;
+		width: 40%;
+		margin-top:10px;
+		text-align: center;
+		color:white; 
+		padding: 3px;
+		margin-left: 30%;
+	}
+	.parktime .left{
+		width: 50%;
+		float: left;
+		font-size: 16px;
+		color: #6D7278;
+	}
+	.parktime .right{
+		width: 50%;
+		float: right;
+		font-size: 16px;
+		color: #6D7278;
+	}
+	.parktime .time{
+		font-size: 16px;
+		color: #000000;
+	}
+	#pay-btn{
+		width: 60%;
+	    margin-left: 20%;
+	    margin-top: 10px;
+	    background: #3366CC;
+	    border-radius: 25px;
+	    border: none;
+	    font-family: PingFangSC-Medium;
+	    font-size: 16px;
+	    color: white;
+	    text-align: center;
+	    height: 40px;
+	    padding-top: 10px;
+	}
+	.btn-success{
+		width: 60%;
+	    margin-left: 20%;
+	    margin-top: 10px;
+	    background: #3366CC;
+	    border-radius: 5px;
+	    border: none;
+	    font-family: PingFangSC-Medium;
+	    font-size: 16px;
+	    color: #FFFFFF;
+	    text-align: center;
+	    height: 35px;
+	    padding-top: 8px;
+	}
+	.payment{
+		font-size: 24px;
+		color: #f7c444;
+		text-align: center;
+		line-height: 22px;
+	}
+	.payable{
+		font-size: 16px;
+		color: #949292;
+		line-height: 22px;
+	}
+	.bingo{
+		width: 40px;
+	}
+</style>
+ 
+<div class='pay'>
+	<div class='title'>缴费记录</div>
+	<form action="" method="post">
+		{% csrf_token %}
+		{% if r %}
+		<div class='content_row parkinglot'>{{ parkinglot.name }}</div>
+		<div class='content_row'>
+			<div class='number'> {% if r.car_number %} {{ r.car_number}}{% else %} 无牌车 {% endif %}</div>
+		</div>
+		<div class="content_row parktime">
+			<div class='left'>
+				<div>入场时间</div>
+				<div class='time'>{{ r.in_time|date:'Y-m-d H:i' }}</div>
+			</div>
+			<div class='right'>
+				<div>停车时长</div>
+				<div class='time'>{{ hours1.0 }} 小时 {{ hours1.1 }} 分钟</div>
+			</div>
+			<div style="clear:both"></div>
+		</div>
+	
+	{% if r.bill2 %}
+		<div class="content_row parktime">
+			<div class='left'>
+				<div>出场时间</div>
+				<div class='time'>{{ r.final_out_time|date:'Y-m-d H:i' }}</div>
+			</div>
+			<div class='right'>
+				<div>滞留时间</div>
+				<div class='time'>{{ hours2.0 }} 小时 {{ hours2.1 }} 分钟</div>
+			</div>
+			<div style="clear:both"></div>
+		</div>
+	{% endif %}
+	<!-- 	<div class="content_row">
+			优惠券 <img src='/static/wechat/user/img/right.png' />
+		</div> -->
+		<div class="content_row">
+			实付金额 <span class='payment'> {{ r.bill.payment }}</span>元
+				 <del class='payable'>{{ r.bill.payable }}元</del>
+		</div>
+
+	{% if r.bill2 %}
+		<div class="content_row">
+			滞留费 <span class='payment'> {{ r.bill2.payment }}</span>元
+		</div>
+	{% endif %}
+
+	 
+		{% endif %}
+	</form>
+</div>
+  
+
+{% endblock %}
+

@@ -1,1 +1,101 @@
-myplate.html
+<!DOCTYPE html>
+<html>
+<head>
+	<title>杰停停车</title>
+	<meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+	<style type="text/css">
+		.title{
+			font-family: PingFangSC-Semibold;
+			font-size: 32px;
+			color: #000000;
+			text-align: left;
+			margin: 15px;
+		}
+		.plate{
+			background: #3366CC;
+			box-shadow: 0 2px 4px 0 rgba(0,0,0,0.50);
+			border-radius: 8px;
+			font-family: PingFangSC-Medium;
+			margin:15px;
+			padding:18px;
+		}
+		.plate-number{
+			font-size: 28px;
+			color: #FFFFFF;
+			letter-spacing: 0.48px;
+			text-align: left;
+			width: 60%;
+		}
+		.unbound{
+			font-size: 14px;
+			color: #3366CC;
+			letter-spacing: 0.24px;
+			text-align: center;
+			background: #FFFFFF;
+			box-shadow: 0 2px 4px 0 rgba(255,255,255,0.25);
+			border-radius: 19px;
+			padding-left: 30px;
+		    padding-right: 30px;
+		    padding-bottom: 3px;
+		    padding-top: 3px;
+		    float: right;
+    		margin-top: 7px;
+		}
+		.bottom{
+			position: fixed;
+			bottom: 10px;
+			text-align: center;
+			width: 100%;
+			padding-left: 20%;
+			padding-right: 20%;
+		}
+
+		.bottom .bound{
+			background: #3366CC;
+			box-shadow: 0 2px 4px 0 rgba(51,102,204,0.50);
+			border-radius: 19px;
+			border-radius: 19px;
+			width: 40%;
+			font-family: PingFangSC-Medium;
+			font-size: 17px;
+			color: #FFFFFF;
+			letter-spacing: 0.29px;
+			text-align: center;
+			padding: 6px 30px 8px 30px;
+		}
+		
+	</style>
+</head>
+<body>
+
+<div class='title'>我的车牌</div>
+{% for i in plates %}
+<div class="plate">
+	<form action='' method="post">
+		<input type="hidden" name="action" value="unbound">
+		<input type="hidden" name="id" value="{{ i.id }}">
+		<span class='plate-number'>沪A12345</span>
+		<span class='unbound'><button type='submit'>解绑</button></span>
+	</form>
+</div>
+{% endfor %}
+
+<div class="plate">
+	<span class='plate-number'>沪A12345</span>
+	<span class='unbound'>解绑</span>
+</div>
+<div class="plate">
+	<span class='plate-number'>沪A12345</span>
+	<span class='unbound'>解绑</span>
+</div>
+<div class='bottom'>
+	<div class="bound">绑定车牌</div>
+	</div>
+</body>
+
+<script type="text/javascript">
+
+</script>
+</html>
