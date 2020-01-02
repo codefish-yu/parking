@@ -194,7 +194,8 @@ def parkout(request, user, parkinglot_id, gate_id=None):
             return JsonResponse(ctx)
 
     ''' 扫码执行入口'''
-    if not r:     # 如果查不到记录就让其输入车牌号
+    if not r:     # 如果根据用户查不到记录就让其输入车牌号
+        ctx['plates'] = MyPlate.objects.filter(user=user)
         return render(request, 'public_count/1_plate_number.html', ctx)
     else:         # 如果有停车记录跳至记录页面, 可以点击离场
         

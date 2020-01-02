@@ -5,6 +5,7 @@
 	<title>杰停停车</title>
 	<meta name="viewport" content="width=device-width" />
     <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=yes"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
 <style type="text/css">
 	.title{
@@ -19,11 +20,27 @@
 	    background: #FFFFFF;
 	    padding: 10px;
 	    padding-top: 15px;
-	    display: flex;
-	    /*border-top: 1px solid #f7f5f5;*/
-	    border-bottom: 1px solid #f7f5f5;
+	    text-align: center;
+	    margin-top: 50px;
 	}
-	 
+	.aa{
+		font-family: PingFangSC-Semibold;
+		font-size: 24px;
+		color: #000000;
+		text-align: center;
+	}
+	.coupon-right{
+		font-family: PingFangSC-Medium;
+		font-size: 16px;
+		color: #929292;
+		margin: 20px;
+	}
+	.bottom{
+		font-family: PingFangSC-Medium;
+		font-size: 16px;
+		color: #3366CC;
+		text-align: center;
+	}
 </style>
 </head>
 
@@ -33,28 +50,30 @@
 <div class='title'>	异常受理 </div>
 
 <div class='coupon_row' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
-	 <div class='coupon-left'>
+	 <div>
 	 	<img src='/static/wechat/user/img/system-tips@3x.png' 
-		style="width: 20px" 
+		style="width: 55px" 
 		/>
 	 </div>
-	 <div class='coupon-right'>
+	 <div class='aa'>
 	 	正在加急处理您的问题
 	 </div>
 </div>
  
-<div class='coupon_row' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
+<div class='coupon_row'  style="margin-top:150px" id='{{ i.id }}'>
 	 <div class='coupon-right'>
 	 	您也可以直接联系客服进行处理
 	 </div>
 	 <div class='coupon-left'>
 	 	<img src='/static/wechat/user/img/wodekefu@3x.png' 
-		style="width: 20px" 
+		style="width: 50px" 
 		/>
 	 </div>
-	 <div class='coupon-right'>
+	 <a href="tel:400-0000-688" style="text-decoration: unset;">
+	 <div class='bottom'>
 	 	联系客服
 	 </div>
+	 </a>
 </div>
  
  
