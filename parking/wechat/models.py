@@ -22,6 +22,6 @@ class Problem(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	plate = models.CharField(max_length=100, verbose_name='车牌')
 	parkinglot = models.ForeignKey(ParkingLot, on_delete=models.CASCADE)
-	gate = models.ForeignKey(Gate, on_delete=models.CASCADE)
+	gate = models.ForeignKey(Gate, null=True, on_delete=models.SET_NULL)
 
 	create_time = models.DateTimeField(auto_now_add=True)
