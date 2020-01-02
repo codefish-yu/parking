@@ -1,0 +1,199 @@
+<!-- 用户在结算支付的时候, 选择优惠券重新进行计算金额 -->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>杰停停车</title>
+	<meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+</head>
+<body>
+
+<style type="text/css">
+	.title{
+		font-family: PingFangSC-Semibold;
+		font-size: 32px;
+		color: #000000;
+		text-align: left;
+		margin: 10px;
+	}
+	.car_number{
+		height: 38px;
+		/*width: 100%;*/
+		padding-top: 8px;
+		padding-bottom: 8px;
+		padding-left: 3%;
+		background: #3366CC;
+		
+	}
+	.car_number input{
+		width: 7%;
+		height: 32px;
+		margin-left: 0.5%; 
+		margin-right: 0.5%; 
+		text-align: center; 
+	}
+
+	/*.car_number input:hover{
+		border:1px solid red;
+	}*/
+	.car_number .circle{
+		width: 5px;
+	    height: 5px;
+	    border-radius: 50%;
+	    border: 0px;
+	}
+	.confirm_div{
+		margin-top: 40px;
+		text-align: center;
+	}
+	.confirm_div .confirm{
+		background: #3366CC;
+		box-shadow: 0 2px 4px 0 rgba(51,102,204,0.50);
+		font-family: PingFangSC-Medium;
+		font-size: 17px;
+		color: #FFFFFF;
+		letter-spacing: 0.29px;
+		text-align: center;
+		width: 50%;
+	    height: 50px;
+	    border: 0px;
+	    color: white;
+	    border-radius: 25px;
+	}
+	.confirm_div .no_card{
+		font-family: PingFangSC-Medium;
+		font-size: 12px;
+		color: #666666;
+		letter-spacing: 0.2px;
+		text-align: center;
+		margin-top: 15px;
+	}
+	.parkinglot{
+		font-family: PingFangSC-Medium;
+		font-size: 16px;
+		color: #000000;
+		margin: 20px;
+	}
+	.error{
+		font-family: PingFangSC-Medium;
+		font-size: 16px;
+		color: #EBC34B;
+		text-align: center;
+	}
+	.error .icon{
+		border-radius: 50%;
+	    width: 30px;
+	    background-color: #EBC34B;
+	    color: white;
+	    padding-left: 8px;
+	    padding-right: 8px;
+	}
+	.error .msg{
+		font-family: PingFangSC-Medium;
+		font-size: 16px;
+		color: #000000;
+	}
+	.error .submit{
+		margin-top:20px;
+		/*background: rgba(84,127,213,0.25);*/
+		font-family: PingFangSC-Medium;
+		font-size: 16px;
+		color: #3366CC;
+		text-align: center;
+	}
+	.error .submit img{
+		width: 50px;
+	}
+
+</style>
+<form action='/wechat/personal/myplate/' method="post">
+	<div class='title'>绑定车牌</div>
+
+		{% csrf_token %}
+		<input type='hidden' name='action' value='bound' />
+		<input type='hidden' name='plate' />
+		
+		<div class='car_number'>
+			<input type='text' name='number1' maxlength="1" value='{{car_number.0}}' 
+			{% if not car_number %}autofocus="autofocus"{% endif %} />
+			<input type='text' name='number2' maxlength="1" value='{{car_number.1}}' />
+			<span style="color:white;font-size: 5px">●</span>
+			<input type='text' name='number3' maxlength="1" value='{{car_number.2}}' />
+			<input type='text' name='number4' maxlength="1" value='{{car_number.3}}' />
+			<input type='text' name='number5' maxlength="1" value='{{car_number.4}}' />
+			<input type='text' name='number6' maxlength="1" value='{{car_number.5}}' />
+			<input type='text' name='number7' maxlength="1" value='{{car_number.6}}' />
+			<input type='text' placeholder='+' name='number8' maxlength="1" value='{{car_number.7}}' />
+		</div>
+
+	<div class='confirm_div'>
+		<button class='confirm' type='button'>绑定车牌</button>
+	</div>
+</from>
+</body>
+<script src="/static/js/jquery.min.js"></script>
+<script type="text/javascript">
+		function get_number(){
+			var number = $('input[name=number1]').val() +
+			$('input[name=number2]').val() +
+			$('input[name=number3]').val() +
+			$('input[name=number4]').val() +
+			$('input[name=number5]').val() +
+			$('input[name=number6]').val() +
+			$('input[name=number7]').val() 
+			if($('input[name=number8]').val()){
+				number = number +$('input[name=number7]').val()
+			}
+			return number
+		}
+		// $('.car_number input').keydown(function(event){
+		// 	if(event.code == 'Backspace'){
+		// 		if($(this).val() == ''){
+		// 			if($(this).prev().attr('name')){
+		// 				$(this).prev().focus()
+		// 			}else{
+		// 				$(this).prev().prev().focus()
+		// 			}
+		// 		}
+		// 	}
+		// })
+		$('.car_number input').keyup(function(event){
+			if(event.code == 'Backspace' || event.key == 'Backspace'){
+				if($(this).val() == ''){
+					if($(this).prev().attr('name')){
+						$(this).prev().focus()
+					}else{
+						$(this).prev().prev().focus()
+					}
+				}
+			}
+
+		 	console.info(event)
+			if($(this).attr('name') == 'number1')
+				if(event.code != 'Enter' || event.key == 'Enter') return
+			$(this).val($(this).val().toLocaleUpperCase())
+			if($(this).val().length != 1) return 
+			if($(this).next().attr('name')){
+				$(this).next().focus()
+			}else{
+				$(this).next().next().focus()
+			}
+		})
+
+		$('.confirm').click(function(){
+ 			for(var i=1;i<8;i++){
+ 				var val = $('input[name=number'+i+']').val()
+ 				if(!val){
+ 					$('input[name=number'+i+']').focus()
+ 					return
+ 				}
+ 			}
+ 			$('input[name=plate]').val(get_number())
+ 			console.info(get_number())
+ 			$('form').submit()
+		})
+
+ 
+	</script>
+</html>

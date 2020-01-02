@@ -1,1 +1,99 @@
-mybill.html
+<!-- 用户在结算支付的时候, 选择优惠券重新进行计算金额 -->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>杰停停车</title>
+	<meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+<style type="text/css">
+	.title{
+		font-family: PingFangSC-Semibold;
+		font-size: 32px;
+		color: #000000;
+		text-align: left;
+		margin: 10px;
+	}
+	.coupon_row{
+	 	height: 50px;
+	    background: #FFFFFF;
+	    padding: 10px;
+	    padding-top: 15px;
+	    display: flex;
+	    /*border-top: 1px solid #f7f5f5;*/
+	    border-bottom: 1px solid #f7f5f5;
+	}
+	.coupon-left{
+		width: 80%;
+	}
+	.coupon-right{
+		width: 20%;
+		font-family: PingFangSC-Regular;
+		font-size: 16px;
+		color: #999999;
+		letter-spacing: 0.27px;
+		text-align: right;
+		padding-top: 10px;
+	}
+	.coupon-right img{
+		height: 13px
+	}
+	.coupon-left .parklot{
+		font-family: PingFangSC-Regular;
+		font-size: 17px;
+		color: #333333;
+		letter-spacing: 0.29px;
+		text-align: left;
+	}
+	.coupon-left .date{
+		font-family: PingFangSC-Regular;
+		font-size: 14px;
+		color: #999999;
+		letter-spacing: 0.29px;
+		text-align: left;
+		padding-left: 5px;
+	}
+ 	a{
+ 		text-decoration: unset;
+ 	}
+</style>
+</head>
+
+
+<body>
+
+<div class='title'>	我的账单 </div>
+
+<div class='coupon_row' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
+	 <div class='coupon-left'>
+	 	<div class="parklot">上海交通大学医学院附属仁济医院</div>
+	 	<div class='date'>2019-10-31 ¥ 9</div>
+	 </div>
+	 <div class='coupon-right'><span>已缴费 </span> <img src='/static/wechat/user/img/right.png' /></div>
+</div>
+<a href="8">
+	<div class='coupon_row' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
+		 
+		 <div class='coupon-left'>
+		 	<div class="parklot">上海交通大学医学院附属仁济医院</div>
+		 	<div class='date'>2019-10-31 ¥9</div>
+		 </div>
+		 <div class='coupon-right'><span>已缴费 </span> <img src='/static/wechat/user/img/right.png' /></div>
+	</div>
+</a>
+
+{% for r in records %}
+<a href="{{ r.id }}">
+	<div class='coupon_row' id='{{ r.id }}'>
+		 <div class='coupon-left'>
+		 	<div class="parklot">上海交通大学医学院附属仁济医院</div>
+		 	<div class='date'>2019-10-31 ¥ 9</div>
+		 </div>
+		 <div class='coupon-right'><span>已缴费 </span> <img src='/static/wechat/user/img/right.png' /></div>
+	</div>
+</a>
+ {% endfor %}
+
+ 
+</body>
+</html>

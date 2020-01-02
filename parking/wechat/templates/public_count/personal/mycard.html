@@ -1,1 +1,151 @@
-mycard.html
+<!-- 用户在结算支付的时候, 选择优惠券重新进行计算金额 -->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>杰停停车</title>
+	<meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+<style type="text/css">
+	.title{
+		font-family: PingFangSC-Semibold;
+		font-size: 32px;
+		color: #000000;
+		text-align: left;
+		margin: 10px;
+	}
+	.coupon_row{
+		text-align: center;
+	    font-family: PingFangSC-Medium;
+		color: #000000;
+		height: 160px;
+		background-repeat: no-repeat;
+    	background-size: 100% 100%;
+    	background: #3366CC;
+		box-shadow: 0 2px 4px 0 rgba(0,0,0,0.50);
+		border-radius: 8px;
+		border-radius: 8px;
+		margin: 10px;
+		margin-bottom: 25px;
+	}
+ 	.coupon_row .top{
+ 		height: 110px;
+ 	}
+ 	.coupon_row .bottom{
+ 		height: 50px;
+ 		background: #FFFFFF;
+		border-radius: 0 0 8px 8px;
+		background: white;
+ 	}
+
+ 	.bottom .date{
+ 		float: left;
+ 		font-family: PingFangSC-Medium;
+		font-size: 12px;
+		color: #000000;
+		margin: 15px;
+ 	}
+ 	.bottom .xufei{
+ 		float: right;
+ 		margin: 5px;
+ 		background: #3366CC;
+		box-shadow: 0 2px 4px 0 rgba(51,102,204,0.50);
+		border-radius: 19px;
+		font-family: PingFangSC-Medium;
+		font-size: 14px;
+		color: #FFFFFF;
+		letter-spacing: 0.24px;
+		text-align: center;
+		padding: 3px 28px;
+		margin: 12px;
+ 	}
+ 	.top .parkinglot{
+ 		height: 8px;
+	    font-family: PingFangSC-Medium;
+	    font-size: 12px;
+	    color: #FFFFFF;
+	    text-align: left;
+	    padding: 16px;
+ 	}
+ 	.top .plate{
+ 		height: 60px;
+ 	}
+ 	.top .plate .number{
+ 		float: left;
+ 		margin: 10px;
+ 		background: #547FD5;
+		border-radius: 3px;
+		border-radius: 3px;
+		font-family: PingFangSC-Medium;
+		font-size: 14px;
+		color: #FFFFFF;
+		letter-spacing: 0.24px;
+		text-align: left;
+		padding: 4px;
+ 	}
+ 	.top .plate .price{
+ 		float: right;
+ 		font-family: PingFangSC-Medium;
+		font-size: 28px;
+		color: #FFFFFF;
+		letter-spacing: 0.48px;
+		text-align: left;
+		margin-right: 10px;
+ 	}
+ 	.top .plate .price span{
+ 		font-family: PingFangSC-Medium;
+		font-size: 14px;
+		color: #ffffff;
+		letter-spacing: 0.24px;
+		text-align: left;
+		line-height: 40px;
+ 	}
+</style>
+</head>
+
+
+<body>
+
+<div class='title'>	我的月卡 </div>
+
+<div class='coupon_row' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
+	<div class="top">
+		<div class='parkinglot'>
+			 上海交通大学医学院附属仁济医院
+		</div>
+		<div class='plate'>
+			<div class='number'> 沪A·DF392 </div>
+			<div class='price'> 350 <span>元/月</span></div>
+		</div>
+	</div>
+ 
+	<div class='bottom'>
+		<div class='date'>有效期 2019-10-20</div>
+		<div class='xufei'>续费</div>
+	</div>
+</div>
+
+{% for i in cards %}
+<div class='coupon_row' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
+	<div class="top">
+		<div class='parkinglot'>
+			 {% for j in i.suit %}  {{j.name}}  {% endfor %}
+		</div>
+		<div class='plate'>
+			<div class='number'> {{ i.car_number }} </div>
+			<div class='price'> 350 <span>元/月</span></div>
+		</div>
+	</div>
+ 
+	<div class='bottom'>
+		<div class='date'>有效期 {{ valid_end|date:'Y-m-d' }}</div>
+		<div class='xufei'>续费</div>
+	</div>
+</div>
+{% endfor %}
+<script type="text/javascript">
+	
+	 
+</script>
+</body>
+</html>

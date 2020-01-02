@@ -34,7 +34,7 @@
 	    border: 0px;
 	}
 	.confirm_div{
-		margin-top: 40px;
+		/*margin-top: 40px;*/
 		text-align: center;
 	}
 	.confirm_div .confirm{
@@ -95,52 +95,82 @@
 	.error .submit img{
 		width: 50px;
 	}
-
+	.plates{
+		padding: 20px;
+	}
+	.plate{
+		color: white;
+	    background: #3366CC;
+	    padding: 15px;
+	    margin-bottom: 15px;
+	    font-size: 20px;
+	    border-radius: 7px;
+	    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.50);
+	}
 </style>
-<form action='' method="post">
-	{% include 'public_count/coupons.html' %}
 	<div class='title'>绑定车牌</div>
+		<form action='' method="post" id='bound'>
+			{% csrf_token %}
+			<input type='hidden' name='action' value='record' />
+			<input type='hidden' name='car_number' />
+			
+			<div class='car_number'>
+				<input type='text' name='number1' maxlength="1" value='{{car_number.0}}' 
+				{% if not car_number %}autofocus="autofocus"{% endif %} />
+				<input type='text' name='number2' maxlength="1" value='{{car_number.1}}' />
+				<input type='text' class="circle" maxlength="1"  />
+				<input type='text' name='number3' maxlength="1" value='{{car_number.2}}' />
+				<input type='text' name='number4' maxlength="1" value='{{car_number.3}}' />
+				<input type='text' name='number5' maxlength="1" value='{{car_number.4}}' />
+				<input type='text' name='number6' maxlength="1" value='{{car_number.5}}' />
+				<input type='text' name='number7' maxlength="1" value='{{car_number.6}}' />
+				<input type='text' placeholder='+' name='number8' maxlength="1" value='{{car_number.7}}' />
+			</div>
+		</form>
 
-		{% csrf_token %}
-		<input type='hidden' name='action' value='record' />
-		<input type='hidden' name='car_number' />
-		
-		<div class='car_number'>
-			<input type='text' name='number1' maxlength="1" value='{{car_number.0}}' 
-			{% if not car_number %}autofocus="autofocus"{% endif %} />
-			<input type='text' name='number2' maxlength="1" value='{{car_number.1}}' />
-			<input type='text' class="circle" maxlength="1"  />
-			<input type='text' name='number3' maxlength="1" value='{{car_number.2}}' />
-			<input type='text' name='number4' maxlength="1" value='{{car_number.3}}' />
-			<input type='text' name='number5' maxlength="1" value='{{car_number.4}}' />
-			<input type='text' name='number6' maxlength="1" value='{{car_number.5}}' />
-			<input type='text' name='number7' maxlength="1" value='{{car_number.6}}' />
-			<input type='text' placeholder='+' name='number8' maxlength="1" value='{{car_number.7}}' />
-			<!-- <div class='btn' ><div>+</div><div>新能源</div></div> -->
-		</div>
 	<div class='parkinglot'>
 		<div>当前车场</div>
 		<div>{{ parkinglot.name }} </div>
 	</div>
 
+
 	 {% if error %}
-	<div class='error'>
-		<span class='icon'>i</span><span>  未匹配到入场车牌！请核对车牌。</span>
-		<br>
-		<span class='msg'>如果您输入无误，请提交给工作人员处理。</span>
-		<br>
-		<div class='submit'>
-			<div><img src="/static/wechat/user/img/submit.png" /></div>
-			<div>提交</div>
+	 <form action='/wechat/problem/' method="post" id='problem'>
+		<div class='error'>
+			{% csrf_token %}
+			<input type='hidden' name='car_number' />
+			<input type='hidden' name='parkinglot' value='{{parkinglot_id}}' />
+			<input type='hidden' name='gate' value='{{gate_id}}' />
+			<span class='icon'>i</span><span>  未匹配到入场车牌！请核对车牌。</span>
+			<br>
+			<span class='msg'>如果您输入无误，请提交给工作人员处理。</span>
+			<br>
+			<div class='submit'>
+				<div><img src="/static/wechat/user/img/submit.png" /></div>
+				<div>提交</div>
+			</div>
 		</div>
-	</div>
+	</form>
 	{% endif %}
 
 	<div class='confirm_div'>
 		<button class='confirm' type='button'>绑定车牌</button>
-		<div class='no_card'> 我是无牌车 </div>
+		<!-- <div class='no_card'> 我是无牌车 </div> -->
 	</div>
-</from>
+
+{% if plates %}
+	<div class='plates'>
+		<h4>可选车牌</h4>
+	{% for i in plates %}
+		<div class='plate'>
+			{{ i.plate }}
+		</div>
+	{% endfor %}
+	</div>
+{% endif %}
+
+
+
 
 {% endblock %}
 {% block js %}
@@ -159,7 +189,7 @@
 			return number
 		}
 		$('.car_number input').keydown(function(event){
-			if(event.code == 'Backspace'){
+			if(event.code == 'Backspace' || event.key == 'Backspace'){
 				if($(this).val() == ''){
 					if($(this).prev().attr('name')){
 						$(this).prev().focus()
@@ -172,7 +202,7 @@
 		$('.car_number input').keyup(function(event){
 		 	console.info(event)
 			if($(this).attr('name') == 'number1')
-				if(event.code != 'Enter') return
+				if(event.code != 'Enter' || event.key != 'Enter') return
 			$(this).val($(this).val().toLocaleUpperCase())
 			if($(this).val().length != 1) return 
 			if($(this).next().attr('name')){
@@ -181,20 +211,34 @@
 				$(this).next().next().focus()
 			}
 		})
-
-		$('.confirm').click(function(){
- 			for(var i=1;i<8;i++){
+		function check(){
+			for(var i=1;i<8;i++){
  				var val = $('input[name=number'+i+']').val()
  				if(!val){
  					$('input[name=number'+i+']').focus()
- 					return
+ 					return false
  				}
  			}
+ 			return true
+		}
+		$('.confirm').click(function(){
+ 			if(!check()) return 
  			$('input[name=car_number]').val(get_number())
  			console.info(get_number())
- 			$('form').submit()
+ 			$('#bound').submit()
 		})
 
+		$('.submit').click(function(){
+ 			if(!check()) return 
+ 			$('input[name=car_number]').val(get_number())
+ 			console.info($('#problem'))
+ 			$('#problem').submit()
+		})
+		$('.plate').click(function(){
+			$('input[name=car_number]').val($(this).html().trim())
+			console.info($(this).html())
+			$('#bound').submit()
+		})
 		$(document).ready(function(){
 			{% if not car_number %} 
 			$('input[name=number1]').trigger("click").focus()

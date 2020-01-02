@@ -104,6 +104,15 @@ urlpatterns = [
     path('wechat/parkin/<int:parkinglot_id>/<int:gate_id>/',wechat.parkin),
     path('wechat/parkout/<int:parkinglot_id>/<int:gate_id>/',wechat.parkout),
     path('wechat/parkout/<int:parkinglot_id>/',wechat.parkout),
+    path('wechat/personal/mybill/<int:id>/',wechat.mybill),
+    path('wechat/personal/mybill/',wechat.mybill),
+    path('wechat/personal/mycard/',wechat.mycard),
+    path('wechat/personal/mycoupon/',wechat.mycoupon),
+    path('wechat/personal/myplate/bound/',wechat.bound),
+    path('wechat/personal/myplate/',wechat.myplate),
+    path('wechat/personal/',wechat.personal),
+    path('wechat/problem/',wechat.problem),
+
 
     #account
     path('account/spec_pass/',ac.spec_pass),
@@ -111,6 +120,7 @@ urlpatterns = [
     path('account/record/',ac.record),
     path('account/personal/',ac.personal,name='personal'),
     path('account/begin_work/',ac.begin_work),
+
 
     #business
     path('business/com_login/',b.com_login),

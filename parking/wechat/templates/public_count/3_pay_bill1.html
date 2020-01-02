@@ -131,6 +131,10 @@
 		{% endif %}
 	</form>
 </div>
+<div class='coupon' style="display: none">
+	{% include 'public_count/coupon.html' %}
+</div>
+
 {% else %}
 <div class='paid'>
 	<div class='title'>支付成功</div>
@@ -199,6 +203,11 @@
 		        });
 		    });
 
+		})
+
+		$('#coupons').click(function(){
+			$('.coupon').show()
+			$('.pay').hide()
 		})
 
 	})

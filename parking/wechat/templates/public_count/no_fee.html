@@ -1,14 +1,18 @@
+<!-- 出场扫码时, 没有产生停车费 -->
 
 
 
-<!DOCTYPE html>
-<html>
+{% extends 'public_count/base/base.html' %}
 
-<head>
-	<title>一路顺风</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-	<h3>本次停车不产生费用</h3>
-</body>
-</html>
+{% block content %}
+
+	<div class='content_row' style="margin-top:100px">
+		<img src='/static/wechat/user/img/bingo.png' class='bingo' />
+	</div>
+	<div class='content_row'>
+	 	 本次停车不产生费用
+	</div>
+	<div class='content_row'>
+	 	 祝您一路顺风
+	</div>
+{% endblock %}

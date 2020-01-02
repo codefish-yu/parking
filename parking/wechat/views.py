@@ -3,56 +3,21 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
+from .my import *
 from meta import api
-from meta.models import Product, Order, User
 from device.models import Camera
+from .decorators import *
 from parkinglot.models import ParkingLot
-from realtime.models import InAndOut, Bill, OpeningOrder
+from meta.models import Product, Order, User
 from chargerule.charge import charge, demurrage
+from realtime.models import InAndOut, Bill, OpeningOrder
 
 
 import math
 import datetime
-import functools
 
 
 '''手机客户端 ''' 
-
-
-def now():
-    return datetime.datetime.now()
-
-
-def user_required(func):
-
-    @functools.wraps(func)
-    def wrapper(request, *args, **kwargs):
-        from meta import api
-        
-        wrapper.__name__ = func.__name__
-
-        token = request.session['token'] if 'token' in request.session else ''
-        
-        if not token:
-            token = request.GET.get('token', '')
-            if token:
-                request.session['token'] = token
-
-        next_url = request.get_full_path()
-
-        if not token:
-            return redirect('/login/public/account/?next=' + next_url)
-
-        try:
-            user =  api.check_token(token) #User.objects.first() 
-        except APIError:
-            return redirect('/login/public/account/?next=' + next_url)
-
-        request.user = user
-        result = func(request, user=user, *args, **kwargs)
-        return result
-
-    return wrapper
 
 
 # 创建开闸指令
@@ -114,14 +79,6 @@ def createBill2(in_and_out):
     in_and_out.save()
 
     return bill
-
-
-def get_park_time(in_time, out_time=None):
-    out_time =  out_time if out_time else now()
-    diff = out_time - in_time
-    hours = math.floor(diff.seconds / 3600)
-    minutes = math.ceil((diff.seconds % 3600) / 60 )
-    return hours, minutes
 
 
 @user_required
@@ -237,7 +194,8 @@ def parkout(request, user, parkinglot_id, gate_id=None):
             return JsonResponse(ctx)
 
     ''' 扫码执行入口'''
-    if not r:     # 如果查不到记录就让其输入车牌号
+    if not r:     # 如果根据用户查不到记录就让其输入车牌号
+        ctx['plates'] = MyPlate.objects.filter(user=user)
         return render(request, 'public_count/1_plate_number.html', ctx)
     else:         # 如果有停车记录跳至记录页面, 可以点击离场
         
