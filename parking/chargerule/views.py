@@ -293,6 +293,7 @@ def coupon(request):
                 r = TicketRecord()  
 
             _save_attr_(r, request)
+
             company_id = request.POST.get('company_id', '')
             parkinglot_id = request.POST.get('parkinglot_id', '')
             if parkinglot_id:
@@ -501,6 +502,55 @@ def chargedemo(request):
     ctx['all_tickets'] = all_tickets
 
     return render(request, 'charge_demo.html', ctx)
+
+
+@page
+@csrf_exempt
+def check_coupon(request):
+    ctx ={}
+    records = TicketRecord.objects.all()
+
+    def t(m):
+        return int(m) if m else''
+
+    def c_s(n,s):
+        for i in s:
+            if i.status == 0:
+                    i.status = n
+                    i.save()
+
+    if request.method == 'POST':
+        action = request.POST.get('action','')
+        
+        ids = request.POST.getlist('ids','')
+        if ids:
+            r = TicketRecord.objects.filter(id__in=ids).all()
+        if action == 'pass':
+            c_s(1,r)
+
+        elif action == 'refuse':
+            c_s(2,r)
+    
+        elif action == 'search':
+            p_id = request.POST.get('parkinglot_id','')
+            c_id = request.POST.get('company_id','')
+            status = request.POST.get('status','')
+            records = TicketRecord.objects.all()
+
+            if p_id != '':
+                records = records.filter(parkinglot__id=t(p_id))
+            if c_id != '':
+                records = records.filter(company__id=t(c_id))
+            if status != '':
+                records = records.filter(status=t(status))
+            ctx['p'] = t(p_id)
+            ctx['c'] = t(c_id)
+            ctx['s'] = t(status)
+
+    ctx['parkinglots'] = ParkingLot.objects.all()
+    ctx['companies'] = Company.objects.filter(status=1).all()
+    ctx['objects'] = records
+    return (ctx,'check_coupon.html')
 
 
 

@@ -60,8 +60,6 @@ def com_login(request):
 		if action == 'login':
 			account = request.POST.get('account')
 			password = request.POST.get('password')
-			print(account)
-			print(password)
 			company = Company.objects.filter(account=account,password=password,status=1).first()
 			if company:
 				request.session['company_id'] = company.id
@@ -133,7 +131,7 @@ def apply(request,tc_id):
 def grant(request,company):
 	ctx = {}
 	p=0
-	records = TicketRecord.objects.filter(company=company).all()
+	records = TicketRecord.objects.filter(company=company,status=1).all()
 
 
 	if request.method == 'POST':
@@ -141,7 +139,7 @@ def grant(request,company):
 		if action == 'change':
 			p = int(request.POST.get('p'))
 			if p == 0:
-				records = TicketRecord.objects.filter(company=company).all()
+				records = TicketRecord.objects.filter(company=company,status=1).all()
 			else:
 				records = ApplyRecord.objects.filter(coupon__company=company).all()
 

@@ -39,7 +39,7 @@ urlpatterns = [
 
     # administrator
     path('',a.base),
-    path('login/',a.login),
+    path('administrator/login/',a.login),
     path('base/', a.base),   
     path('index/', a.index),
     path('administrator/log/', a.log),
@@ -90,6 +90,7 @@ urlpatterns = [
     path('chargerule/cardtype/',charge.card_type),
     path('chargerule/coupontype/',charge.coupon_type),
     path('chargerule/chargedemo/',charge.chargedemo),
+    path('chargerule/check_coupon/',charge.check_coupon),
 
 
     # realtime

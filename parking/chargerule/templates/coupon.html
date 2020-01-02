@@ -148,7 +148,7 @@
         </div>
 
         <div class="layui-layer layui-layer-iframe" id="layui-layer6" type="iframe" times="6" showtime="0" contype="string" style="z-index: 19891020; width: 820px; height: 580px; top:20.5px; left: 215px;">
-            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i> 新增摄像头</div>
+            <div class="layui-layer-title" style="cursor: move;"><i class="fa fa-car"></i>修改优惠券</div>
             <div id="" class="layui-layer-content"><div class="ibox-content">
                 <div class="form-horizontal" id="verifyCheck">
                     <form id='update_form_{{ i.id }}' action='' method="post">
@@ -212,6 +212,19 @@
                             <div class="col-sm-4">
                                 <input placeholder="有效截至" class="laydate-icon form-control layer-date end_date_update" name="end_date" id='end_date_{{forloop.counter}}' value='{{i.end_date|date:"Y-m-d H:i:s"}}'>
                             </div>
+                            <label class="col-sm-1 control-label">叠加</label>
+                            <div class="col-sm-4">
+                                <input type="radio" name="superpose" value="1"{% if i.superpose == 1%}checked{% endif%} >是
+                                <input type="radio" class="le" name="superpose" value="0" {% if i.superpose == 1%}checked{% endif%}>否
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">余量</label>
+                            <div class="col-sm-4">
+                                <input placeholder="余量" class=" form-control" name="extra" style="width: 200px" value="{{i.extra}}">
+                            </div>
+                            <label class="control-label">注：余量框若非直接转账则无需修改</label>
                         </div>
                        <!--  <div class="form-group">
                             <label class="col-sm-2 control-label">起始日期</label>
@@ -348,6 +361,19 @@
                             <div class="col-sm-4">
                                 <input placeholder="有效截至" class="laydate-icon form-control layer-date" name="end_date" id='end_date_add' style="width: 200px">
                             </div>
+                            <label class="col-sm-1 control-label">叠加</label>
+                            <div class="col-sm-4">
+                                <input type="radio" name="superpose" value="1">是
+                                <input type="radio" name="superpose" value="0" class="le">否
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">余量</label>
+                            <div class="col-sm-4">
+                                <input placeholder="余量" class=" form-control" name="extra" style="width: 200px">
+                            </div>
+                            <label class=" control-label">注：余量框若非直接转账则无需修改</label>
                         </div>
                         <!-- <div class="form-group">
                             <label class="col-sm-2 control-label">起始日期</label>
@@ -414,6 +440,9 @@
     .unit{
       display: inline-block;
 
+    }
+    .le{
+        margin-left: 15%!important
     }
 </style>
 {% endblock %}
