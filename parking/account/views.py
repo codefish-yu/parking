@@ -101,6 +101,7 @@ def spec_pass(request,user):
 	gate_id = get_gate_id(user)
 	record = get_inandout(gate_id)
 	p = 0
+	ctx['change'] = 'true'
 
 
 	def check_type(number):
@@ -116,13 +117,18 @@ def spec_pass(request,user):
 		action =request.POST.get('action','')
 
 		if action == 'check':
-			record = get_record(gate_id)
-			if str(record._meta) == 'realtime.exceptrecord' or str(record._meta) == 'wechat.problem': 
+			new = get_record(gate_id)
+			if new:
+				if str(new._meta) == 'realtime.exceptrecord' or str(new._meta) == 'wechat.problem': 
+				
+					return redirect('/account/correct/')
 			
-				return redirect('/account/correct/')
-			
-			if not record.out_time:
-				ctx['p'] = 1
+				if not record.out_time:
+					ctx['p'] = 1
+				if record.id != new.id:
+					ctx['change'] = 'false'
+				else:
+					ctx['change'] = 'true'
 
 			
 		elif action == 'pass':
@@ -150,6 +156,7 @@ def spec_pass(request,user):
 				re.spec_num = len(chek)
 				createOpenOrder(re.parkinglot.id,re.gate.id,record)
 				re.save()
+			ctx['change'] = 'true'
 
 		elif action == 'in':
 			record = get_inandout(gate_id,1)
@@ -234,6 +241,7 @@ def correct(request,user):
 					r.save()
 					record.status =1
 					record.save()
+			#未匹配的处理方法待确定
 
 				return redirect('/account/spec_pass')
 

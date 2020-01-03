@@ -84,7 +84,7 @@ class TicketRecord(models.Model):
     start_time2 = models.FloatField(null=True, verbose_name='优惠时段起点')
     end_time2 = models.FloatField(null=True, verbose_name='优惠时段截止')
     coucode = models.ImageField(null=True,verbose_name='券码',upload_to='coucode/')
-    qrcode = models.ImageField(null=True,blank=True,verbose_name='动态码',upload_to='qrcode/')
+    qrrandom = models.CharField(max_length=30,verbose_name='随机数',null=True)
     superpose = models.IntegerField(default=0,verbose_name='是否可叠加',choices=[(0,'否'),(1,'是')])
     status = models.IntegerField(default=0,choices=[(0,'待审核'),(1,'已通过'),(2,'审核失败')])
 

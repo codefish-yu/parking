@@ -218,7 +218,6 @@
 	}
 
 </style>
-<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
 	$('#laun').click(()=>(
 		$('#change-form input[name=p]').val(0),
@@ -237,5 +236,35 @@
 	function sh(id) {
 		$('#code_'+id).toggle()
 	}
+	{	//动态码
+		function makeqr(obj,item){
+			let qrcode = qrcanvas({
+                        data:'http://parking.metatype.cn/share/?uid={{uid}}',
+                        size:200
+                });
+			obj.src = qrcode.toDataURL('image/png');
+		}
+
+		function  change() {
+			$.ajax({
+				url:'',
+				data:{
+					'action':'change'
+				},
+				success:function(e){
+					var list = $('.barc img');
+					for(var i=0;i<list.length;i++){
+						makeqr(list[i],e.result[i])
+					}
+				}
+			})
+		}
+		
+		var inter = setInterval(change,60000);
+
+	}
+
+
+
 </script>
 {% endblock %}

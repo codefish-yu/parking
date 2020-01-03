@@ -28,5 +28,12 @@ class BusinessBill(models.Model):
 	product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL,blank=True)
 
 
+# class Ticket(models.Model):
+# 	class Meta:
+# 		verbose_name='用户领券记录'
+
+# 	coupon = models.ForeignKey(TicketRecord,verbose_name='券',on_delete=models.SET_NULL,null=True)
+# 	amount = 
+
 
 

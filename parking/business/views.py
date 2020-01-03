@@ -8,8 +8,13 @@ from django.http import JsonResponse
 from meta import api
 
 import functools
+import random
 
 # Create your views here.
+def ran():
+	return ''.join(random.sample(string.digits + string.ascii_letters,8))
+
+
 def wuser_required(func):
 
     @functools.wraps(func)
@@ -147,6 +152,20 @@ def grant(request,company):
 				records = TicketRecord.objects.filter(company=company,status=1).all()
 			else:
 				records = ApplyRecord.objects.filter(coupon__company=company).all()
+
+		elif action == 'change':
+			l = []
+			for i in records:
+
+				i.qrrandom = ran()
+				i.save()
+
+				t = {
+					'id':i.id,
+					'code':i.qrrandom
+				}
+				l.append(t)
+			return JsonResponse({'result':l})
 
 
 	ctx['p']=p
