@@ -18,10 +18,15 @@ def user_required(view_func):
 
     def wrapper(request, *args, **kwargs):
         if 'uid' not in request.session:
-            return redirect('/login/')
+            return redirect('/administrator/login/')
 
         user = AdminUser.objects.filter(id=request.session['uid']).first()
-        return view_func(request, me=user, *args, **kwargs)
+        role = user.role_name
+        request.session['role'] = role.role_name
+        request.session['menus'] = menus = role.get_menu_and_childmenu()
+        request.session['operations'] = role.get_operations(request.path)
+
+        return view_func(request, user=user, *args, **kwargs)
 
     return wrapper
 

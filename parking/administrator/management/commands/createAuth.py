@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from administrator.models import Menu, Operation
+from administrator.models import AdminUser, Menu, Operation, Role
 
 
 '''系统部署时初始化权限菜单, 运行一次'''
@@ -42,7 +42,6 @@ class Command(BaseCommand):
                     ['泊位管理', [], '/parking/port/'],
                     ['收费站管理', [], '/parking/station/'],
                     ['摄像头管理', [], '/parking/carema/'],
-                    # ['口管理', [], ''],
                     ['LED管理', [], '/parking/led/'],
                     ['人员管理', [], '/parking/workman/']
             ]},
@@ -80,8 +79,12 @@ class Command(BaseCommand):
                         operation = Operation.objects.create(operation_name=op, action=Operations[op])
 
                         child_menu.operation.add(operation)
+ 
+        if not AdminUser.objects.exists():
+            if not Role.objects.exists():
+                role = Role.objects.create(role_name='Admin', detail='系统默认管理员角色')
+            else:
+                role = Role.objects.filter(role_name='Admin').first()
 
-
-
-
+            AdminUser.objects.create(user_name='admin', user_pass='admin', role_name=role, remark='系统默认管理员')
 

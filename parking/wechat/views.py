@@ -146,6 +146,8 @@ def parkout(request, user, parkinglot_id, gate_id=None):
             r = InAndOut.objects.filter(parkinglot_id=int(parkinglot_id), number=car_number, status=0).order_by('-in_time')
             if r.exists():
                 r = r.first()
+                
+                MyPlate.objects.get_or_create(user=user, plate=r.number)
                 r.user = user
                 r.save()
                 ctx['r'] = r
@@ -245,7 +247,7 @@ def parkout(request, user, parkinglot_id, gate_id=None):
                             createOpenOrder(parkinglot_id, gate_id, r)
                         else:
                             bill = createBill2(r)
-                            ctx['hours'] = get_park_time(r.latest_leave_time, now())
+                            ctx['hours'] = get_park_time(r.out_time, now())
                             ctx['payment'] = bill.payment
                             ctx['payable'] = bill.payable
                             ctx['r'] = r

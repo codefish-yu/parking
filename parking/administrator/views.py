@@ -23,22 +23,37 @@ def login(request):
         if action == 'login':
             user_name = request.POST.get('user_name')
             password = request.POST.get('user_pass')
+            print(user_name, password)
             user = AdminUser.objects.filter(user_name=user_name,user_pass=password).first()
             if user :
+                print(user)
                 request.session['uid'] = user.id
+                request.session['user_name'] = user.user_name
 
-                return render(request, 'common/base.html')
+                return redirect(base)
 
 
     return render(request, 'login.html')
 
 
-# @user_required
-def base(request):
+def logout(request):
+    
+    if 'uid' in request.session:
+        del(request.session['uid'])
+    if 'user_name' in request.session:
+        del(request.session['user_name'])
+
+    return render(request, 'login.html')
+
+
+
+@user_required
+def base(request, user):
+    print('sss')
     return render(request, 'common/base.html')
 
 @user_required
-def modify(request,me):
+def modify(request, user):
     ctx={}
     
     if request.method == 'POST':
@@ -192,7 +207,7 @@ def get_role(request, id):
     ctx = {}
 
     ctx['role'] = r = Role.objects.filter(id=id).first()
-    ctx['auth'] = r.get_auth()
+    ctx['auth'] = r.get_auth_ids()
     ctx['menus'] = Menu.objects.filter(parent=None).order_by('id')
 
     return render(request, 'edit_role.html', ctx)

@@ -40,6 +40,7 @@ urlpatterns = [
     # administrator
     path('',a.base),
     path('administrator/login/',a.login),
+    path('administrator/logout/',a.logout),
     path('base/', a.base),   
     path('index/', a.index),
     path('administrator/log/', a.log),
@@ -112,6 +113,7 @@ urlpatterns = [
     path('wechat/personal/myplate/',wechat.myplate),
     path('wechat/personal/',wechat.personal),
     path('wechat/problem/',wechat.problem),
+    path('wechat/scan/coupon/<int:id>/<str:code>/',wechat.scan_coupon),
 
 
     #account

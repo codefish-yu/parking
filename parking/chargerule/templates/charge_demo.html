@@ -1,5 +1,10 @@
 {% extends 'iframe.html' %}
 {% block content %}
+<style type="text/css">
+    label{
+        text-align: right;
+    }
+</style>
 <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
             <div class="col-sm-12">
@@ -14,18 +19,18 @@
                         </div>
                     </div>
                    
-                    <div class="ibox-content">
+                    <div class="ibox-content" style="width: 100%;display: inline-block;">
                         <form id='query_form' action='' method="post">
-                            <div class='form-inline col-md-8'>
+                            <div class='form-inline'>
                                 {% csrf_token %}
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">车   牌 </label>
-                                    <div class="col-md-4">
-                                        <input type="text" name="car_number" class="form-control required" value="{{ car_number }}">
+                                <div class="form-group"  style="width: 100%">
+                                    <label class="col-md-1 control-label">车   牌 </label>
+                                    <div class="col-md-2">
+                                        <input type="text" name="car_number" class="form-control required" value="{{ car_number }}" required="" />
                                     </div>
-                                    <label class="col-md-2 control-label">所属车场</label>
-                                    <div class="col-md-4">
-                                        <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='company_add' name="parkinglot_id" style="display: none;width: 100%">
+                                    <label class="col-md-1 control-label">所属车场</label>
+                                    <div class="col-md-2">
+                                        <select data-placeholder="选择停车场" class="form-control chosen-select" child-id='company_add' name="parkinglot_id" style="display: none;width: 100%" required="">
                                             <option value=''>选择停车场</option>
                                             {% for i in parkinglots %}
                                                 <option value='{{i.id}}'
@@ -35,25 +40,26 @@
                                         </select>
                                     </div>
                                 </div>
-                                <br>
-                                <br>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">开始时间</label>
-                                    <div class="col-md-4">
-                                        <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="in_time" id='in_time'
-                                        value="{{in_time}}" 
-                                        >
+                        
+                                <div class="form-group" style="width: 100%">
+                                    <label class="col-md-1 control-label">开始时间</label>
+                                    <div class="col-md-2">
+                                        <input placeholder="进场时间" class="laydate-icon form-control layer-date" name="in_time" id='in_time'
+                                        value="{{in_time}}"  required="" />
                                     </div>
-                                    <label class="col-md-2 control-label">结束时间</label>
-                                    <div class="col-md-4">
-                                        <input placeholder="购买日期" class="laydate-icon form-control layer-date" name="out_time" id="out_time" value="{{out_time}}">
+                                    <label class="col-md-1 control-label">结算时间</label>
+                                    <div class="col-md-2">
+                                        <input placeholder="结算时间" class="laydate-icon form-control layer-date" name="out_time" id="out_time" value="{{out_time}}" required="">
+                                    </div>
+                                    <label class="col-md-1 control-label">最后出场时间</label>
+                                    <div class="col-md-2">
+                                        <input placeholder="最后出场时间" class="laydate-icon form-control layer-date" name="final_out_time" id="final_out_time" value="{{final_out_time}}" required="">
                                     </div>
                                 </div>
-                                <br>
-                                <br>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">优惠券类型&nbsp;&nbsp;&nbsp;</label>
-                                    <div class="col-md-4">
+                      
+                                <div class="form-group"  style="width: 100%">
+                                    <label class="col-md-1 control-label">优惠券类型&nbsp;&nbsp;&nbsp;</label>
+                                    <div class="col-md-2">
                                         <select data-placeholder="优惠券类型" class="form-control chosen-select" child-id='ticket_add' name="ticket_type" style="display: none;width: 100%">
                                            <option value=''>优惠券类型</option>
                                            <option value="0">打折券</option>
@@ -62,13 +68,19 @@
                                            <option value="3">满时券</option>
                                         </select>
                                     </div>
-                                    <label class="col-md-1"></label>
                                     <label class="col-md-1">券</label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <select data-placeholder="选择券" class="form-control chosen-select" name="ticket" id='ticket_add'
                                         style="display: none;width: 100%">
                                             <option value=''>选择券</option>
                                         </select>
+                                    </div>
+                                    <label class="col-md-1"></label>
+                                    <div class="col-md-2">
+                                        <input type='hidden' name='action' value='charge' />
+                                        <button class="btn btn-primary search-btn" type="submit">
+                                            <i class="fa fa-search"></i> 计 算 
+                                        </button>
                                     </div>
                                 </div>
                                 <br>
@@ -76,14 +88,7 @@
                                 </div>
                                 <br>  <br>   
                             </div>
-                            <div class='col-md-4'>
-                                <div class="form-group">
-                                    <input type='hidden' name='action' value='charge' />
-                                    <button class="btn btn-primary search-btn" type="submit">
-                                        <i class="fa fa-search"></i> 计 算 
-                                    </button>
-                                </div>
-                            </div>
+               
                         </form>
 
                         {% if payment %}
@@ -103,17 +108,17 @@
                                 <p>卡 :  {{ card.my_card.name }}, 
                                     {% if card.my_card.diff_type == 0 %}
                                     工作日: {{ card.my_card.work }},
-                                    非工作日: {{ card.my_card.relax }}
+                                    非工作日: {{ card.my_card.relax|default:'无优惠' }}
                                     {% endif %}
                                 </p>
                                 {% if card.my_card.diff_type == 1 %}
-                                <p>周一 : {{ card.my_card.free }},</p>
-                                <p>周二 : {{ card.my_card.free_tu }},</p>
-                                <p>周三 : {{ card.my_card.free_we }},</p>
-                                <p>周四 : {{ card.my_card.free_th }},</p>
-                                <p>周五 : {{ card.my_card.free_fr }},</p>
-                                <p>周六 : {{ card.my_card.free_sa }},</p>
-                                <p>周日 : {{ card.my_card.free_su }},</p>
+                                <p>周一 : {{ card.my_card.free|default:'无优惠' }},</p>
+                                <p>周二 : {{ card.my_card.free_tu|default:'无优惠' }},</p>
+                                <p>周三 : {{ card.my_card.free_we|default:'无优惠' }},</p>
+                                <p>周四 : {{ card.my_card.free_th|default:'无优惠' }},</p>
+                                <p>周五 : {{ card.my_card.free_fr|default:'无优惠' }},</p>
+                                <p>周六 : {{ card.my_card.free_sa|default:'无优惠' }},</p>
+                                <p>周日 : {{ card.my_card.free_su|default:'无优惠' }},</p>
                                 {% endif %}
                                 <p>有效期 :  <span>{{ card.valid_start }} ~ {{ card.valid_end }}</span></p>
                             {% else %}
@@ -132,6 +137,7 @@
                             <p>应收 : <span>{{ payment.0 }} 元</span>,
                                 实收 : <span>{{ payment.1 }} 元</span>
                             </p>
+                            <p>滞留费: {{ payment_bill2 }} 元 </p>
                         </div>
                         {% endif %}
                     </div>
@@ -152,8 +158,12 @@
     var in_time = { elem: "#in_time", format: "YYYY-MM-DD hh:mm:ss", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
         laydate(in_time)
 
-     var out_time = { elem: "#out_time", format: "YYYY-MM-DD hh:mm:ss", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
+    var out_time = { elem: "#out_time", format: "YYYY-MM-DD hh:mm:ss", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
         laydate(out_time)
+    
+    var final_out_time = { elem: "#final_out_time", format: "YYYY-MM-DD hh:mm:ss", min: "1900-01-01", max: "2099-06-16", istime: true, istoday: true };
+        laydate(final_out_time)
+
 
     initValidator('#add_form','');
     function initValidator(name,id){
