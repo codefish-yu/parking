@@ -69,11 +69,9 @@ def get_valid_hours(start, end, day_max=8):
 def get_valid_hours_perday(areas, start=None, end=None):
     hours = 0
     if start and end: # 同一天
-        print(start, end)
         hours = date_2_float(end) - date_2_float(start)
         end = date_2_float(end)
         start = date_2_float(start)
-        print('sss',start, end, hours)
         for i in areas:
             s = str_2_float(i['start'])
             e = str_2_float(i['end'])
@@ -82,7 +80,7 @@ def get_valid_hours_perday(areas, start=None, end=None):
                 print(1)
             elif start <= s and end >= s:
                 print(2)
-                hours -= e - s
+                hours -= end - s
             elif start <= e and end >= e:
                 print(3)
                 hours -= e - start
@@ -141,7 +139,6 @@ def get_valid_hours_per24(start, end, parkinglot, card):
             areas = card.free_sa
         if week_day == 6:
             areas = card.free_su 
-        print(areas)
         return json.loads(areas.replace('\'', '\"')) if areas else []
 
     hours = 0
@@ -179,12 +176,10 @@ def get_by_card(start, end, parkinglot, card, day_max):
         _end = start + datetime.timedelta(days=1)
         if _end > end:
             h = get_valid_hours_per24(start, end, parkinglot, card)
-            print('sssxxx',start, end, h)
             hours += h if h < day_max else day_max
             break
         else:
             h = get_valid_hours_per24(start, _end, parkinglot, card)
-            print('xxxxxxxx',start, _end, h)
            
             hours += h if h < day_max else day_max
             start = _end
@@ -222,7 +217,7 @@ def compute(parkinglot, start, end, coupons, card):
     if card: # 有卡
         hours = 0
 
-        if start > card.valid_end or end < card.valid_start:
+        if start >= card.valid_end or end <= card.valid_start:
             hours = get_valid_hours(start, end)
         elif start < card.valid_start and end < card.valid_end:
             hours = get_by_card(card.valid_start, end, parkinglot, card.my_card, day_max) + get_valid_hours(start, card.valid_start, day_max)
@@ -230,7 +225,7 @@ def compute(parkinglot, start, end, coupons, card):
             hours = get_by_card(start, card.valid_end, parkinglot, card.my_card, day_max) + get_valid_hours(card.valid_end, end, day_max)
         else:
             hours = get_by_card(start, end, parkinglot, card.my_card, day_max)
-        
+            print('hours', hours)
         if hours == get_valid_hours(start, end):     # 说明错峰卡没有生效, 停车时间跟错峰时间没有重叠
             payment, left_time = hours2price(hours, baseRule) 
             latest_leave_time = end + datetime.timedelta(hours=left_time)      # 超过这个时间, 就会产生滞留费
@@ -239,6 +234,7 @@ def compute(parkinglot, start, end, coupons, card):
         else:                                        # 错峰卡生效, 超出的时间按每半小时一计
             payable = payment = math.ceil(hours * 2) / 2 * baseRule.per_hour
             left_time = math.ceil(hours * 2) / 2 - hours + free_time/60
+            print('left_time', hours, left_time)
             latest_leave_time = end + datetime.timedelta(hours=left_time)
 
     else:
@@ -249,7 +245,6 @@ def compute(parkinglot, start, end, coupons, card):
         payable = payment
 
         if coupons: # 有券, 只能同时用一种券, 可叠加多张
-        
             for coupon in coupons:
                 if coupon.type == 0:
                     payment = payment * coupon.rate / 100
@@ -290,18 +285,15 @@ def charge(in_and_out, coupons=None):
 
 
 
-
-# 计算滞留费
-def demurrage(in_and_out):
-    card = in_and_out.parkinglot.parkinglot_card.filter(car_number=in_and_out.number).first()
-    
-    now = datetime.datetime.now()
-    print(in_and_out.latest_leave_time)
-    if now < in_and_out.latest_leave_time:
+def compute_demurrage(parkinglot, out_time, latest_leave_time, card, final_out_time=None):
+    print('ssssss',out_time, latest_leave_time, final_out_time)
+    if not final_out_time:
+        final_out_time = datetime.datetime.now()
+     
+    if final_out_time < latest_leave_time:
         return 0
     else:
-        parkinglot = in_and_out.parkinglot
-
+         
         baseRule = BaseRule.objects.filter(parkinglot=parkinglot, status=0).first()
         day_max = baseRule.day_max
         per_hour = baseRule.per_hour
@@ -309,9 +301,10 @@ def demurrage(in_and_out):
         min_price = baseRule.min_price
 
 
-        start = in_and_out.latest_leave_time - datetime.timedelta(hours=free_time/60)
-        end = now
+        start = latest_leave_time - datetime.timedelta(hours=free_time/60)
+        end = final_out_time
 
+        left_time = get_hours(out_time, start) # 计算停车费时,计费时间减去实际停车时间, 比如停车2.1小时,算成2.5小时的钱, 那么就多算了0.4小时, 这是可以用作滞留时间的
         if end <= start:
             return 0
 
@@ -326,7 +319,12 @@ def demurrage(in_and_out):
                 hours = get_by_card(start, card.valid_end, parkinglot, card.my_card, day_max) + get_valid_hours(card.valid_end, end, day_max)
             else:
                 hours = get_by_card(start, end, parkinglot, card.my_card, day_max)
-           
+                print(hours, left_time)
+                if hours <= left_time + free_time/60:
+                    hours = 0
+                else:
+                    hours = hours - left_time
+                print('hours', hours)
         else:
             hours = get_valid_hours(start, end, day_max)
         
@@ -334,8 +332,13 @@ def demurrage(in_and_out):
         
         return valid_hour * per_hour
 
-        
 
+# 计算滞留费
+def demurrage(in_and_out):
+    card = in_and_out.parkinglot.parkinglot_card.filter(car_number=in_and_out.number).first()
+    parkinglot = in_and_out.parkinglot
+    out_time = in_and_out.out_time
+    latest_leave_time = in_and_out.latest_leave_time
 
-
-      
+    return charge_demurrage(parkinglot, out_time, latest_leave_time, card)
+    

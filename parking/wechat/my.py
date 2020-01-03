@@ -98,3 +98,10 @@ def problem(request, user):
 
 		return render(request, 'public_count/problem.html')
 
+
+@user_required
+def scan_coupon(request, user, id, code):
+
+	pass
+	
+	return render(request, 'public_count/personal/mycoupon.html', ctx)

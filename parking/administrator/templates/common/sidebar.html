@@ -20,9 +20,8 @@
 
                         <span class="clear">
 
-                            <span class="block m-t-xs"><strong class="font-bold">&#x5E73;&#x53F0;&#x5C55;&#x793A;</strong></span>
-
-                            <span class="text-muted text-xs block">&#x9AD8;&#x7EA7;&#x7BA1;&#x7406;&#x5458;<b class="caret"></b></span>
+                           
+                            <span class="text-muted text-xs block">{{ request.session.user_name }}<b class="caret"></b></span>
 
                         </span>
 
@@ -32,7 +31,7 @@
 
                         <li class="changePwd"><a href="#">修改密码</a></li>
 
-                        <li class="loginOut J_menuItem"><a href="#">安全退出</a></li>
+                        <!-- <li class="loginOut J_menuItem"><a href="/administrator/logout/">安全退出</a></li> -->
 
                     </ul>
 
@@ -42,10 +41,27 @@
 
             </li>
 
+            {% if request.session.role != 'Admin' %}
+                {% for i in request.session.menus %}
+                    <li class="menu-role">
+
+                    <a href="#" class="button"><i class="fa fa-car"></i> <span class="nav-label">{{ i.menu}} </span><span class="fa arrow"></span></a>
+
+                    <ul class="nav nav-second-level">
+                        {% for j in i.child_menu %}
+                        <li><a class="J_menuItem" href="{{j.url}}">{{j.child_menu}}</a></li>
+                        {% endfor %}
+                         
+                    </ul>
+
+                </li>
+
+                {% endfor %}
+            {% else %}
 
             <li class="menu-role">
 
-                <a href="#" class="button"><i class="fa fa-th"></i> <span class="nav-label">系统配置 </span><span class="fa arrow"></span></a>
+                <a href="#" class="button"><i class="fa fa-car"></i> <span class="nav-label">系统配置 </span><span class="fa arrow"></span></a>
 
                 <ul class="nav nav-second-level">
                     <li><a class="J_menuItem" href="/administrator/settings/">系统配置</a></li>
@@ -58,7 +74,7 @@
 
             <li class="menu-role">
 
-                <a href="#" class="button"><i class="fa fa-th"></i> <span class="nav-label">用户管理 </span><span class="fa arrow"></span></a>
+                <a href="#" class="button"><i class="fa fa-car"></i> <span class="nav-label">用户管理 </span><span class="fa arrow"></span></a>
 
                 <ul class="nav nav-second-level">
 
@@ -71,7 +87,7 @@
 
             <li class="menu-role">
 
-                <a href="#" class="button"><i class="fa fa-th"></i> <span class="nav-label">商家管理 </span><span class="fa arrow"></span></a>
+                <a href="#" class="button"><i class="fa fa-car"></i> <span class="nav-label">商家管理 </span><span class="fa arrow"></span></a>
 
                 <ul class="nav nav-second-level">
 
@@ -164,7 +180,7 @@
             
             <li class="menu-role">
 
-                <a href="#"><i class="fa fa-bar-chart-o"></i> <span class="nav-label">报表管理</span><span class="fa arrow"></span></a>
+                <a href="#"><i class="fa fa-car"></i> <span class="nav-label">报表管理</span><span class="fa arrow"></span></a>
 
                 <ul class="nav nav-second-level">
 
@@ -185,7 +201,7 @@
                 </ul>
 
             </li>
- 
+            {% endif %}
         </ul>
 
     </div>

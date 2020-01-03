@@ -33,7 +33,7 @@ class Role(models.Model):
     role_name = models.CharField(max_length=100, unique=True, verbose_name='用户名')
     detail = models.CharField(max_length=200, null=True, verbose_name='说明')
 
-    def get_auth(self):
+    def get_auth_ids(self):
         auths = Authority.objects.filter(role=self)
         menu = set()
         child_menu = set()
@@ -46,6 +46,37 @@ class Role(models.Model):
                 operation.add(j.id)
 
         return {'menu': menu, 'child_menu': child_menu, 'operation': operation}
+
+    def get_menu_and_childmenu(self):
+        auths = Authority.objects.filter(role=self)
+        menus = []
+        
+        for i in auths:
+            flag = False
+            for j,v in enumerate(menus):
+                if v['id'] == i.menu.id:
+                    flag = True
+                    menus[j]['child_menu'].append({'child_menu': i.child_menu.menu_name, 'child_menu_id': i.child_menu.url})
+
+            if not flag:
+                menus.append({
+                    'id':i.menu.id,
+                    'menu': i.menu.menu_name,
+                    'child_menu': [{'child_menu': i.child_menu.menu_name, 'url': i.child_menu.url}]
+                    })
+        print(menus)
+        return menus
+
+    def get_operations(self, url):
+        menu = Menu.objects.filter(url=url).first()
+        if not menu:
+            return []
+        else:
+            auth = Authority.objects.filter(role=self, child_menu=menu)
+            if auth:
+                return [{'operation_name': i.operation_name, 'action': i.action} for i in auth.first().operation.all()]
+            else:
+                return []
 
 
 class Menu(models.Model):

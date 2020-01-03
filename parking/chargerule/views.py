@@ -470,15 +470,17 @@ def card(request):
 
 
 def chargedemo(request):
+
     ctx = {}
     if request.method == 'POST':
         action = request.POST.get('action', '')
         if action == 'charge':
-            from .charge import compute
+            from .charge import compute, compute_demurrage
 
             ctx['coupons'] = coupons = request.POST.getlist('coupons', '')
             ctx['in_time'] = in_time = request.POST.get('in_time', '')
             ctx['out_time'] = out_time = request.POST.get('out_time', '')
+            ctx['final_out_time'] = final_out_time = request.POST.get('final_out_time', '')
             ctx['car_number'] = car_number = request.POST.get('car_number', '')
             ctx['parkinglot_id'] = parkinglot_id = int(request.POST.get('parkinglot_id', ''))
 
@@ -489,7 +491,10 @@ def chargedemo(request):
 
             in_time = datetime.datetime.strptime(in_time, '%Y-%m-%d %H:%M:%S')
             out_time = datetime.datetime.strptime(out_time, '%Y-%m-%d %H:%M:%S')
-            ctx['payment'] = compute(parkinglot, in_time, out_time, coupons, card)
+            final_out_time = datetime.datetime.strptime(final_out_time, '%Y-%m-%d %H:%M:%S')
+            payable, payment, latest_leave_time = compute(parkinglot, in_time, out_time, coupons, card)
+            ctx['payment'] = (payable, payment, latest_leave_time)
+            ctx['payment_bill2'] = compute_demurrage(parkinglot, out_time, latest_leave_time, card, final_out_time)
             
     ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
     
