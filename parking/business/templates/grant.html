@@ -36,6 +36,12 @@
 		<div id="code_{{i.id}}" class="barc" onclick="sh({{i.id}})">
 			<img src="{% if i.coucode %}{{i.coucode.url}}{% endif %}" >
 		</div>
+		<div class='ran'>
+			<input type="hidden" value="{{i.qrrandom}}">
+		</div>
+		<div class='id'>
+			<input type="hidden" value="{{i.id}}">
+		</div>
 		{% endif %}
 		{% endfor %}
 	</div>
@@ -237,10 +243,10 @@
 		$('#code_'+id).toggle()
 	}
 	{	//动态码
-		function makeqr(obj,item){
+		function makeqr(obj,id,code){
 			let qrcode = qrcanvas({
-                        data:'http://parking.metatype.cn/share/?uid={{uid}}',
-                        size:200
+                        data:'http://parking.metatype.cn/wechat/scan/coupon/'+id+'/'+code+'/',
+                        size:250
                 });
 			obj.src = qrcode.toDataURL('image/png');
 		}
@@ -254,15 +260,27 @@
 				success:function(e){
 					var list = $('.barc img');
 					for(var i=0;i<list.length;i++){
-						makeqr(list[i],e.result[i])
+						makeqr(list[i],e.result[i].id,e.result[i].code)
 					}
 				}
 			})
 		}
+
+		//初始化
+		$(document).ready(function(){
+			var ran_list = $('.ran input');
+			var id_list = $('.id input');  
+			var list = $('.barc img');
+			for(var i=0;i<list.length;i++){
+				makeqr(list[i],id_list[i].value,ran_list[i].value)
+			}
+		})
 		
 		var inter = setInterval(change,60000);
 
 	}
+
+
 
 
 
