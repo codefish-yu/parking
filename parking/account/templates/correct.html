@@ -30,16 +30,17 @@
 		{% if p == 1 %}
 		<p>用户填写</p>
 		<div class="correct-form">
+
 			<form method="post" action="" id='corrct-form' >
-				<input type="text" name="num_1" class="inp" value="">
-				<input type="text" name="num_2" class="inp" maxlength="1">
+				<input type="text" name="num_1" class="inp" value="{{on}}">
+				<input type="text" name="num_2" class="inp" maxlength="1" value="{{tw}}">
 				<span id='poi'>.</span>
-				<input type="text" name="num_3" class="inp" maxlength="1">
-				<input type="text" name="num_4" class="inp" maxlength="1">
-				<input type="text" name="num_5" class="inp" maxlength="1">
-				<input type="text" name="num_6" class="inp" maxlength="1">
-				<input type="text" name="num_7" class="inp" maxlength="1" >
-				<input type="" name="num_8" class="inp" placeholder="新能源">
+				<input type="text" name="num_3" class="inp" maxlength="1" value="{{th}}">
+				<input type="text" name="num_4" class="inp" maxlength="1" value="{{fo}}">
+				<input type="text" name="num_5" class="inp" maxlength="1" value="{{fi}}">
+				<input type="text" name="num_6" class="inp" maxlength="1" value="{{si}}">
+				<input type="text" name="num_7" class="inp" maxlength="1"  value="{{se}}">
+				<input type="" name="num_8" class="inp" placeholder="新能源" value="{{ei}}">
 				<input type="hidden" name="action" value="correct">
 			</form>
 		</div>

@@ -23,5 +23,6 @@ class Problem(models.Model):
 	plate = models.CharField(max_length=100, verbose_name='车牌')
 	parkinglot = models.ForeignKey(ParkingLot, on_delete=models.CASCADE)
 	gate = models.ForeignKey(Gate, null=True, on_delete=models.SET_NULL)
+	status = models.IntegerField(default=0,choices=[(0,'待处理'),(1,'已处理')])
 
-	create_time = models.DateTimeField(auto_now_add=True)
+	update_time = models.DateTimeField(auto_now_add=True)
