@@ -9,6 +9,7 @@ from chargerule.models import *
 from wechat.views import createOpenOrder
 from account.models import *
 from meta.models import User,WechatUser
+from wechat.models import Problem
 from device.models import * 
 from meta import api
 import functools
@@ -65,7 +66,7 @@ def get_inandout(id,t=0,r=1):
 	if t == 1:
 		return all_or_fir(InAndOut.objects.filter(camera_in=c,status__in=[-1,0]).order_by('-update_time'),r)
 	elif t == 2:
-		return all_or_fir(ExceptRecord.objects.filter(status=0).order_by('-update_time'),r)
+		return all_or_fir(ExceptRecord.objects.filter(status=0,camera=c).order_by('-update_time'),r)
 
 	return all_or_fir(InAndOut.objects.filter(camera_out=c).exclude(status__in=[-1,0]).order_by('-update_time'),r)
 
@@ -74,10 +75,18 @@ def get_record(gate_id):
 	ri = get_inandout(gate_id,1)
 	ro = get_inandout(gate_id)
 	exc =get_inandout(gate_id,2) 
+	pro = Problem.objects.filter(gate__id=gate_id,status=0).order_by('-update_time').first()
 	if not exc:
-		return max(ri,ro)
+		if pro:
+			return max(pro,max(ri,ro))
+		else:
+			return max(ri,ro)
+	else:
+		if pro:
+			return max(max(pro,exc),max(ri,ro))
+		else:
+			return max(exc,max(ri,ro))
 
-	return max(exc,max(ri,ro))
 
 def get_gate_id(user):
 	wk = WorkRecord.objects.filter(worker=user).order_by('-time').first()
@@ -108,9 +117,10 @@ def spec_pass(request,user):
 
 		if action == 'check':
 			record = get_record(gate_id)
-			if str(record._meta) == 'realtime.exceptrecord': 
+			if str(record._meta) == 'realtime.exceptrecord' or str(record._meta) == 'wechat.problem': 
 			
 				return redirect('/account/correct/')
+			
 			if not record.out_time:
 				ctx['p'] = 1
 
@@ -159,10 +169,33 @@ def spec_pass(request,user):
 @user_required
 @csrf_exempt
 def correct(request,user):
+
+	def que(number):
+		l = len(number)
+		list = []
+		for i in range(l):
+			item = InAndOut.objects.filter(status__in=[-1,0],number__startswith=number[:i],number__endswith=number[(i+1):]).all()
+			if item:
+				for j in item:
+					d ={
+						'id':j.id,
+						'pic':j.picture_in.url
+					}
+					list.append(d)
+		return list
+
+	def get_problem(id):
+
+		return Problem.objects.filter(gate__id=id,status=0).order_by('-update_time').first()
+
 	ctx = {}
 	gate_id = get_gate_id(user)
-	record = get_inandout(gate_id,2) 
-	p = record.direction if record else 0
+	record = max(get_problem(gate_id),get_inandout(gate_id,2))
+
+	if str(record._meta) == 'realtime.exceptrecord':
+		p = record.direction if record else 0
+	else:
+		p = 1
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')
@@ -174,34 +207,56 @@ def correct(request,user):
 			
 			r = InAndOut.objects.filter(number=number).first()
 			if r:
-				r.final_out_time = record.time
-				r.plate_color_out = reccord.plate_color
-				r.logo_out = record.logo
-				r.park_id = record.park_id
-				r.cam_id_out = record.cam_id
-				r.cam_ip_out = record.cam_ip
-				r.plate_val_out = record.plate_val
-				r.confidence_out = record.confidence
-				r.color_out = record.color
-				r.vdc_type = record.vdc_type
-				r.triger_type_out = record.triger_type
-				r.vehicle_type_out = record.vehicle_type
-				r.camera_out = record.camera
-				r.picture = record.picture
-				r.closeup_pic = record.closeup_pic
-				r.exception = 1
-				r.save()
-				record = r
+				if p == 0:
+					r.final_out_time = record.time
+					r.plate_color_out = reccord.plate_color
+					r.logo_out = record.logo
+					r.park_id = record.park_id
+					r.cam_id_out = record.cam_id
+					r.cam_ip_out = record.cam_ip
+					r.plate_val_out = record.plate_val
+					r.confidence_out = record.confidence
+					r.color_out = record.color
+					r.vdc_type = record.vdc_type
+					r.triger_type_out = record.triger_type
+					r.vehicle_type_out = record.vehicle_type
+					r.camera_out = record.camera
+					r.picture = record.picture
+					r.closeup_pic = record.closeup_pic
+					r.exception = 1
+					r.save()
+					if r.bill:
+						if r.bill.status == 1:
+							re = WorkRecord.objects.filter(worker=user).order_by('-time').first()
+							createOpenOrder(re.parkinglot.id,re.gate.id,r)
+				else:
+					r.user = record.user
+					r.save()
+					record.status =1
+					record.save()
+
+				return redirect('/account/spec_pass')
 
 		elif action == 'in':
 			p=1
-			record = ExceptRecord.objects.filter(direction=p,status=0).order_by('-update_time').first()
+			record = get_problem(gate_id)
 			
-
 		elif action == 'out':
 			p = 0
 			record = ExceptRecord.objects.filter(direction=p,status=1).order_by('-update_time').first()
 
+
+	if record and str(record._meta) == 'wechat.problem' :
+		ctx['except'] = que(record.number)
+		plate = [i for i in record.plate]
+		ctx['on'] = plate[0]
+		ctx['tw'] = plate[1]
+		ctx['th'] = plate[2]
+		ctx['fo'] = plate[3]
+		ctx['fi'] = plate[4]
+		ctx['si'] = plate[5]
+		ctx['se'] = plate[6]
+		ctx['ei'] = plate[7]
 
 	ctx['p'] = p
 	ctx['record'] = record
@@ -214,6 +269,7 @@ def record(request,user):
 	
 	def transfor(t):
 		return datetime.datetime.strptime(t,'%Y-%m-%d %H:%M:%S')
+
 
 	ctx = {}
 	gate_id = get_gate_id(user)

@@ -49,6 +49,7 @@
 		<div>
 			<div class="item">需核实入场时间</div>
 			<div id='phone'><img src="/static/img/phone.svg"></div>
+			<!-- <a href="tel:13166037628">0311-85358073</a> -->
 		</div>
 		{% elif record.get_price == 0%}
 		<div>
@@ -62,7 +63,7 @@
 			<div class="price">¥0</div>
 		</div>
 		<div>
-			<div class="item">已线上缴费：¥{{record.get_price}} </div>
+			<div class="item">已线上缴费:¥{{record.get_price}}</div>
 		</div>
 		{% else %}
 		<div>

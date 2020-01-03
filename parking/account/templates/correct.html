@@ -1,24 +1,46 @@
-
 {% extends 'home.html' %}
 {% block content %}
 <div id='total'>
 	{% include 'header.html' %}
 	
 	<div class='con'>
-		<img src="{{ record.picture.url}}" id='im'>
-		{% if p == 1%}
+		<div id='bo_pic'>
+			{% if p == 1 %}
+			{% if except %}
+			<div id='pic_con'>
+				{% for i in except%}
+				<img id='im_{{i.id}}' src="{{i.pic}}" class='im pic'>
+				{% endfor %}
+			</div>	
+			{% else %}
+			<div id='pic_con'>
+				<img src="{{ record.picture.url}}" class='im ig'>
+			</div>
+			{% endif %}
+			<div id='cli'>
+				<span id=le><img src="/static/img/left.svg">上一张</span>
+				<span id='mid'>1</span>
+				<span id='ri'>下一张<img src="/static/img/right.svg"></span>
+			</div>
+			{% else %}
+			<img src="{{ record.picture.url}}" class='im'>
+			{% endif %}
+			
+		</div>
+		{% if p == 1 %}
 		<p>用户填写</p>
 		<div class="correct-form">
+
 			<form method="post" action="" id='corrct-form' >
-				<input type="text" name="num_1" class="inp" value="">
-				<input type="text" name="num_2" class="inp" maxlength="1">
+				<input type="text" name="num_1" class="inp" value="{{on}}">
+				<input type="text" name="num_2" class="inp" maxlength="1" value="{{tw}}">
 				<span id='poi'>.</span>
-				<input type="text" name="num_3" class="inp" maxlength="1">
-				<input type="text" name="num_4" class="inp" maxlength="1">
-				<input type="text" name="num_5" class="inp" maxlength="1">
-				<input type="text" name="num_6" class="inp" maxlength="1">
-				<input type="text" name="num_7" class="inp" maxlength="1" >
-				<input type="" name="num_8" class="inp" placeholder="新能源">
+				<input type="text" name="num_3" class="inp" maxlength="1" value="{{th}}">
+				<input type="text" name="num_4" class="inp" maxlength="1" value="{{fo}}">
+				<input type="text" name="num_5" class="inp" maxlength="1" value="{{fi}}">
+				<input type="text" name="num_6" class="inp" maxlength="1" value="{{si}}">
+				<input type="text" name="num_7" class="inp" maxlength="1"  value="{{se}}">
+				<input type="" name="num_8" class="inp" placeholder="新能源" value="{{ei}}">
 				<input type="hidden" name="action" value="correct">
 			</form>
 		</div>
@@ -84,7 +106,7 @@
 		position: absolute;
     	margin: 8% 0% 0% 15%;
 	}
-	#im{
+	.im{
 		width: 100%;
 		height: 140px
 	}
@@ -110,12 +132,87 @@
 		border-radius: 50%;
 		margin: 5% 0 5% 40%
 	}
+	#cli img{
+		height: 17px;
+		margin-bottom: -3px;
+	}
+	#le{
+		background-color: #3366CC;
+		color: white;
+		font-size: 15px;
+		position: absolute;
+		left: 5px
+	}
+	#ri{
+		background-color: #3366CC;
+		color: white;
+		font-size: 15px;
+		position: absolute;
+		right: 5px
+	}
+	#cli{
+		width: 100%;
+		height: 15px;
+    	margin-top: 5px;
+	}
+	#mid{
+		position: absolute;
+		left: 50%
+	}
+	.pic{
+		display: none;
 
+	}
+	#pic_con{
+		width: 100%;
+	}
 </style>
 {% endblock %}
 {% block js %}
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
+	function cal(obj,t){
+		if($(obj).css('background-color') == "rgb(128, 128, 128)"){
+			return;
+		}
+		var le = $('#bo_pic img').length;
+		var i = parseInt($('#mid').text());
+		$('#mid').text(i+t);
+		$('#im_'+i).toggle();
+		$('#im_'+i+t).toggle();
+		if((i+t) == 1){
+			$('#le').css('background-color','gray');
+		}
+		else if((i+t) == le ){
+			$('#ri').css('background-color','gray');
+		}
+		
+	}
+	$('#pic_con').click(function(){
+		if($('#pic_con').css('height') == window.innerHeight+'px'){
+			$('#pic_con').css('height','');
+			$('#pic_con').css('z-index',0);
+			$('#pic_con').css('background-color','');
+			$('#pic_con').css('position','relative');
+			$('#pic_con').css('top','');
+			$('.pic').css('margin-top','');
+			$('.ig').css('margin-top','')
+		}else{
+			$(this).css('height',window.innerHeight);
+			$('#pic_con').css('z-index',20);
+			$('#pic_con').css('position','fixed');
+			$('#pic_con').css('background-color','rgba(0,0,0,0.3');
+			$('#pic_con').css('top',0);
+			$('.ig').css('margin-top',0.4*window.innerHeight);
+			$('.pic').css('margin-top',0.4*window.innerHeight)
+		}
+	}
+	)
+	$(document).ready(()=>(
+		$('#im_1').toggle()
+	))
+	$('#le').click(cal('#le',-1));
+	$('#le').click(cal('#ri',+1));
 	$('#correct').click(()=>(
 		$('#corr-form').submit()
 	))

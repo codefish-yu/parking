@@ -7,6 +7,8 @@ from meta.models import Product,Order,Payment
 from django.http import JsonResponse
 from meta import api
 
+import functools
+
 # Create your views here.
 def wuser_required(func):
 
@@ -42,14 +44,16 @@ def wuser_required(func):
 
 def user_required(view_func):
 
-    def wrapper(request, *args, **kwargs):
-        if 'company_id' not in request.session:
-            return redirect('/business/com_login/')
+	@functools.wraps(view_func)
+	def wrapper(request, *args, **kwargs):
+		if 'company_id' not in request.session:
+			return redirect('/business/com_login/')
 
-        company = Company.objects.filter(id=request.session['company_id']).first()
-        return view_func(request, company=company, *args, **kwargs)
+		company = Company.objects.filter(id=request.session['company_id']).first()
+		return view_func(request, company=company, *args, **kwargs)
 
-    return wrapper
+	return wrapper
+
 
 # @wuser_required
 @csrf_exempt
@@ -81,7 +85,7 @@ def apply(request,tc_id):
 		if action == 'buy':
 			amount = request.POST.get('amount')
 			cost = float(request.POST.get('cost'))
-			print(cost)
+	
 			r = ApplyRecord()
 			r.coupon = record
 			r.number = int(amount)
@@ -89,20 +93,21 @@ def apply(request,tc_id):
 			p = Product()
 			b.cost=cost
 			p.price=cost
+
 			if cost == 0:
 				b.status =1
 				record.extra +=int(amount)
-				record.save() 
+				record.save()
+
 			p.save()
 			b.product = p
 			b.save()
 			r.bill = b
 			r.save()
 			tip = p.id
+
 			if cost == 0:
 				return redirect('/business/grant/')
-
-			
 
 		elif action == 'confirm':
 			p_id = request.POST.get('product_id')
