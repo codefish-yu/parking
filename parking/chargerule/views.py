@@ -8,6 +8,7 @@ from .models import *
 from company.models import Company
 from parkinglot.models import ParkingLot
 from administrator.models import AdminUser 
+from business.views import ran
 from administrator.decorators import page, _save_attr_,export_excel
 import io
 
@@ -306,6 +307,7 @@ def coupon(request):
             if ticket_type and ticket_id:
                 r.coupons_id = int(ticket_id)
             r.coucode = code(r.id)
+            r.qrrandom = ran()
             r.save()
 
         elif action == 'update':

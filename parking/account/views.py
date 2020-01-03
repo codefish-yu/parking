@@ -51,9 +51,10 @@ def user_required(func):
 
 
 def max(a,b):
-	if a.update_time>b.update_time:
-		return a
-	return b
+	if a and b:
+		if a.update_time>b.update_time:
+			return a
+		return b
 
 def all_or_fir(obj,t=1):
 	if t == 0:
@@ -198,11 +199,12 @@ def correct(request,user):
 	ctx = {}
 	gate_id = get_gate_id(user)
 	record = max(get_problem(gate_id),get_inandout(gate_id,2))
-
-	if str(record._meta) == 'realtime.exceptrecord':
-		p = record.direction if record else 0
-	else:
-		p = 1
+	p =0
+	if record:
+		if str(record._meta) == 'realtime.exceptrecord':
+			p = record.direction if record else 0
+		else:
+			p = 1
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')
