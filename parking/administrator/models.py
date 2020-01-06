@@ -69,12 +69,14 @@ class Role(models.Model):
 
     def get_operations(self, url):
         menu = Menu.objects.filter(url=url).first()
+        print(url, menu)
         if not menu:
             return []
         else:
             auth = Authority.objects.filter(role=self, child_menu=menu)
+
             if auth:
-                return [{'operation_name': i.operation_name, 'action': i.action} for i in auth.first().operation.all()]
+                return [i.action for i in auth.first().operation.all()]
             else:
                 return []
 

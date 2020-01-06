@@ -154,8 +154,9 @@ def user(request):
 
 
 @csrf_exempt
+@user_required
 @page
-def role(request):
+def role(request, user):
     ctx = {}
 
     roles = Role.objects.all()

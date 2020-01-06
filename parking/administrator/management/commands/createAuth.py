@@ -76,9 +76,9 @@ class Command(BaseCommand):
                         child_menu = Menu.objects.create(menu_name=child[0], parent=menu, url=child[2])
 
                     for op in child[1]:
-                        operation = Operation.objects.create(operation_name=op, action=Operations[op])
-
-                        child_menu.operation.add(operation)
+                        if not child_menu.operation.filter(operation_name=op).exists():
+                            operation = Operation.objects.create(operation_name=op, action=Operations[op])
+                            child_menu.operation.add(operation)
  
         if not AdminUser.objects.exists():
             if not Role.objects.exists():
