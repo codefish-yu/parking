@@ -81,6 +81,15 @@ def createBill2(in_and_out):
     return bill
 
 
+def cost_coupons(coupons, bill):
+    if coupons:
+        from chargerule.models import UserCoupon
+        usercoupons = UserCoupon.objects.filter(id__in=coupons)
+        usercoupons.update(status=1)
+        bill.user_coupon = usercoupons
+    return
+
+
 @user_required
 def parkin(request, user, parkinglot_id, gate_id):
     '''卡口扫码入场'''
@@ -126,15 +135,18 @@ def parkout(request, user, parkinglot_id, gate_id=None):
                 if order:
                     from meta.models import Payment
                     if Payment.objects.filter(order=order).exists():
+                        
+
                         bill = Bill.objects.filter(product_id=int(product_id))
                         bill.update(status=1, pay_type=1, pay_time=now())
                         
+                        bill = bill.first()
+                        coupons = request.POST.get('coupons', [])
+                        cost_coupons(coupons, bill)
+
                         if gate_id:  # 如果此时在出口扫描支付, 则要立即创建开闸指令
-                            r = bill.first().InAndOut
-                            bill.update(status=2)
+                            r = bill.InAndOut
                             createOpenOrder(parkinglot_id, gate_id, r)
-                            r.final_out_time = now()
-                            r.save()
 
                         return JsonResponse({'success': True})
             return JsonResponse({'success': False})

@@ -3,6 +3,7 @@ from django.db import models
 
 from meta.models import User, Product
 from device.models import Camera
+from chargerule.models import UserCoupon
 from parkinglot.models import ParkingLot, Worker, Gate
 
 
@@ -131,6 +132,7 @@ class Bill(models.Model):
     status = models.IntegerField(default=0, choices=[(0, '未支付'),(1, '已支付'),(2,'已出场')])
     detail = models.ForeignKey('PayDetail',on_delete=models.SET_NULL,verbose_name='收费明细',related_name='detail',null=True,blank=True)
 
+    user_coupon = models.ManyToManyField(UserCoupon, verbose_name='用券')
     product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
 
 

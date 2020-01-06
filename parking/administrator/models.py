@@ -56,7 +56,7 @@ class Role(models.Model):
             for j,v in enumerate(menus):
                 if v['id'] == i.menu.id:
                     flag = True
-                    menus[j]['child_menu'].append({'child_menu': i.child_menu.menu_name, 'child_menu_id': i.child_menu.url})
+                    menus[j]['child_menu'].append({'child_menu': i.child_menu.menu_name, 'url': i.child_menu.url})
 
             if not flag:
                 menus.append({

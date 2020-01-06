@@ -22,8 +22,7 @@ def user_required(view_func):
 
         user = AdminUser.objects.filter(id=request.session['uid']).first()
         role = user.role_name
-        request.session['role'] = role.role_name
-        request.session['menus'] = menus = role.get_menu_and_childmenu()
+        
         request.session['operations'] = role.get_operations(request.path)
 
         return view_func(request, user=user, *args, **kwargs)
