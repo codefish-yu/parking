@@ -124,7 +124,7 @@ def apply(request,tc_id):
 				if order:
 					if Payment.objects.filter(order=order).exists():
 						bill = BusinessBill.objects.filter(product_id=int(p_id)).update(status=1)
-						ar = ApplyRecord.objects.filter(bill=bill).first()
+						ar = ApplyRecord.objects.filter(bill=bill.first()).first()
 						record.extra +=ar.number
 						record.save()
 
