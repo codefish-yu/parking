@@ -179,13 +179,8 @@ def ticket(request,tc_id):
 	if request.method == 'POST':
 		action = request.POST.get('action','')
 		if action == 'vary':
-			l = []
-			t = {
-				'id':record.id,
-				'code':ran()
-			}
-	
-			return JsonResponse({'result':t})
+			
+			return JsonResponse({'result':{'id':record.id,'code':ran()}})
 
 	ctx['record'] = record
 	return render(request,'ticket.html',ctx)

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'administrator',
     'account',
     'business',
+    'manager',
 
 ]
 
