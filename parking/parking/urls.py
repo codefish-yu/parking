@@ -133,6 +133,8 @@ urlpatterns = [
 
     #manager
     path('manager/manage_login/',m.manage_login),
+    path('manager/manage_home/',m.manage_home),
+
 
 
 
