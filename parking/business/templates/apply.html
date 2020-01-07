@@ -100,10 +100,10 @@
 				action:'buy'
 			}
 			myajax('', d, (data)=>{
-				if(e.result  == 0){
+				if(data.result  == 0){
 					window.location.href='/business/grant/'
 				}else{
-					product_id=e.result
+					product_id=data.result
 				}
 			}
 		)
