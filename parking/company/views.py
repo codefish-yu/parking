@@ -122,6 +122,6 @@ def company(request):
 				ctx['a']=ass_name
 
 	ctx['objects'] = ctx['company'] = companys
-	ctx['parkinglot'] = ParkingLot.objects.all()
+	ctx['parkinglot'] = ParkingLot.objects.filter(status=0)
 
 	return (ctx,'company.html')

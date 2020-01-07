@@ -10,6 +10,7 @@ from meta import api
 import functools
 import random
 import string
+import datetime
 
 # Create your views here.
 def ran():
@@ -61,9 +62,9 @@ def user_required(view_func):
 	return wrapper
 
 
-# @wuser_required
+@wuser_required
 @csrf_exempt
-def com_login(request):
+def com_login(request,user):
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')
@@ -83,7 +84,6 @@ def com_login(request):
 @csrf_exempt
 def apply(request,tc_id):
 	ctx = {}
-	tip = -1
 	record = TicketRecord.objects.filter(id=int(tc_id)).first()
 	
 	if request.method == 'POST':
@@ -110,27 +110,29 @@ def apply(request,tc_id):
 			b.save()
 			r.bill = b
 			r.save()
-			tip = p.id
+			
 
 			if cost == 0:
-				return redirect('/business/grant/')
+				return JsonResponse({'result':0})
+
+			return JsonResponse({'result':p.id})
 
 		elif action == 'confirm':
 			p_id = request.POST.get('product_id')
 			if p_id:
-				order = Order.objects.filter(product_id=pid).order_by('-create_time').first()
+				order = Order.objects.filter(product_id=p_id).order_by('-create_time').first()
 				if order:
 					if Payment.objects.filter(order=order).exists():
-						bill = BusinessBill.objects.filter(product_id=int(p_id))
-						bill.update(status=1, pay_type=1, pay_time=datetime.datetime.now())
-						ar = ApplyRecord.objects.filter(product__id=p_id).first()
+						bill = BusinessBill.objects.filter(product_id=int(p_id)).first()
+						bill.status=1
+						bill.save()
+						ar = ApplyRecord.objects.filter(bill=bill).first()
 						record.extra +=ar.number
 						record.save()
 
 						return JsonResponse({'result':'ok'})
 			return JsonResponse({'result':'bad'})
 
-	ctx['product_id'] = tip
 	ctx['diff'] = record.amount - record.extra
 	ctx['record'] = record
 	return render(request,'apply.html',ctx)

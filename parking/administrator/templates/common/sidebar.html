@@ -41,7 +41,7 @@
 
             </li>
 
-            {% if request.session.role != 'Admin' %}
+            
                 {% for i in request.session.menus %}
                     <li class="menu-role">
 
@@ -57,9 +57,9 @@
                 </li>
 
                 {% endfor %}
-            {% else %}
+          
 
-            <li class="menu-role">
+            <!-- <li class="menu-role">
 
                 <a href="#" class="button"><i class="fa fa-car"></i> <span class="nav-label">系统配置 </span><span class="fa arrow"></span></a>
 
@@ -200,8 +200,7 @@
 
                 </ul>
 
-            </li>
-            {% endif %}
+            </li> -->
         </ul>
 
     </div>

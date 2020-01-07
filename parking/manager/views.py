@@ -44,4 +44,11 @@ def manage_login(request):	#username:管理员名字
 #员工列表界面
 def staff_list(request):
 	pass
-	# if request.method == 'GET':
+
+	return render(request,'manage_login.html',ctx)
+
+
+def manage_home(request):
+	ctx = {}
+
+	return render(request,'manage_home.html',ctx)

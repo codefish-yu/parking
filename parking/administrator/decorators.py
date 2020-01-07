@@ -21,7 +21,7 @@ def user_required(view_func):
             return redirect('/administrator/login/')
 
         user = AdminUser.objects.filter(id=request.session['uid']).first()
-        role = user.role_name
+        role = user.role_name 
         
         request.session['operations'] = role.get_operations(request.path)
 

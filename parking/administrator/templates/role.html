@@ -36,9 +36,15 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-sm-6 m-b-xs">
+                                {% if 'add' in request.session.operations %}
                                 <button type="button" id="Add" class=" btn btn-primary model-btn" data-target='add_role_model' style="display: inline-block;"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                                {% endif %}
+                                {% if 'update' in request.session.operations %}
                                 <button type="button" id="update-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-edit"></i>&nbsp;修改</button>
+                                {% endif %}
+                                {% if 'delete' in request.session.operations %}
                                 <button type="button" id="delete-btn" class="btn btn-primary " style="display: inline-block;"><i class="fa fa-trash"></i>&nbsp;删除</button>
+                                {% endif %}
                             </div>
                             <div class="col-sm-3 m-b-xs"></div>
                         </div>
@@ -57,7 +63,11 @@
                                         <input type="hidden" name="action" value='delete'>
                                     {% for i in objects %}
                                         <tr>
-                                         <td><input name='ids' type='checkbox' value='{{i.id}}' /></td>
+                                         <td>
+                                            {% if i.role_name != 'Admin' %}
+                                            <input name='ids' type='checkbox' value='{{i.id}}' />
+                                            {% endif %}
+                                        </td>
                                             <td>{{ i.role_name }}</td>
                                             <td>{{ i.detail|default:''}}</td>
                                         </tr>

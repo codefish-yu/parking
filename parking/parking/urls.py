@@ -134,9 +134,7 @@ urlpatterns = [
     #manager
     path('manager/manage_login/',m.manage_login),
     path('manager/staff_list/',m.staff_list),
-    
-
-
+    path('manager/manage_home/',m.manage_home),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
