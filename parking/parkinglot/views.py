@@ -320,6 +320,8 @@ def calendar(request):
 		
 		if p:
 			days = Calendar.objects.filter(year=year, ifwork=status,parkinglot__id=p)
+			if not days:
+				days = Calendar.objects.filter(year=year, ifwork=status,parkinglot__isnull=True)
 		else:
 			days = Calendar.objects.filter(year=year, ifwork=status,parkinglot__isnull=True)
 				
