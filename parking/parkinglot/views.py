@@ -378,7 +378,7 @@ def calendar(request):
 	ctx['year'] = year
 	ctx['workdays'] = get_day(year,True,p)
 	ctx['nonworkdays'] = get_day(year,False,p)
-	ctx['parkinglot'] = ParkingLot.objects.all()
+	ctx['parkinglot'] = ParkingLot.objects.filter(status=0).all()
 
 	return render(request, 'calendar.html', ctx)
 
