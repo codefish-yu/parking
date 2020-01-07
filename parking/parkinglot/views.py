@@ -352,12 +352,12 @@ def calendar(request):
 
 	if request.method == 'POST':
 		action = request.POST.get('action')
+		p = int(request.POST.get('parkinglot',''))	
 		if action == 'save':
 			ctx['year'] = year = request.POST.get('year', '')
 			workdays = request.POST.getlist('workdays', [])
 			nonworkdays = request.POST.getlist('nonworkdays', [])
 			year = int(year)
-			p = int(request.POST.get('p',''))
 
 			if p:
 				Calendar.objects.filter(parkinglot__id=p).delete()
@@ -369,16 +369,12 @@ def calendar(request):
 
 		if action == 'change_year':
 			ctx['year'] = year = request.POST.get('year', '')
-			p = request.POST.get('parkinglot','')
-
-		if action == 'change':
-			p = int(request.POST.get('parkinglot',''))			
-
-	ctx['p'] = int(p) if p else 0
+					
+	ctx['p'] = p 
 	ctx['year'] = year
 	ctx['workdays'] = get_day(year,True,p)
 	ctx['nonworkdays'] = get_day(year,False,p)
-	ctx['parkinglot'] = ParkingLot.objects.all()
+	ctx['parkinglot'] = ParkingLot.objects.filter(status=0).all()
 
 	return render(request, 'calendar.html', ctx)
 

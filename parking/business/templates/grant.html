@@ -260,7 +260,7 @@
 				},
 				success:function(e){
 					var list = $('.barc img');
-					console.log(e.result)
+					
 					for(var i=0;i<list.length;i++){
 
 						makeqr(list[i],e.result[i].id,e.result[i].code)

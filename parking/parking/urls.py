@@ -29,6 +29,7 @@ from chargerule import views as charge
 from realtime import views as realtime
 from account import views as ac
 from business import views as b
+from manager import views as m
 
 
 urlpatterns = [
@@ -129,6 +130,9 @@ urlpatterns = [
     path('business/apply/<int:tc_id>/',b.apply),
     path('business/grant/',b.grant),
     path('business/ticket/<int:tc_id>/',b.ticket),
+
+    #manager
+    path('manager/manage_login/',m.manage_login),
 
 
 
