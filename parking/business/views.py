@@ -114,7 +114,7 @@ def apply(request,tc_id):
 			if cost == 0:
 				return JsonResponse({'result':0})
 
-			return JsonResponse({'result':tip})
+			return JsonResponse({'result':p.id})
 
 		elif action == 'confirm':
 			p_id = request.POST.get('product_id')
