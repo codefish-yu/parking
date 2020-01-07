@@ -79,6 +79,7 @@
 	}
 </style>
 <script type="text/javascript">
+	var product_id;
 	function myajax(url, data, callback, type){
             type = type || 'json'
             $.ajax({
@@ -102,6 +103,7 @@
 				if(data.result  == 0){
 					window.location.href='/business/grant/'
 				}else{
+					product_id = data.result;
 					myajax('/order/public/account/'+data.result+'/', {csrfmiddlewaretoken:'{{ csrf_token }}'}, (data)=>(pay(data)))
 				}
 			}
