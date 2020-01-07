@@ -315,9 +315,38 @@ def place(request):
 
 
 def calendar(request):
+
+	def get_day(year,status,p):
+		
+		if p:
+			days = Calendar.objects.filter(year=year, ifwork=status,parkinglot__id=p)
+		else:
+			days = Calendar.objects.filter(year=year, ifwork=status,parkinglot__isnull=True)
+				
+		l= []
+		for i in days:
+
+			l.append(i.day.strftime('%Y-%m-%d'))
+		return l
+
+
+	def renew(ds,status,y,p):
+		l = []
+		if ds:
+			for i in ds:
+				r = Calendar(day=i, ifwork=status, year=y)
+				if p:
+					parkinglot = ParkingLot.objects.filter(id=p).first()
+					r.parkinglot=parkinglot
+
+				l.append(r)
+			if l:
+				Calendar.objects.bulk_create(l)
+
 	ctx = {}
 
 	year = datetime.datetime.now().year
+	p = 0
 
 	if request.method == 'POST':
 		action = request.POST.get('action')
@@ -326,45 +355,28 @@ def calendar(request):
 			workdays = request.POST.getlist('workdays', [])
 			nonworkdays = request.POST.getlist('nonworkdays', [])
 			year = int(year)
-			
-			records = []
-			print(workdays)
-			Calendar.objects.filter(year=year).delete()
+			p = int(request.POST.get('p',''))
 
-			if workdays:
-				for i in workdays:
-					r = Calendar(day=i, ifwork=True, year=year)
-					records.append(r)
-				if records:
-					Calendar.objects.bulk_create(records)
-			records = []
-			if nonworkdays:
-				for i in nonworkdays:
-					r = Calendar(day=i, ifwork=False, year=year)
-					records.append(r)
-				if records:
-					Calendar.objects.bulk_create(records)
+			if p:
+				Calendar.objects.filter(parkinglot__id=p).delete()
+			else:
+				Calendar.objects.filter(parkinglot__isnull=True).delete()	
+
+			renew(workdays,True,year,p)
+			renew(nonworkdays,False,year,p)
 
 		if action == 'change_year':
 			ctx['year'] = year = request.POST.get('year', '')
+			p = request.POST.get('parkinglot','')
 
-	days = Calendar.objects.filter(year=year, ifwork=True)
-	workdays = []
-	for i in days:
-		workdays.append(i.day.strftime('%Y-%m-%d'))
-	
-	days = Calendar.objects.filter(year=year, ifwork=False)
-	nonworkdays = []
-	for i in days:
-		nonworkdays.append(i.day.strftime('%Y-%m-%d'))
+		if action == 'change':
+			p = int(request.POST.get('parkinglot',''))			
 
+	ctx['p'] = int(p) if p else 0
 	ctx['year'] = year
-	# ctx['workdays'] = ['2019-01-06', '2019-01-07']
-	ctx['workdays'] = workdays
-	print(workdays)
-	# ctx['nonworkdays'] = ['2019-01-16', '2019-01-17']
-	ctx['nonworkdays'] = nonworkdays
-	print(nonworkdays)
+	ctx['workdays'] = get_day(year,True,p)
+	ctx['nonworkdays'] = get_day(year,False,p)
+	ctx['parkinglot'] = ParkingLot.objects.all()
 
 	return render(request, 'calendar.html', ctx)
 

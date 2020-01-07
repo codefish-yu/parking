@@ -9,6 +9,7 @@ from meta import api
 
 import functools
 import random
+import string
 
 # Create your views here.
 def ran():
@@ -153,16 +154,13 @@ def grant(request,company):
 			else:
 				records = ApplyRecord.objects.filter(coupon__company=company).all()
 
-		elif action == 'change':
+		elif action == 'vary':
 			l = []
 			for i in records:
 
-				i.qrrandom = ran()
-				i.save()
-
 				t = {
 					'id':i.id,
-					'code':i.qrrandom
+					'code':ran()
 				}
 				l.append(t)
 			return JsonResponse({'result':l})
@@ -171,3 +169,23 @@ def grant(request,company):
 	ctx['p']=p
 	ctx['records'] = records
 	return render(request,'grant.html',ctx) 
+
+
+@csrf_exempt
+def ticket(request,tc_id):
+	ctx = {}
+	record = TicketRecord.objects.filter(id=tc_id).first()
+
+	if request.method == 'POST':
+		action = request.POST.get('action','')
+		if action == 'vary':
+			l = []
+			t = {
+				'id':record.id,
+				'code':ran()
+			}
+	
+			return JsonResponse({'result':t})
+
+	ctx['record'] = record
+	return render(request,'ticket.html',ctx)
