@@ -83,7 +83,6 @@ def com_login(request,user):
 @csrf_exempt
 def apply(request,tc_id):
 	ctx = {}
-	tip = -1
 	record = TicketRecord.objects.filter(id=int(tc_id)).first()
 	
 	if request.method == 'POST':
@@ -110,7 +109,7 @@ def apply(request,tc_id):
 			b.save()
 			r.bill = b
 			r.save()
-			tip = p.id
+			
 
 			if cost == 0:
 				return JsonResponse({'result':0})
@@ -132,7 +131,6 @@ def apply(request,tc_id):
 						return JsonResponse({'result':'ok'})
 			return JsonResponse({'result':'bad'})
 
-	ctx['product_id'] = tip
 	ctx['diff'] = record.amount - record.extra
 	ctx['record'] = record
 	return render(request,'apply.html',ctx)
