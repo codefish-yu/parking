@@ -101,7 +101,22 @@ def problem(request, user):
 
 @user_required
 def scan_coupon(request, user, id, code):
+	from chargerule.models import TicketRecord, UserCoupon
 
-	pass
-	
+	ctx = {}
+
+	r = TicketRecord.objects.filter(id=id)
+	if r.exists():
+		r = r.first()
+		if r.qrrandom == code:
+			from business.views import ran
+			r.qrrandom = ran()
+			r.save()
+
+			UserCoupon.objects.create(user=user, ticket_record=r.first())
+		else:
+			ctx['error'] = '二维码已过期'
+
+	coupons = UserCoupon.objects.select_related('ticket_record', 'ticket_record__coupons').filter(status=0).order_by('-create_time')
+
 	return render(request, 'public_count/personal/mycoupon.html', ctx)

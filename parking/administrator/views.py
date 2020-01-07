@@ -23,15 +23,17 @@ def login(request):
         if action == 'login':
             user_name = request.POST.get('user_name')
             password = request.POST.get('user_pass')
-            print(user_name, password)
+             
             user = AdminUser.objects.filter(user_name=user_name,user_pass=password).first()
             if user :
-                print(user)
+                 
                 request.session['uid'] = user.id
                 request.session['user_name'] = user.user_name
 
-                return redirect(base)
+                request.session['role'] = user.role_name.role_name
+                request.session['menus'] = menus = user.role_name.get_menu_and_childmenu()
 
+                return redirect(base)
 
     return render(request, 'login.html')
 
@@ -71,7 +73,7 @@ def modify(request, user):
                 r.save()
             
 
-    ctx['me'] =  me
+    ctx['me'] =  user
     ctx['roles'] = roles = Role.objects.all()
 
     return render(request,'perModify.html',ctx)

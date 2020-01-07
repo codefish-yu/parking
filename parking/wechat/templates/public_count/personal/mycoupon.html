@@ -92,7 +92,13 @@
 
 
 <body>
-
+{% if error %}
+	
+	<div style="padding: 30px;margin-top:200px ">
+		<h5>{{ error }}</h5>
+	</div>
+	
+{% else %}
 <div class='title'>	优惠券</div>
 
 <!-- <div class='coupon_row coupon-type1' repeatable='{{ i.repeatable }}' id='{{ i.id }}'>
@@ -161,6 +167,7 @@
 	</div>
 {% endfor %}
 	 
+{% endif %}
 <script type="text/javascript">
 	
 	 

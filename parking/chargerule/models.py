@@ -211,8 +211,9 @@ class UserCoupon(models.Model):
 
     user = models.ForeignKey(CarUser, on_delete=models.SET_NULL, null=True, blank=True)
     car_number = models.CharField(max_length=200, null=True, blank=True, verbose_name='车牌')
-    coupon = models.ForeignKey(Coupons, on_delete=models.CASCADE)
-    status = models.IntegerField(choices=[(0, '未使用'),(1, '已使用')])
+    ticket_record = models.ForeignKey(TicketRecord, on_delete=models.CASCADE)
+    coupon = models.ForeignKey(Coupons, null=True, on_delete=models.CASCADE)
+    status = models.IntegerField(default=0, choices=[(0, '未使用'),(1, '已使用')])
 
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     use_time = models.DateTimeField(auto_now_add=True, verbose_name='使用时间')
