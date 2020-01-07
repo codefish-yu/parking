@@ -1,1 +1,130 @@
-manage_login.html
+{% extends 'home.html' %}
+{% block content %}
+<div id='bo'>
+	<div id="top">
+		<div>
+			<select name="parkinglot" data-placeholder="选择停车场" id="park">
+				<option value="">选择停车场</option>
+			</select>
+		</div>
+		<div class="time">
+			<div class="ti-it">
+				<div >2019年</div>
+				<div >12月</div>
+			</div>
+			<select >
+				<option value="">日报</option>
+				<option value="">周报</option>
+				<option value="">月报</option>
+				<option value="">年报</option>
+			</select>
+		</div>
+		<div class="mon">
+			<div>应收金额（元）</div>
+			<div>14000</div>
+		</div>
+		<div>
+			<div class="item">
+				<div>出场车次</div>
+				<div></div>
+			</div>
+			<div class="item">
+				<div>优免券抵扣金额（元）</div>
+				<div></div>
+			</div>
+		</div>
+		<div>
+			<div class="item">
+				<div>特殊处理损失</div>
+				<div></div>
+			</div>
+			<div class="item">
+				<div>优免券使用数量</div>
+				<div></div>
+			</div>
+		</div>
+	</div>
+	<div id="bottom">
+		<div class="bo-it">
+			<div >
+				<img src="">
+				<span>员工管理</span>
+			</div>
+			<div >
+				<img src="">
+				<span>出入场管理</span>
+			</div>
+			<div>
+				<img src="">
+				<span>优惠券</span>
+			</div>
+		</div>
+		<div class="bo-it">
+			<div >
+				<img src="">
+				<span>特殊放行</span>
+			</div>
+			<div >
+				<img src="">
+				<span>交接班管理</span>
+			</div>
+			<div >
+				<img src="">
+				<span>自定义功能</span>
+			</div>
+		</div>
+	</div>
+</div>
+<style type="text/css">
+	.ti-it{
+		display: inline-block;
+		width: 49%;
+		text-align: center;
+	}
+	.ti-it div{
+		display: inline-block;
+	}
+	.mon{
+		text-align: center
+	}
+	.bo-it div{
+		display: inline-block;
+		width: 32%
+	}
+	.item{
+		display: inline-block;
+		width: 49%
+	}
+	.time{
+		margin-top: 4%
+	}
+	.time select{
+		display: inline-block;
+		position: absolute;
+		right: 15%;
+		font-size: 12pt;
+	}
+	#top{
+		height: 60%;
+		background: linear-gradient(#3366CC, #ffffff);
+		color: white;
+		font-family: PingFangSC-Semibold
+	}
+	#bottom{
+		height: 40%
+	}
+	#bo{
+		width: 100%;
+		height: 100%;
+		position: absolute;
+	}
+	select{
+		color: white;
+		font-family: PingFangSC-Semibold
+	}
+	#park{
+		font-size: 14pt;
+		margin: 3% 0 0 20%
+	}
+</style>
+{% endblock %}

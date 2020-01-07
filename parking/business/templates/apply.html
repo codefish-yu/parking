@@ -115,12 +115,12 @@
 	})
 	var product_id = {{product_id}}
 	if(product_id != -1){
-		myajax('/order/public/account/'+product_id+'/', {csrfmiddlewaretoken:'{{ csrf_token }}'}, (data)=>{
-			pay(data)
-		})
+		myajax('/order/public/account/'+product_id+'/', {csrfmiddlewaretoken:'{{ csrf_token }}'}, (data)=>(pay(data),console.log(1111))
+		)
 	}
 
 	function pay(data){
+
 	   WeixinJSBridge.invoke(
 	      'getBrandWCPayRequest', {
 	      	"appId":data.appId,     //公众号名称，由商户传入     
