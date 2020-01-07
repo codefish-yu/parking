@@ -48,31 +48,43 @@ class Role(models.Model):
         return {'menu': menu, 'child_menu': child_menu, 'operation': operation}
 
     def get_menu_and_childmenu(self):
-        auths = Authority.objects.filter(role=self)
         menus = []
-        
-        for i in auths:
-            flag = False
-            for j,v in enumerate(menus):
-                if v['id'] == i.menu.id:
-                    flag = True
-                    menus[j]['child_menu'].append({'child_menu': i.child_menu.menu_name, 'url': i.child_menu.url})
 
-            if not flag:
+        if self.role_name == 'Admin':
+            m = Menu.objects.filter(parent=None)
+            for i in m:
+                child_menu = Menu.objects.filter(parent=i)
                 menus.append({
-                    'id':i.menu.id,
-                    'menu': i.menu.menu_name,
-                    'child_menu': [{'child_menu': i.child_menu.menu_name, 'url': i.child_menu.url}]
+                    'id':i.id,
+                    'menu': i.menu_name,
+                    'child_menu': [{'child_menu': _.menu_name, 'url': _.url} for _ in child_menu]
                     })
-        print(menus)
+        else:
+            auths = Authority.objects.filter(role=self)
+            
+            for i in auths:
+                flag = False
+                for j,v in enumerate(menus):
+                    if v['id'] == i.menu.id:
+                        flag = True
+                        menus[j]['child_menu'].append({'child_menu': i.child_menu.menu_name, 'url': i.child_menu.url})
+
+                if not flag:
+                    menus.append({
+                        'id':i.menu.id,
+                        'menu': i.menu.menu_name,
+                        'child_menu': [{'child_menu': i.child_menu.menu_name, 'url': i.child_menu.url}]
+                        })
         return menus
 
     def get_operations(self, url):
         menu = Menu.objects.filter(url=url).first()
-        print(url, menu)
+
         if not menu:
             return []
         else:
+            if self.role_name == 'Admin':
+                return [i.action for i in menu.operation.all()]
             auth = Authority.objects.filter(role=self, child_menu=menu)
 
             if auth:
