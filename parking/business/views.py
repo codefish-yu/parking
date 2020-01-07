@@ -123,9 +123,10 @@ def apply(request,tc_id):
 				order = Order.objects.filter(product_id=p_id).order_by('-create_time').first()
 				if order:
 					if Payment.objects.filter(order=order).exists():
-						bill = BusinessBill.objects.filter(product_id=int(p_id)).update(status=1)
-						b = bill.first()
-						ar = ApplyRecord.objects.filter(bill=b).first()
+						bill = BusinessBill.objects.filter(product_id=int(p_id)).first()
+						bill.status=1
+						bill.save()
+						ar = ApplyRecord.objects.filter(bill=bill).first()
 						record.extra +=ar.number
 						record.save()
 
