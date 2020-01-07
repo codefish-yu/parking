@@ -113,7 +113,9 @@ def apply(request,tc_id):
 			tip = p.id
 
 			if cost == 0:
-				return redirect('/business/grant/')
+				return JsonResponse({'result':0})
+
+			return JsonResponse({'result':tip})
 
 		elif action == 'confirm':
 			p_id = request.POST.get('product_id')

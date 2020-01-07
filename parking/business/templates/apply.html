@@ -2,7 +2,7 @@
 {% block content %}
 <div id='bod'>
 	<p>购买优惠券</p>
-	<form method="post" action="" id='buy-form'>
+	<div id='buy-form'>
 		<input type="hidden" name="action" value="buy">
 		<!-- <input type="hidden" name="id" value="{{record.id}}"> -->
 		<div class="item">
@@ -26,7 +26,7 @@
 			<input type="text" name="con" class='elem' disabled>
 			<input type="hidden" name="cost">
 		</div>
-	</form>
+	</div>
 
 	<div id='bt'>
 		支付
@@ -79,6 +79,7 @@
 	}
 </style>
 <script type="text/javascript">
+	var product_id == -1 ;
 	function myajax(url, data, callback, type){
             type = type || 'json'
             $.ajax({
@@ -92,7 +93,20 @@
 	var t = 0
 	$('#bt').click(function(){
 		if(t==1){
-			$('#buy-form').submit()
+			d = {
+				csrfmiddlewaretoken:'{{ csrf_token }}',
+				cost:$('#buy-form input[name=cost]').val(),
+				amount:$('#buy-form input[name=amount]').val(),
+				action:'buy'
+			}
+			myajax('', d, (data)=>{
+				if(e.result  == 0){
+					window.location.href='/business/grant/'
+				}else{
+					product_id=e.result
+				}
+			}
+		)
 		}
 	})
 	$('#buy-form input[name=amount]').change(function(){
@@ -113,7 +127,6 @@
 
 		}
 	})
-	var product_id = {{product_id}}
 	if(product_id != -1){
 		myajax('/order/public/account/'+product_id+'/', {csrfmiddlewaretoken:'{{ csrf_token }}'}, (data)=>(pay(data),console.log(1111))
 		)
