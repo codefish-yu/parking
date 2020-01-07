@@ -3,7 +3,10 @@ from django.core.management.base import BaseCommand, CommandError
 from administrator.models import AdminUser, Menu, Operation, Role
 
 
-'''系统部署时初始化权限菜单, 运行一次'''
+'''
+    系统部署时初始化权限菜单, 运行一次
+    如果菜单有删除, 运行这个是无效的, 要手动去删除菜单, 然后把这代码里相应的菜单也删掉
+'''
 
 class Command(BaseCommand):
 

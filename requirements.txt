@@ -1,2 +1,5 @@
 pymysql
 django==2.1.7
+Pillow
+xlwt
+qrcode
