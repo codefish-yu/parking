@@ -102,7 +102,7 @@
 				if(data.result  == 0){
 					window.location.href='/business/grant/'
 				}else{
-					myajax('/order/public/account/'+data.result+'/', {csrfmiddlewaretoken:'{{ csrf_token }}'}, (data)=>(pay(data),))
+					myajax('/order/public/account/'+data.result+'/', {csrfmiddlewaretoken:'{{ csrf_token }}'}, (data)=>(pay(data)))
 				}
 			}
 		)
@@ -126,9 +126,6 @@
 
 		}
 	})
-	if(product_id != -1){
-		
-	}
 
 	function pay(data){
 

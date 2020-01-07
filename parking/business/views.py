@@ -61,9 +61,9 @@ def user_required(view_func):
 	return wrapper
 
 
-@wuser_required
+# @wuser_required
 @csrf_exempt
-def com_login(request,user):
+def com_login(request):
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')
