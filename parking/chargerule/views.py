@@ -275,7 +275,7 @@ def coupon(request):
         from meta.qrcode import make_qrcode
         import datetime
         
-        url = str(id)
+        url = 'http://parking.metatype.cn/business/ticket/'+str(id)+'/'
         now = datetime.datetime.now()
         name = str(now.year)+''+str(now.month)+''+str('now.day')+''+str(now.hour)+''+str(now.minute)+''+str(now.second)
         return make_qrcode(url,name+'.png')

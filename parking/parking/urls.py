@@ -128,6 +128,7 @@ urlpatterns = [
     path('business/com_login/',b.com_login),
     path('business/apply/<int:tc_id>/',b.apply),
     path('business/grant/',b.grant),
+    path('business/ticket/<int:tc_id>/',b.ticket),
 
 
 

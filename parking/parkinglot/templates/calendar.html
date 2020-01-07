@@ -59,7 +59,15 @@
                                     {% for i in nonworkdays %}
                                     <input type='hidden' name='nonworkdays' value="{{i}}" />
                                     {% endfor %}
-                                    <button type="submit" class=" btn btn-primary model-btn"  >保存</button>
+                                    <select name='parkinglot' class="chosen-select front-control" data-placeholder="选择停车场" id="park">
+                                        <option value="0">默认</option>
+                                        {% for i in parkinglot %}
+                                        <option value="{{i.id}}" {%if i.id == p %}selected{%endif%}>{{i.name}} </option>
+                                        {% endfor %}
+                                        
+                                    </select>
+                                    <input type="hidden" name="p" value="{{p}}">
+                                    <button type="submit" class=" btn btn-primary model-btn" >保存</button>
                                 </form>
                             </div>
                         </div>
@@ -71,10 +79,16 @@
                         {% csrf_token %}
                         <input type='hidden' name='year' />
                         <input type='hidden' name='action' value="change_year" />
+                        <input type="hidden" name="parkinglot" value="{{p}}">
                     </form>
                 </div>
             </div>
         </div>
+        <form method="post" id="change-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="change">
+            <input type="hidden" name="parkinglot" value="{{p}}">
+        </form>
  
 {% endblock %}
 
@@ -85,6 +99,14 @@
 
 
 <script>
+    $('#park').change(function(){
+        $('#change-form input[name=parkinglot]').val(this.value);
+        $('#query_form input[name=p]').val(this.value);
+        $('#change_year_form input[name=parkinglot]').val(this.value);
+        $('#change-form').submit()
+    })
+    $('.chosen-select').chosen();
+    $('.chosen-select').next().css('width', '200px');
     var year = parseInt({{year}})
 
     $('.calendar').calendar({'startYear': year});

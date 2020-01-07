@@ -179,6 +179,126 @@
 		font-family: PingFangSC-Medium
 	}
 </style>
+<div id='total'>
+	{% include 'header.html' %}
+	
+	<div class='con'>
+
+		<img src="{% if p == 0 %}{% if record.picture_out %}{{ record.picture_out.url}}{%else%}/static/img/car.png{% endif %}{% else %}{% if record.picture_in %}{{ record.picture_in.url}}{%else%}/static/img/car.png{% endif %}{% endif %}" id='im'>
+		<div>
+			<div class="number">{{ record.number}}</div>
+			<div class="ty">
+				{% if type == 0%}
+				<div>临停车</div>
+				<div id="no"> 233</div>
+				{% elif type == 1%}
+				<div>月租车</div>
+				<div id="ti">{{ card.valid_start | date:'Y-m-d'}}-{{ card.valid_end | date:'Y-m-d'}} </div>
+				{% endif %}
+				
+			</div>
+			
+			
+		</div>
+		<div>
+			<div class="item">计费时长:</div>
+			<div class="item">{% if record %}{{record.get_duration}}{% else %}0{% endif %} 小时</div>
+		</div>
+		<div>
+			<div class="item">入场时间:</div>
+			{% if record.in_time %}
+			<div class="item">{{record.in_time}} </div>
+			{% else%}
+			<div class="nr item">无入场记录</div>
+			{% endif %}
+		</div>
+		<div>
+			<div class="item">出场时间:</div>
+			{% if record.out_time %}
+			<div class="item">{{record.out_time}} </div>
+			{% else%}
+			<div class="nr item">无出场记录</div>
+			{% endif %}
+		</div>
+		{% if not record.in_time %}
+		<div>
+			<div class="price">¥0</div>
+		</div>
+		<div>
+			<div class="item">需核实入场时间</div>
+			<div id='phone'><img src="/static/img/phone.svg"></div>
+			<!-- <a href="tel:13166037628">0311-85358073</a> -->
+		</div>
+		{% elif record.get_price == 0%}
+		<div>
+			<div class="price">¥0</div>
+		</div>
+		<div>
+			<div class="item">无需缴费</div>
+		</div>
+		{% elif record.bill.status == 1%}
+		<div>
+			<div class="price">¥0</div>
+		</div>
+		<div>
+			<div class="item">已线上缴费:¥{{record.get_price}}</div>
+		</div>
+		{% else %}
+		<div>
+			<div class="price">¥16</div>
+		</div>
+		<div>
+			<div class="item">示例</div>
+		</div>
+
+		{% endif %}
+	</div>
+	<div class="bt">
+		{% if p == 0%}
+		<div id='pas'>特殊放行</div>
+		{% endif %}
+		<div id='que' {% if p == 1%}style="margin-left: 31%;"{% endif %}><span id='ex_t'><img src="/static/img/ex.png" id='ex_i'><i id='ex_f'>有异常</i></span>查看记录</div>
+	</div>
+	<form id='info_form' method="post" action="">
+		 {% csrf_token %}
+		<input type="hidden" name="action" value="check">
+	</form>
+	
+	{% include 'bottom.html' %}
+</div>
+<div id='pass'>
+	<form method="post" action="" id='pass-form' enctype="multipart/form-data">
+		<input type="hidden" name="action" value="pass">
+		<input type="hidden" name="remark">
+		<input type="file" name="audio" style="display:none">
+		<input type="hidden" name="id" value="{{record.id}}">
+	</form>
+	<div id='p_con'>
+		<div id='canc'><img src="/static/img/Cancel.svg"> </div>
+		<div id='mark'>特放备注</div>
+		<div id='s_con'>
+			<div class="car">
+				<div class="c_item">押钞车</div>
+				<div class="c_item">老干部</div>
+			</div>
+			<div class="car">
+				<div class="c_item">救护车</div>
+				<div class="c_item">疾控中心</div>
+			</div>
+			<div class="car">
+				<div class="c_item">危险品车</div>
+				<div class="c_item">残疾证</div>
+			</div>
+			<button id='voic'><img src="/static/img/voice.svg"></button>
+			<!-- <audio src="/static/test.wav" controls></audio> -->
+			<button id='stopAudio'><img src="/static/img/stop.svg"></button>
+			<div id='conf'>确认</div>
+		</div>
+	</div>
+</div>
+<form method="post" action="" id ="check-form">
+	<input type="hidden" name="action">
+</form>
 {% endblock %}
 {% block js %}
 <script type="text/javascript">
@@ -317,125 +437,5 @@
 	
 	
 </script>
-<div id='total'>
-	{% include 'header.html' %}
-	
-	<div class='con'>
-
-		<img src="{% if p == 0 %}{% if record.picture_out %}{{ record.picture_out.url}}{%else%}/static/img/car.png{% endif %}{% else %}{% if record.picture_in %}{{ record.picture_in.url}}{%else%}/static/img/car.png{% endif %}{% endif %}" id='im'>
-		<div>
-			<div class="number">{{ record.number}}</div>
-			<div class="ty">
-				{% if type == 0%}
-				<div>临停车</div>
-				<div id="no"> 233</div>
-				{% elif type == 1%}
-				<div>月租车</div>
-				<div id="ti">{{ card.valid_start | date:'Y-m-d'}}-{{ card.valid_end | date:'Y-m-d'}} </div>
-				{% endif %}
-				
-			</div>
-			
-			
-		</div>
-		<div>
-			<div class="item">计费时长:</div>
-			<div class="item">{% if record %}{{record.get_duration}}{% else %}0{% endif %} 小时</div>
-		</div>
-		<div>
-			<div class="item">入场时间:</div>
-			{% if record.in_time %}
-			<div class="item">{{record.in_time}} </div>
-			{% else%}
-			<div class="nr item">无入场记录</div>
-			{% endif %}
-		</div>
-		<div>
-			<div class="item">出场时间:</div>
-			{% if record.out_time %}
-			<div class="item">{{record.out_time}} </div>
-			{% else%}
-			<div class="nr item">无出场记录</div>
-			{% endif %}
-		</div>
-		{% if not record.in_time %}
-		<div>
-			<div class="price">¥0</div>
-		</div>
-		<div>
-			<div class="item">需核实入场时间</div>
-			<div id='phone'><img src="/static/img/phone.svg"></div>
-			<!-- <a href="tel:13166037628">0311-85358073</a> -->
-		</div>
-		{% elif record.get_price == 0%}
-		<div>
-			<div class="price">¥0</div>
-		</div>
-		<div>
-			<div class="item">无需缴费</div>
-		</div>
-		{% elif record.bill.status == 1%}
-		<div>
-			<div class="price">¥0</div>
-		</div>
-		<div>
-			<div class="item">已线上缴费:¥{{record.get_price}}</div>
-		</div>
-		{% else %}
-		<div>
-			<div class="price">¥16</div>
-		</div>
-		<div>
-			<div class="item">示例</div>
-		</div>
-
-		{% endif %}
-	</div>
-	<div class="bt">
-		{% if p == 0%}
-		<div id='pas'>特殊放行</div>
-		{% endif %}
-		<div id='que' {% if p == 1%}style="margin-left: 31%;"{% endif %}><span id='ex_t'><img src="/static/img/ex.png" id='ex_i'><i id='ex_f'>有异常</i></span>查看记录</div>
-	</div>
-	<form id='info_form' method="post" action="">
-		 {% csrf_token %}
-		<input type="hidden" name="action" value="check">
-	</form>
-	
-	{% include 'bottom.html' %}
-</div>
-<div id='pass'>
-	<form method="post" action="" id='pass-form' enctype="multipart/form-data">
-		<input type="hidden" name="action" value="pass">
-		<input type="hidden" name="remark">
-		<input type="file" name="audio" style="display:none">
-		<input type="hidden" name="id" value="{{record.id}}">
-	</form>
-	<div id='p_con'>
-		<div id='canc'><img src="/static/img/Cancel.svg"> </div>
-		<div id='mark'>特放备注</div>
-		<div id='s_con'>
-			<div class="car">
-				<div class="c_item">押钞车</div>
-				<div class="c_item">老干部</div>
-			</div>
-			<div class="car">
-				<div class="c_item">救护车</div>
-				<div class="c_item">疾控中心</div>
-			</div>
-			<div class="car">
-				<div class="c_item">危险品车</div>
-				<div class="c_item">残疾证</div>
-			</div>
-			<button id='voic'><img src="/static/img/voice.svg"></button>
-			<!-- <audio src="/static/test.wav" controls></audio> -->
-			<button id='stopAudio'><img src="/static/img/stop.svg"></button>
-			<div id='conf'>确认</div>
-		</div>
-	</div>
-</div>
-<form method="post" action="" id ="check-form">
-	<input type="hidden" name="action">
-</form>
 {% endblock %}
 
