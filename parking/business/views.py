@@ -63,7 +63,7 @@ def user_required(view_func):
 
 @wuser_required
 @csrf_exempt
-def com_login(request):
+def com_login(request,user):
 
 	if request.method == 'POST':
 		action = request.POST.get('action','')
@@ -118,7 +118,7 @@ def apply(request,tc_id):
 		elif action == 'confirm':
 			p_id = request.POST.get('product_id')
 			if p_id:
-				order = Order.objects.filter(product_id=pid).order_by('-create_time').first()
+				order = Order.objects.filter(product_id=p_id).order_by('-create_time').first()
 				if order:
 					if Payment.objects.filter(order=order).exists():
 						bill = BusinessBill.objects.filter(product_id=int(p_id))
