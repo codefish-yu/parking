@@ -1,6 +1,49 @@
 {% extends 'home.html' %}
 {% block content %}
-<div>
+<div class="barc">
 	<img src="{{record.coucode.url}}">
+	<input type="hidden" value="{{record.id}}" class="id">
+	<input type="hidden" value="{{record.qrrandom}}" class="ran">
+
 </div>
+<style type="text/css">
+	img{
+		margin: 25% 0 0 15%
+	}
+</style>
+<script type="text/javascript">
+	{	//动态码
+		function makeqr(obj,id,code){
+
+			let qrcode = qrcanvas({
+                        data:'http://parking.metatype.cn/wechat/scan/coupon/'+id+'/'+code+'/',
+                        size:250
+                });
+			$(obj).attr('src',qrcode.toDataURL('image/png'))
+			
+		}
+
+		function  change() {
+			$.ajax({
+				url:'',
+				type:'post',
+				data:{
+					'action':'vary'
+				},
+				success:function(e){
+					makeqr($('.barc img'),e.result.id,e.result.code)
+				}
+			})
+		}
+
+		//初始化
+		$(document).ready(function(){
+				makeqr($('.barc img'),$('.id').val(),$('.id').val())
+			
+		})
+		
+		var inter = setInterval(change,6000);
+
+	}
+</script>
 {% endblock %}

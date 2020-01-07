@@ -170,8 +170,22 @@ def grant(request,company):
 	ctx['records'] = records
 	return render(request,'grant.html',ctx) 
 
+
+@csrf_exempt
 def ticket(request,tc_id):
 	ctx = {}
+	record = TicketRecord.objects.filter(id=tc_id).first()
 
-	ctx['record'] = TicketRecord.objects.filter(id=tc_id).first()
+	if request.method == 'POST':
+		action = request.POST.get('action','')
+		if action == 'vary':
+			l = []
+			t = {
+				'id':record.id,
+				'code':ran()
+			}
+	
+			return JsonResponse({'result':t})
+
+	ctx['record'] = record
 	return render(request,'ticket.html',ctx)
