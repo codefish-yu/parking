@@ -356,7 +356,7 @@ def coupon(request):
             TicketRecord.objects.filter(id__in=ids).delete()#update(is_delete=1)
 
     ctx['objects'] = objects.order_by('-buy_time')
-    ctx['parkinglots'] = ParkingLot.objects.filter(status=0).all()
+    ctx['parkinglots'] = ParkingLot.objects.filter(status=0)
     c = Company.objects.select_related('parkinglot').filter(status=1)
     companies = {}
 

@@ -103,6 +103,9 @@ class Menu(models.Model):
 
     operation = models.ManyToManyField('Operation', verbose_name='操作')
 
+    def __str__(self):
+        return self.menu_name
+
 
 class Operation(models.Model):
     class Meta:
@@ -111,6 +114,9 @@ class Operation(models.Model):
     operation_name = models.CharField(max_length=100, default='', verbose_name='操作名称')
     action = models.CharField(max_length=100, default='', verbose_name='方法名')
 
+    def __str__(self):
+        return self.operation_name
+        
 
 class Authority(models.Model):
     class Meta:

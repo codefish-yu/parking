@@ -33,7 +33,7 @@ class Command(BaseCommand):
             ]},
             {
                 '商家管理':[
-                    ['商家账户',[], '/company/company/'],
+                    ['商家账户',['查询', '新增', '修改', '删除'], '/company/company/'],
                     ['商家充值明细', [], '/company/bill/'],
                     ['商家车牌充值明细', [], '/company/bill2/'],
                     ['折扣券管理', [], '/company/ticket/']
