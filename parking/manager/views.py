@@ -42,8 +42,16 @@ def manage_login(request):	#username:管理员名字
 	return render(request,'manage_login.html',ctx)
 
 #员工列表界面
-def staff_list(request):
-	pass
+def staff_list(request,parkinglot):	#哪一个停车场得从url中传过来，用来分辨是哪位
+	ctx = {}
+
+	if request.method == 'GET':
+		workers_to_parkinglot = Worker.objects.filter(parkinglot=parkinglot)
+
+
+
+
+
 
 	return render(request,'manage_login.html',ctx)
 
