@@ -1,6 +1,6 @@
 pymysql
 MyQR 
-django==2.1.7
+django==2.1.15
 Pillow
 xlwt
 qrcode
